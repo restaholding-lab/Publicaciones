@@ -1,0 +1,2676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa del Ecosistema Digital · Curso MIT para Dirección Comercial</title>
+<meta name="description" content="Cartografía interactiva por capas del stack tecnológico moderno, orientada a perfiles de dirección de ventas y marketing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ========== TOKENS ========== */
+:root {
+  --paper: #F4EFE6;
+  --paper-2: #EDE7DA;
+  --paper-3: #E4DDCB;
+  --ink: #1A1712;
+  --ink-2: #4A4238;
+  --ink-3: #7A6F5F;
+  --line: #C9BFA9;
+  --line-soft: #DED4BE;
+  --accent: #B33A2A;
+
+  /* Colores por capa */
+  --c-l00: #8A8172;
+  --c-l01: #5C6E82;
+  --c-l02: #4A6B4E;
+  --c-l03: #A67F2E;
+  --c-l04: #2F5D8A;
+  --c-l05: #9A3A2E;
+  --c-l06: #6B4A85;
+  --c-l07: #5E7D4B;
+  --c-l08: #1E1E26;
+  --c-l09: #B76A24;
+  --c-l10: #A65E5B;
+  --c-l11: #4A7A98;
+  --c-l12: #3E3560;
+  --c-glo: #6B4A2E;
+
+  --f-display: "Fraunces", Georgia, serif;
+  --f-body: "IBM Plex Sans", -apple-system, system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --sidebar-w: 320px;
+  --content-max: 900px;
+  --radius: 2px;
+  --shadow-1: 0 1px 0 rgba(26,23,18,0.06);
+  --shadow-2: 0 10px 30px -12px rgba(26,23,18,0.18);
+}
+
+/* ========== RESET ========== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+  background-image:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: 0 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Overlay para atenuar la rejilla */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(244,239,230,0.88), rgba(244,239,230,0.94));
+  pointer-events: none;
+  z-index: -1;
+}
+
+img, svg { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ========== LAYOUT ========== */
+.wrap {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 100vh;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 32px 24px 40px 32px;
+  border-right: 1px solid var(--line);
+  background: var(--paper-2);
+  background-image: linear-gradient(180deg, var(--paper-2) 0%, var(--paper) 100%);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.brand__mark {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.brand__dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+.brand__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 6px 0 4px;
+  color: var(--ink);
+}
+.brand__sub {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.nav-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.nav-list { list-style: none; padding: 0; margin: 0; }
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 10px 8px 14px;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.18s ease;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.nav-item:hover {
+  color: var(--ink);
+  background: rgba(179, 58, 42, 0.04);
+  border-left-color: var(--line);
+}
+.nav-item.is-active {
+  color: var(--ink);
+  background: rgba(26,23,18,0.05);
+  border-left-color: var(--layer-color, var(--accent));
+  font-weight: 500;
+}
+.nav-item__num {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+  min-width: 20px;
+  font-weight: 500;
+}
+.nav-item.is-active .nav-item__num { color: var(--layer-color, var(--accent)); }
+.nav-item__label { line-height: 1.35; }
+
+.sidebar-footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  line-height: 1.55;
+}
+.sidebar-footer strong { color: var(--ink-2); font-weight: 500; }
+
+/* ========== MAIN ========== */
+.main {
+  padding: 48px 56px 120px;
+  max-width: calc(var(--content-max) + 112px);
+}
+
+/* ========== HERO ========== */
+.hero {
+  margin-bottom: 96px;
+  padding-top: 24px;
+}
+.hero__eyebrow {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero__eyebrow::before {
+  content: "";
+  width: 24px; height: 1px;
+  background: var(--accent);
+}
+.hero__title {
+  font-family: var(--f-display);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: clamp(38px, 5.6vw, 68px);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0 0 32px;
+  max-width: 820px;
+}
+.hero__title em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--accent);
+}
+.hero__lead {
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 640px;
+  margin: 0 0 40px;
+}
+.hero__meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 720px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.hero__meta > div {
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.hero__meta dt {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+.hero__meta dd {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.reading-guide {
+  margin-top: 56px;
+  padding: 28px 32px;
+  background: var(--paper-2);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.reading-guide__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+.reading-guide p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+.reading-guide p:last-child { margin-bottom: 0; }
+.reading-guide kbd {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  padding: 1px 6px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink);
+}
+
+/* ========== LAYER SECTION ========== */
+.layer {
+  margin-bottom: 88px;
+  scroll-margin-top: 40px;
+  position: relative;
+}
+.layer__header {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 28px;
+  align-items: start;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.layer__num {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  padding-top: 12px;
+  position: relative;
+}
+.layer__num::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 32px;
+  height: 3px;
+  background: var(--layer-color, var(--accent));
+}
+.layer__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(28px, 3.6vw, 42px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.layer__tag {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--layer-color, var(--accent));
+  font-weight: 500;
+}
+
+.layer__intro {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 28px;
+  margin-bottom: 32px;
+}
+.layer__intro-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 4px;
+}
+.layer__intro-body p {
+  margin: 0 0 14px;
+  font-size: 16.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.layer__intro-body p:last-child { margin-bottom: 0; }
+.layer__intro-body em {
+  font-style: italic;
+  color: var(--layer-color, var(--accent));
+  font-weight: 500;
+  padding: 0 2px;
+}
+
+/* Ejes de aprendizaje */
+.axes {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 28px;
+  margin-bottom: 32px;
+}
+.axes__label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 4px;
+}
+.axes__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.axis {
+  padding: 16px 18px;
+  background: var(--paper-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+}
+.axis__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 14.5px;
+  color: var(--ink);
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+.axis__text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* Componentes desplegables */
+.components {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 28px;
+  margin-bottom: 32px;
+}
+.components__label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 4px;
+}
+.components__list {
+  border-top: 1px solid var(--line);
+}
+details.component {
+  border-bottom: 1px solid var(--line);
+  transition: background 0.2s ease;
+}
+details.component[open] {
+  background: linear-gradient(180deg, transparent, var(--paper-2));
+}
+details.component summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 4px 18px 40px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+  position: relative;
+  transition: color 0.15s ease;
+}
+details.component summary::-webkit-details-marker { display: none; }
+details.component summary::before {
+  content: "+";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  font-family: var(--f-mono);
+  font-size: 20px;
+  color: var(--layer-color, var(--accent));
+  font-weight: 300;
+  transition: transform 0.25s ease;
+  line-height: 1;
+}
+details.component[open] summary::before {
+  content: "−";
+}
+details.component summary:hover .component__title { color: var(--layer-color, var(--accent)); }
+.component__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  transition: color 0.15s ease;
+}
+.component__hint {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  text-transform: lowercase;
+}
+.component__body {
+  padding: 4px 4px 24px 40px;
+}
+.component__body p {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.component__body p:last-child { margin-bottom: 0; }
+.component__body ul {
+  margin: 12px 0;
+  padding-left: 20px;
+}
+.component__body li {
+  margin-bottom: 6px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.component__body li strong { color: var(--ink); font-weight: 500; }
+
+.term {
+  font-family: var(--f-mono);
+  font-size: 0.88em;
+  padding: 1px 5px;
+  background: rgba(179, 58, 42, 0.06);
+  border-radius: 3px;
+  color: var(--layer-color, var(--accent));
+  font-weight: 500;
+  border-bottom: 1px dotted var(--layer-color, var(--accent));
+  cursor: help;
+}
+
+/* Meeting talkbox */
+.meeting {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 28px;
+  margin-top: 8px;
+}
+.meeting__label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 20px;
+}
+.meeting__body {
+  padding: 24px 28px;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+.meeting__body::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 4px;
+  background: var(--layer-color, var(--accent));
+}
+.meeting__title {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-3);
+  margin: 0 0 12px;
+}
+.meeting__quote {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--paper);
+  margin: 0 0 14px;
+  letter-spacing: -0.005em;
+}
+.meeting__note {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--paper-3);
+  margin: 0;
+}
+
+/* ========== GLOSSARY ========== */
+.glossary {
+  margin-top: 96px;
+  scroll-margin-top: 40px;
+}
+.glossary__header {
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.glossary__num {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+}
+.glossary__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(32px, 4.5vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+.glossary__lead {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 620px;
+  margin: 0 0 28px;
+}
+
+.search {
+  position: relative;
+  max-width: 480px;
+  margin-bottom: 40px;
+}
+.search__input {
+  width: 100%;
+  padding: 14px 44px 14px 16px;
+  font-family: var(--f-body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search__input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(179, 58, 42, 0.1);
+}
+.search__input::placeholder { color: var(--ink-3); }
+.search__icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 32px;
+}
+.chip {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  border-radius: 20px;
+  transition: all 0.15s;
+}
+.chip:hover { border-color: var(--ink-2); color: var(--ink); }
+.chip.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.glossary__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2px;
+  background: var(--line-soft);
+  border: 1px solid var(--line);
+}
+.gterm {
+  padding: 18px 20px;
+  background: var(--paper);
+  transition: background 0.15s;
+  position: relative;
+}
+.gterm:hover { background: var(--paper-2); }
+.gterm[hidden] { display: none; }
+.gterm__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.gterm__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 15.5px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.gterm__layer {
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: var(--layer-color, var(--ink-3));
+  color: var(--paper);
+  white-space: nowrap;
+  font-weight: 500;
+}
+.gterm__def {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* ========== FOOTER ========== */
+.footer {
+  margin-top: 120px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--ink-3);
+  line-height: 1.6;
+}
+.footer strong { color: var(--ink-2); font-weight: 500; }
+
+/* ========== MOBILE ========== */
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-2);
+}
+
+@media (max-width: 1000px) {
+  .wrap { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 88%; max-width: 340px;
+    z-index: 90;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: var(--shadow-2);
+  }
+  .sidebar.is-open { transform: translateX(0); }
+  .mobile-toggle { display: block; }
+  .main { padding: 72px 24px 80px; }
+  .layer__header, .layer__intro, .axes, .components, .meeting {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .layer__num::before { top: -6px; }
+  .hero__meta { grid-template-columns: 1fr; }
+}
+
+/* Print */
+@media print {
+  .sidebar, .mobile-toggle, .search, .filter-chips { display: none; }
+  .wrap { grid-template-columns: 1fr; }
+  .main { padding: 20px; max-width: none; }
+  details.component[open] summary::before,
+  details.component summary::before { content: "▸"; }
+  details.component summary { padding-left: 20px; }
+  details.component .component__body { display: block !important; }
+  details.component { break-inside: avoid; }
+}
+
+/* Utils */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+</style>
+</head>
+<body>
+
+<button class="mobile-toggle" id="mobile-toggle" aria-label="Abrir índice">Índice</button>
+
+<div class="wrap">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand__dot"></span>
+      <span class="brand__mark">MIT · Digital Fluency</span>
+    </div>
+    <h1 class="brand__title">Mapa del ecosistema digital</h1>
+    <p class="brand__sub">Curso condensado para dirección comercial y marketing. Un mapa para hablar de tecnología sin ser técnico.</p>
+
+    <div class="nav-label">Capas del stack</div>
+    <ul class="nav-list">
+      <li><a class="nav-item" href="#l01" style="--layer-color: var(--c-l01)"><span class="nav-item__num">01</span><span class="nav-item__label">Infraestructura y nube</span></a></li>
+      <li><a class="nav-item" href="#l02" style="--layer-color: var(--c-l02)"><span class="nav-item__num">02</span><span class="nav-item__label">Sistema operativo y contenedores</span></a></li>
+      <li><a class="nav-item" href="#l03" style="--layer-color: var(--c-l03)"><span class="nav-item__num">03</span><span class="nav-item__label">Datos y almacenamiento</span></a></li>
+      <li><a class="nav-item" href="#l04" style="--layer-color: var(--c-l04)"><span class="nav-item__num">04</span><span class="nav-item__label">Redes y conectividad</span></a></li>
+      <li><a class="nav-item" href="#l05" style="--layer-color: var(--c-l05)"><span class="nav-item__num">05</span><span class="nav-item__label">Seguridad, identidad y gobernanza</span></a></li>
+      <li><a class="nav-item" href="#l06" style="--layer-color: var(--c-l06)"><span class="nav-item__num">06</span><span class="nav-item__label">APIs y flujos de integración</span></a></li>
+      <li><a class="nav-item" href="#l07" style="--layer-color: var(--c-l07)"><span class="nav-item__num">07</span><span class="nav-item__label">Conocimiento y RAG</span></a></li>
+      <li><a class="nav-item" href="#l08" style="--layer-color: var(--c-l08)"><span class="nav-item__num">08</span><span class="nav-item__label">Modelos de IA (LLMs)</span></a></li>
+      <li><a class="nav-item" href="#l09" style="--layer-color: var(--c-l09)"><span class="nav-item__num">09</span><span class="nav-item__label">Agentes y orquestación</span></a></li>
+      <li><a class="nav-item" href="#l10" style="--layer-color: var(--c-l10)"><span class="nav-item__num">10</span><span class="nav-item__label">Aplicaciones y experiencia</span></a></li>
+      <li><a class="nav-item" href="#l11" style="--layer-color: var(--c-l11)"><span class="nav-item__num">11</span><span class="nav-item__label">Observabilidad y telemetría</span></a></li>
+      <li><a class="nav-item" href="#l12" style="--layer-color: var(--c-l12)"><span class="nav-item__num">12</span><span class="nav-item__label">MLOps y gobierno de IA</span></a></li>
+    </ul>
+
+    <div class="nav-label">Referencia</div>
+    <ul class="nav-list">
+      <li><a class="nav-item" href="#glosario" style="--layer-color: var(--c-glo)"><span class="nav-item__num">§</span><span class="nav-item__label">Glosario ampliado</span></a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <strong>Cómo se lee este mapa.</strong> Cada capa se apoya sobre la anterior. La 01 es el suelo físico; la 12 es el sistema nervioso que vigila que todo lo demás funcione. En una reunión técnica los términos saltan de capa: este mapa te da el marco para no perder el hilo.
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN ==================== -->
+  <main class="main">
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+      <div class="hero__eyebrow">Curso 2026 · Digital Fluency for Commercial Leadership</div>
+      <h2 class="hero__title">Hablar de tecnología <em>sin</em> ser técnico. Con precisión, y sin bluff.</h2>
+      <p class="hero__lead">Este mapa es un curso condensado. Está pensado para directivos de ventas y marketing que ya no pueden delegar la conversación técnica: la conversación técnica <em>es</em> la conversación comercial. Doce capas, un vocabulario, y una manera de mirar el stack que después se recuerda.</p>
+      <dl class="hero__meta">
+        <div>
+          <dt>Duración</dt>
+          <dd>Autoguiado · 90 min de lectura activa</dd>
+        </div>
+        <div>
+          <dt>Formato</dt>
+          <dd>Doce capas desplegables + glosario</dd>
+        </div>
+        <div>
+          <dt>Objetivo</dt>
+          <dd>Fluidez, no ingeniería</dd>
+        </div>
+      </dl>
+
+      <div class="reading-guide">
+        <h3 class="reading-guide__title">Cómo usar este documento</h3>
+        <p>Las capas están numeradas de abajo hacia arriba. La <strong>Capa 01</strong> es el suelo físico —servidores, cables, energía—; la <strong>Capa 12</strong> es el sistema que vigila que todo lo demás cumpla su función. Puedes leerlas en orden o saltar a la que te toca en una reunión concreta.</p>
+        <p>Cada capa contiene tres bloques: una <em>idea central</em>, los <em>componentes</em> desplegables (haz clic en el <kbd>+</kbd>) y un cuadro final llamado <em>"En una reunión"</em> con la frase que suele oírse y lo que significa.</p>
+        <p>Los términos técnicos aparecen así: <span class="term" style="--layer-color: var(--accent)">endpoint</span>. Todos están recogidos en el glosario final, filtrable por capa.</p>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 01 ==================== -->
+    <section class="layer" id="l01" style="--layer-color: var(--c-l01)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 01</div>
+        <div>
+          <div class="layer__tag">El suelo físico</div>
+          <h2 class="layer__title">Infraestructura y nube</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Antes de que exista una aplicación, un modelo de IA o un dashboard, existe <em>algo físico</em>: un ordenador encendido en un edificio con aire acondicionado y una conexión a la red eléctrica. Todo lo demás vive alquilado sobre eso.</p>
+          <p>La <em>nube</em> no es una metáfora poética: es la decisión de no comprar ese ordenador, sino alquilarlo por horas o por segundos a un tercero (Amazon, Microsoft, Google) que lo tiene ya montado, refrigerado y conectado. Comprender esta capa importa porque casi todos los costes, latencias y decisiones de soberanía del dato empiezan aquí.</p>
+        </div>
+      </div>
+
+      <div class="axes">
+        <div class="axes__label">Ejes clave</div>
+        <div class="axes__grid">
+          <div class="axis">
+            <h4 class="axis__title">Coste</h4>
+            <p class="axis__text">Se paga por lo que se usa: CPU, memoria, red saliente. La nube abarata el arranque y encarece la escala mal gestionada.</p>
+          </div>
+          <div class="axis">
+            <h4 class="axis__title">Latencia</h4>
+            <p class="axis__text">Un servidor en Fráncfort responde antes a Madrid que uno en Virginia. La geografía sigue importando.</p>
+          </div>
+          <div class="axis">
+            <h4 class="axis__title">Soberanía</h4>
+            <p class="axis__text">¿En qué país físico está el dato? Determina qué legislación se aplica (GDPR, EU Data Act).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Data center</span>
+              <span class="component__hint">edificio físico</span>
+            </summary>
+            <div class="component__body">
+              <p>Nave industrial climatizada llena de servidores encendidos las 24 horas. Los grandes proveedores tienen decenas repartidos por el mundo. Cuando un cliente pregunta <em>"¿dónde están mis datos?"</em>, la respuesta literal es un edificio con dirección postal.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Región y zona de disponibilidad</span>
+              <span class="component__hint">geografía técnica</span>
+            </summary>
+            <div class="component__body">
+              <p>Una <span class="term">región</span> es una zona geográfica (por ejemplo, <em>eu-west-1</em> en Irlanda). Dentro de cada región hay varias <span class="term">zonas de disponibilidad</span>: data centers independientes, físicamente separados, para que si uno se cae el servicio siga vivo.</p>
+              <p>Elegir región tiene tres consecuencias: latencia para tus usuarios, cumplimiento legal y coste (no todas cuestan igual).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Hyperscaler</span>
+              <span class="component__hint">AWS · Azure · GCP</span>
+            </summary>
+            <div class="component__body">
+              <p>Los tres grandes proveedores de nube pública: <span class="term">AWS</span> (Amazon), <span class="term">Azure</span> (Microsoft) y <span class="term">GCP</span> (Google). Concentran la mayoría del cómputo mundial. En Europa emergen alternativas como OVH o Scaleway con narrativa de soberanía.</p>
+              <p>Traducción comercial: cuando un cliente dice "estamos en Azure", te está diciendo su ecosistema, su equipo, y probablemente sus preferencias de compra.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">CPU, GPU, TPU</span>
+              <span class="component__hint">el músculo</span>
+            </summary>
+            <div class="component__body">
+              <p>La <span class="term">CPU</span> es el procesador clásico: hace muchas tareas distintas, en serie. La <span class="term">GPU</span> hace pocas tareas pero en paralelo masivo: por eso mueve videojuegos <em>y</em> entrena modelos de IA. La <span class="term">TPU</span> es la versión de Google, hecha a medida para IA.</p>
+              <p>Un modelo grande de IA se entrena en miles de GPUs a la vez. Esto explica por qué NVIDIA vale lo que vale.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Modelos de despliegue</span>
+              <span class="component__hint">nube pública, privada, híbrida, on-premise</span>
+            </summary>
+            <div class="component__body">
+              <p><strong>On-premise:</strong> servidor en la oficina o data center propio. Control total, coste fijo alto.</p>
+              <p><strong>Nube pública:</strong> alquiler a un hyperscaler. Elasticidad, coste variable.</p>
+              <p><strong>Nube privada:</strong> nube dedicada solo a un cliente. Muy usada en banca y sector público.</p>
+              <p><strong>Híbrida:</strong> mezcla de las anteriores. Un dato sensible en local, el resto en nube.</p>
+              <p><strong>Multicloud:</strong> uso deliberado de varios hyperscalers para no depender de uno.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Estamos evaluando pasar de un despliegue on-prem a una arquitectura multicloud en eu-central-1 y eu-west-3, con soberanía del dato sobre GCP."</blockquote>
+          <p class="meeting__note">Traducción: quieren dejar sus servidores propios y alquilar en dos regiones europeas de dos proveedores distintos, para no depender de uno solo y para que el dato no salga de la UE. Es una conversación de coste, cumplimiento y riesgo, no técnica.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 02 ==================== -->
+    <section class="layer" id="l02" style="--layer-color: var(--c-l02)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 02</div>
+        <div>
+          <div class="layer__tag">Cómo se ejecutan los procesos</div>
+          <h2 class="layer__title">Sistema operativo y contenedores</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Sobre el servidor físico hay una capa de software que decide qué programa se ejecuta cuándo, quién puede leer qué archivo y cómo se reparte la memoria. Es el <em>sistema operativo</em>. En servidores modernos, casi siempre es <em>Linux</em>.</p>
+          <p>Encima del sistema operativo, la industria descubrió algo revolucionario hace diez años: en vez de instalar una aplicación directamente sobre el sistema, se empaqueta en una <em>caja portátil autocontenida</em>. Esa caja es un <em>contenedor</em>. Y esas cajas necesitan un director de orquesta que las levante, las tumbe y las replique según la demanda. Ese director es <em>Kubernetes</em>.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Linux</span>
+              <span class="component__hint">el sistema operativo del servidor</span>
+            </summary>
+            <div class="component__body">
+              <p>Sistema operativo abierto, gratuito, dominante en servidores. Windows domina en PC de oficina; Linux domina en la nube. Existen decenas de "sabores" (Ubuntu, Debian, Red Hat, Alpine) que se diferencian en detalles y comunidad de soporte.</p>
+              <p>Cuando alguien dice "hazlo con un contenedor Alpine" está eligiendo una versión mínima y liviana de Linux para que la caja pese menos.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Contenedor (Docker)</span>
+              <span class="component__hint">la caja portátil</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">contenedor</span> empaqueta una aplicación con todas sus dependencias (librerías, versiones, configuración) en un único artefacto que se ejecuta idéntico en el portátil del desarrollador, en pruebas y en producción. Elimina la excusa clásica <em>"en mi máquina funciona"</em>.</p>
+              <p><span class="term">Docker</span> es la herramienta que popularizó los contenedores. Hoy es prácticamente sinónimo.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Imagen y registro</span>
+              <span class="component__hint">plano y biblioteca</span>
+            </summary>
+            <div class="component__body">
+              <p>Una <span class="term">imagen</span> es la plantilla de un contenedor: la receta y los ingredientes ya empaquetados. Un contenedor es una imagen ejecutándose.</p>
+              <p>Las imágenes se guardan en un <span class="term">registro</span> (Docker Hub, GitHub Container Registry, Azure Container Registry). Es una biblioteca desde la que cualquier servidor puede descargarlas.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Kubernetes (K8s)</span>
+              <span class="component__hint">el director de orquesta</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Kubernetes</span> es un sistema que gestiona miles de contenedores a la vez: los levanta cuando llega tráfico, los replica para no perder disponibilidad, los reinicia si mueren y los distribuye entre servidores. Es la infraestructura invisible detrás de la mayoría de servicios modernos a escala.</p>
+              <p>Es complejo. Las empresas suelen contratarlo como servicio gestionado (<span class="term">EKS</span> en AWS, <span class="term">AKS</span> en Azure, <span class="term">GKE</span> en Google).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Serverless</span>
+              <span class="component__hint">servidores que no ves</span>
+            </summary>
+            <div class="component__body">
+              <p>Modelo en el que el proveedor gestiona todo lo de abajo y tú solo subes una función. Se ejecuta cuando la llaman, se paga por milisegundo. Sirven muy bien para tareas asíncronas y picos irregulares.</p>
+              <p>Ejemplos: <span class="term">AWS Lambda</span>, <span class="term">Azure Functions</span>, <span class="term">Google Cloud Run</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Máquinas virtuales (VM)</span>
+              <span class="component__hint">el modelo previo</span>
+            </summary>
+            <div class="component__body">
+              <p>Una <span class="term">VM</span> simula un ordenador entero por software: sistema operativo incluido. Son más pesadas que los contenedores y arrancan más lento, pero aíslan más. Muchas empresas todavía las usan para cargas legacy.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"El servicio va en un pod dentro del cluster de Kubernetes, con autoescalado horizontal y un despliegue canary."</blockquote>
+          <p class="meeting__note">Traducción: la aplicación corre en contenedores gestionados por Kubernetes. Cuando llega más tráfico se crean copias solas ("autoescalado"). Antes de actualizar toda la flota, prueban la nueva versión en una parte pequeña ("canary") para no romper el servicio entero si algo va mal.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 03 ==================== -->
+    <section class="layer" id="l03" style="--layer-color: var(--c-l03)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 03</div>
+        <div>
+          <div class="layer__tag">Dónde vive el conocimiento</div>
+          <h2 class="layer__title">Datos y almacenamiento</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Una empresa moderna es, cada vez más, una <em>colección de datos</em> con una fachada. Los productos que vende, los clientes que atiende, los procesos que ejecuta: todo está registrado en algún tipo de almacenamiento. Esta capa es donde se guarda ese conocimiento.</p>
+          <p>Hay una distinción esencial que aparece en toda conversación técnica: <em>datos estructurados</em> (tablas con columnas claras, como una hoja de Excel gigante) frente a <em>datos no estructurados</em> (documentos PDF, imágenes, correos, contratos). Cada uno vive en un tipo distinto de almacén.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Bases de datos relacionales (SQL)</span>
+              <span class="component__hint">Postgres · MySQL · SQL Server</span>
+            </summary>
+            <div class="component__body">
+              <p>Guardan datos en <span class="term">tablas</span> con filas y columnas fijas, como una hoja de cálculo con reglas estrictas. Se consultan con un lenguaje llamado <span class="term">SQL</span>. Fiables, maduras, adecuadas para cualquier cosa que se pueda tabular: clientes, pedidos, facturas, transacciones.</p>
+              <p>Los tres nombres a recordar: <span class="term">PostgreSQL</span> (abierto, ampliamente usado), <span class="term">MySQL</span> (histórico y muy extendido), <span class="term">SQL Server</span> (el de Microsoft).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Bases de datos NoSQL</span>
+              <span class="component__hint">MongoDB · DynamoDB · Cassandra</span>
+            </summary>
+            <div class="component__body">
+              <p>Almacenes flexibles para datos que no encajan en tablas rígidas. Guardan <span class="term">documentos</span> (JSON), pares clave-valor o grafos. Escalan bien a volúmenes enormes.</p>
+              <p>Se usan típicamente en catálogos, sesiones de usuario, feeds y datos que cambian de forma con frecuencia.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Object storage (S3 y equivalentes)</span>
+              <span class="component__hint">el disco duro infinito de la nube</span>
+            </summary>
+            <div class="component__body">
+              <p>Almacenamiento pensado para archivos: imágenes, vídeos, PDFs, backups, modelos entrenados. Cada archivo es un <span class="term">objeto</span> con un identificador único. Se paga por gigabyte almacenado y por gigabyte descargado.</p>
+              <p>Nombres: <span class="term">S3</span> (AWS, el estándar de facto), <span class="term">Azure Blob Storage</span>, <span class="term">Google Cloud Storage</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Data warehouse</span>
+              <span class="component__hint">Snowflake · BigQuery · Redshift</span>
+            </summary>
+            <div class="component__body">
+              <p>Base de datos gigante y optimizada para <em>analítica</em>: consultas complejas sobre millones de filas para informes, dashboards, forecasting. No sirve para operaciones diarias, sirve para tomar decisiones.</p>
+              <p>Aquí es donde el equipo de Business Intelligence pasa el día. La conversación comercial típica: "¿podemos integrar vuestro CRM con nuestro <span class="term">warehouse</span>?"</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Data lake y lakehouse</span>
+              <span class="component__hint">datos crudos a escala</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">data lake</span> es un almacén enorme donde se vuelca todo (crudo, sin estructurar, en su formato original) a la espera de darle uso. Un <span class="term">lakehouse</span> combina data lake con la gobernanza y estructura de un warehouse. Databricks popularizó el término.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Bases de datos vectoriales</span>
+              <span class="component__hint">Pinecone · Qdrant · Weaviate</span>
+            </summary>
+            <div class="component__body">
+              <p>Almacenan <span class="term">embeddings</span>: representaciones matemáticas del significado de un texto o una imagen. Permiten buscar por <em>parecido semántico</em>, no por palabras exactas: si buscas "mi coche no arranca" encuentras un manual que habla de "problemas de ignición".</p>
+              <p>Son la infraestructura invisible que hace posible el <span class="term">RAG</span> (Capa 07). Nombres frecuentes: <span class="term">Pinecone</span>, <span class="term">Qdrant</span>, <span class="term">Weaviate</span>, <span class="term">Chroma</span>, y extensiones vectoriales de PostgreSQL como <span class="term">pgvector</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Repositorios de código (Git)</span>
+              <span class="component__hint">GitHub · GitLab · Bitbucket</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">repositorio Git</span> guarda el código fuente de una aplicación con su historial completo de cambios. Es al mismo tiempo archivo, control de versiones y espacio de colaboración.</p>
+              <p><span class="term">GitHub</span>, <span class="term">GitLab</span> y <span class="term">Bitbucket</span> son plataformas que alojan esos repositorios en la nube. Aunque parezca extraño incluirlas aquí, funcionalmente son almacenamiento especializado en código.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Los datos estructurados están en Postgres, los documentos en S3, y para el buscador semántico usamos Pinecone. Todo se agrega en Snowflake para el reporting."</blockquote>
+          <p class="meeting__note">Traducción: tienen cuatro almacenes distintos, cada uno para un tipo de dato. Es lo normal. Lo relevante como comercial es entender que <em>integrar</em> algo con ellos requiere hablar con cada uno por separado o con el warehouse.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 04 ==================== -->
+    <section class="layer" id="l04" style="--layer-color: var(--c-l04)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 04</div>
+        <div>
+          <div class="layer__tag">Cómo viajan los bits</div>
+          <h2 class="layer__title">Redes y conectividad</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Nada de lo anterior tiene sentido si el dato no puede moverse. Esta capa cubre las <em>reglas del transporte</em>: cómo un navegador en Madrid alcanza un servidor en Dublín, cómo se aseguran los mensajes, cómo se reparte la carga cuando llegan millones de peticiones al mismo tiempo.</p>
+          <p>Aunque los términos suenan viejos (TCP, IP, HTTP), son los cimientos sobre los que se construye <em>cada</em> integración moderna, incluida la más avanzada con IA. Un cliente que dice "quiero conectar tu API con nuestro sistema" está hablando de esta capa.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">TCP/IP</span>
+              <span class="component__hint">el idioma de internet</span>
+            </summary>
+            <div class="component__body">
+              <p>El conjunto de reglas por las que los ordenadores se identifican y se envían datos por internet. Toda dirección tiene una <span class="term">IP</span> (por ejemplo, 192.0.2.55). <span class="term">TCP</span> es el protocolo que garantiza que los paquetes llegan en orden y sin perderse. No hace falta saber más para una conversación comercial.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">HTTP y HTTPS</span>
+              <span class="component__hint">el protocolo de la web</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">HTTP</span> es la manera estándar en la que un navegador pide una página a un servidor y el servidor responde. <span class="term">HTTPS</span> es lo mismo, pero cifrado: nadie por el camino puede leer lo que se envía. El candado del navegador.</p>
+              <p>Es también el protocolo sobre el que funcionan casi todas las <span class="term">APIs</span> modernas (Capa 06).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">DNS</span>
+              <span class="component__hint">la agenda de internet</span>
+            </summary>
+            <div class="component__body">
+              <p>Sistema que traduce un nombre humano (<em>brompton.com</em>) a una dirección IP (<em>52.19.203.11</em>) que las máquinas entienden. Cuando escribes una URL, tu ordenador pregunta primero al DNS. Cuando el DNS falla, "internet no funciona" aunque todo lo demás esté bien.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Endpoint</span>
+              <span class="component__hint">la puerta concreta</span>
+            </summary>
+            <div class="component__body">
+              <p>Una URL que representa un punto de acceso específico a un servicio. Por ejemplo, <em>https://api.tuempresa.com/clientes</em> es el <span class="term">endpoint</span> que devuelve la lista de clientes. Cada acción de un servicio suele tener su propio endpoint.</p>
+              <p>Cuando un cliente pide "danos los endpoints", pide la documentación con todas esas puertas y qué hace cada una.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">VPN</span>
+              <span class="component__hint">túnel privado</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Virtual Private Network</span>. Crea un túnel cifrado entre dos redes que en realidad están separadas, haciendo que se comporten como si fueran la misma. Un empleado en casa se conecta por VPN a la red corporativa y accede a recursos internos como si estuviera en la oficina.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">VPC</span>
+              <span class="component__hint">tu parcela vallada en la nube</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Virtual Private Cloud</span>. Espacio de red aislado dentro de un hyperscaler que solo la organización cliente controla. Lo que corre dentro no es visible desde fuera salvo lo que se decida exponer expresamente.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">CDN</span>
+              <span class="component__hint">Cloudflare · Akamai · Fastly</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Content Delivery Network</span>. Red de servidores repartidos por el mundo que guardan copias del contenido más pedido cerca del usuario final. Por eso una imagen de una web americana carga rápido en Madrid: no viene de EE. UU., viene de un servidor a 30 km.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Load balancer</span>
+              <span class="component__hint">el semáforo del tráfico</span>
+            </summary>
+            <div class="component__body">
+              <p>Componente que reparte las peticiones entrantes entre varios servidores en paralelo para que ninguno colapse. Si un servidor cae, el balanceador deja de mandarle tráfico. Es una pieza crítica en cualquier arquitectura que aspire a estar siempre disponible.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Latencia y ancho de banda</span>
+              <span class="component__hint">las dos métricas de red</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Latencia</span>: cuánto tarda un paquete en ir y volver. Se mide en milisegundos. Importa en tiempo real (llamadas, IA en directo, videojuegos).</p>
+              <p><span class="term">Ancho de banda</span>: cuántos datos caben por segundo. Se mide en Mbps o Gbps. Importa en descargas grandes y streaming.</p>
+              <p>Una web puede tener alta latencia y mucho ancho de banda al mismo tiempo. No son lo mismo.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Necesitamos que expongáis un endpoint HTTPS dentro de nuestra VPC, y que soporte una latencia por debajo de 200 ms desde eu-west."</blockquote>
+          <p class="meeting__note">Traducción: piden una puerta cifrada al servicio, accesible solo desde su red privada en la nube, y que responda en menos de un quinto de segundo desde Irlanda. Son requisitos habituales; la respuesta esperada es "sí" o "sí, pero implica esto".</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 05 ==================== -->
+    <section class="layer" id="l05" style="--layer-color: var(--c-l05)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 05</div>
+        <div>
+          <div class="layer__tag">Confianza, control y cumplimiento</div>
+          <h2 class="layer__title">Seguridad, identidad y gobernanza</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Esta capa responde a tres preguntas: <em>¿quién eres?</em> (autenticación), <em>¿qué puedes hacer?</em> (autorización) y <em>¿cómo demostramos ante un regulador que lo hicimos bien?</em> (gobernanza). En cualquier venta B2B moderna, especialmente en sectores regulados, esta capa suele ser <em>la que decide</em> si el acuerdo se cierra.</p>
+          <p>La gobernanza no es un adorno legal: es una arquitectura. GDPR, la Ley de IA europea, ISO 27001 y las certificaciones SOC 2 no se cumplen "haciendo un curso"; se cumplen porque el sistema está construido para cumplirlas.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Autenticación</span>
+              <span class="component__hint">¿quién eres?</span>
+            </summary>
+            <div class="component__body">
+              <p>Proceso por el que el sistema verifica una identidad: usuario y contraseña, huella, código de un solo uso, certificado. Cada vez menos con contraseña, cada vez más con factores múltiples.</p>
+              <p>Términos frecuentes: <span class="term">MFA</span> (Multi-Factor Authentication), <span class="term">2FA</span>, <span class="term">passwordless</span>, <span class="term">passkey</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Autorización</span>
+              <span class="component__hint">¿qué puedes hacer?</span>
+            </summary>
+            <div class="component__body">
+              <p>Una vez identificado, qué acciones y recursos se te permiten. Se modela con <span class="term">roles</span> y <span class="term">permisos</span>.</p>
+              <p><span class="term">RBAC</span> (Role-Based Access Control): tienes permisos según el rol (director, comercial, invitado). <span class="term">ABAC</span> (Attribute-Based): permisos según atributos (país, departamento, hora del día).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">SSO y OAuth</span>
+              <span class="component__hint">un login para todo</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Single Sign-On</span> permite iniciar sesión una sola vez y acceder a todas las aplicaciones corporativas. <span class="term">OAuth</span> es el protocolo que permite "entrar con Google" o "entrar con Microsoft" en aplicaciones de terceros sin darles la contraseña. <span class="term">SAML</span> y <span class="term">OpenID Connect</span> son los estándares subyacentes.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Tokens (JWT)</span>
+              <span class="component__hint">el sello temporal</span>
+            </summary>
+            <div class="component__body">
+              <p>Cadenas cifradas que prueban una identidad durante un rato. En vez de mandar usuario y contraseña en cada petición, se manda un <span class="term">token</span>. Los <span class="term">JWT</span> (JSON Web Tokens) son el formato más común: llevan dentro quién eres, qué puedes hacer y hasta cuándo son válidos.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Cifrado en tránsito y en reposo</span>
+              <span class="component__hint">dos momentos, dos protecciones</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Encryption in transit</span>: los datos van cifrados por la red (HTTPS, TLS). Nadie los puede leer si los intercepta.</p>
+              <p><span class="term">Encryption at rest</span>: los datos van cifrados en el disco donde se guardan. Si alguien roba el disco físicamente, no puede leerlos.</p>
+              <p>Los clientes exigentes preguntan por los dos, y por quién controla las claves (<span class="term">KMS</span>, <span class="term">BYOK</span>: Bring Your Own Key).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Firewall y WAF</span>
+              <span class="component__hint">murallas y filtros</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Firewall</span>: filtra qué tráfico entra y sale de una red. <span class="term">WAF</span> (Web Application Firewall) es un firewall especializado en ataques a aplicaciones web: intentos de inyección, bots, tráfico anómalo. Cloudflare, AWS WAF y Akamai son los nombres habituales.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Zero Trust</span>
+              <span class="component__hint">confianza cero por defecto</span>
+            </summary>
+            <div class="component__body">
+              <p>Filosofía de seguridad moderna: no se confía en <em>nadie</em> por el hecho de estar dentro de la red corporativa. Cada petición se verifica, cada acceso se comprueba. Se opone al modelo antiguo del "castillo con foso": si estás dentro, puedes hacer lo que quieras.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">GDPR, EU AI Act, DORA, NIS2</span>
+              <span class="component__hint">el marco regulatorio europeo</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">GDPR</span>: protección de datos personales de ciudadanos europeos. Vigente desde 2018.</p>
+              <p><span class="term">EU AI Act</span>: regula los sistemas de IA según riesgo. Fecha clave para el Art. 50 (transparencia): 2 de agosto de 2026.</p>
+              <p><span class="term">DORA</span>: resiliencia digital para entidades financieras. Vigente desde 2025.</p>
+              <p><span class="term">NIS2</span>: ciberseguridad para infraestructuras críticas.</p>
+              <p>Todas ellas se traducen en cláusulas contractuales, auditorías y arquitecturas.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Certificaciones (SOC 2, ISO 27001)</span>
+              <span class="component__hint">el sello del auditor</span>
+            </summary>
+            <div class="component__body">
+              <p>Sellos externos que demuestran que la empresa cumple ciertos estándares de seguridad. <span class="term">SOC 2</span>: auditoría americana muy pedida en SaaS. <span class="term">ISO 27001</span>: estándar internacional. <span class="term">SOC 2 Type II</span> es más exigente que <span class="term">Type I</span>. En muchas ventas B2B es un prerrequisito.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Auditoría y trazabilidad</span>
+              <span class="component__hint">demostrar quién hizo qué</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Audit log</span>: registro inalterable de quién accedió a qué recurso y cuándo. <span class="term">Data lineage</span>: trazabilidad del dato a lo largo de su vida (de dónde viene, cómo se ha transformado). Ambos son requisitos habituales en sectores regulados.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Necesitamos SSO con SAML, RBAC granular por departamento, cifrado at rest con BYOK, y un compromiso de residencia del dato en la UE. Aportáis SOC 2 Type II, ¿verdad?"</blockquote>
+          <p class="meeting__note">Traducción: es una compra empresarial madura. Piden inicio de sesión unificado, permisos afinados, control de las claves de cifrado, el dato en Europa y un sello de auditoría americano. Si el equipo técnico dice "sí a todo" sin pestañear, hay opciones. Si no, hay negociación.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 06 ==================== -->
+    <section class="layer" id="l06" style="--layer-color: var(--c-l06)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 06</div>
+        <div>
+          <div class="layer__tag">La lengua franca de los sistemas</div>
+          <h2 class="layer__title">APIs y flujos de integración</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Ningún sistema moderno vive solo. Un CRM se habla con un ERP, con un almacén, con un proveedor de logística, con la plataforma de correo, con el modelo de IA. Lo que hace posible esa conversación son las <em>APIs</em>: contratos técnicos que definen cómo un sistema pide algo a otro y qué recibe a cambio.</p>
+          <p>Encima de las APIs se construyen <em>flujos</em> (workflows, pipelines) que orquestan varias llamadas para resolver un caso de negocio. "Cuando entra un pedido, comprueba stock, aplica descuento, factura y notifica al almacén" es un flujo. Aunque parezca menor, esta capa suele ser <em>donde está el valor comercial</em> de una integración.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">API</span>
+              <span class="component__hint">el contrato entre sistemas</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Application Programming Interface</span>. Es la forma acordada en la que un sistema deja que otros le pidan datos o acciones sin tener que abrir el motor. Toda plataforma seria tiene su API pública documentada.</p>
+              <p>Como comercial: si no hay API, no hay integración escalable. Punto.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">REST</span>
+              <span class="component__hint">el estilo dominante</span>
+            </summary>
+            <div class="component__body">
+              <p>Estilo arquitectónico para APIs basado en HTTP. Sencillo, universal, aceptado por todos. Cuando alguien dice "API REST", habla del 80% de las APIs del mundo.</p>
+              <p>Ejemplos de operaciones REST: <span class="term">GET /clientes</span> (dame la lista), <span class="term">POST /pedidos</span> (crea un pedido), <span class="term">DELETE /usuario/42</span> (borra el usuario 42).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">GraphQL</span>
+              <span class="component__hint">pides lo que quieres, ni más ni menos</span>
+            </summary>
+            <div class="component__body">
+              <p>Alternativa a REST desarrollada por Facebook. El cliente describe con precisión los campos que necesita en una sola petición, evitando cargar datos que luego no usa. Muy útil en apps móviles y frontends complejos.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Webhooks</span>
+              <span class="component__hint">llámame tú cuando pase algo</span>
+            </summary>
+            <div class="component__body">
+              <p>Lo contrario de una API tradicional. En vez de tú preguntar cada minuto "¿ha pasado algo?", el otro sistema te avisa por una URL que le has dado. Muy usado en integraciones de pagos, mensajería, formularios.</p>
+              <p>Stripe, Shopify, Slack y prácticamente todo SaaS moderno funciona con webhooks.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Workflow y pipeline</span>
+              <span class="component__hint">cadenas de valor automatizadas</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Workflow</span>: secuencia lógica de pasos que resuelve un proceso de negocio. "Recibir email → extraer factura → validar → contabilizar → notificar".</p>
+              <p><span class="term">Pipeline</span>: término emparentado, más usado para procesos de datos ("extraer del CRM → transformar → cargar en el warehouse").</p>
+              <p>La diferencia entre ambos es cultural más que técnica; se usan casi indistintamente.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">iPaaS y automatización low-code</span>
+              <span class="component__hint">Zapier · Make · n8n</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">iPaaS</span> (Integration Platform as a Service): plataformas que permiten crear flujos entre servicios sin programar, arrastrando bloques. Democratizan la integración: un directivo de marketing puede conectar HubSpot con Google Sheets sin llamar al departamento IT.</p>
+              <p>Los tres nombres a recordar: <span class="term">Zapier</span> (el pionero comercial), <span class="term">Make</span> (más potente visualmente), <span class="term">n8n</span> (autoalojable, gratis en open source).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">ETL y ELT</span>
+              <span class="component__hint">mover y transformar datos a escala</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">ETL</span>: Extract, Transform, Load. Se saca el dato, se limpia, se carga al almacén.</p>
+              <p><span class="term">ELT</span>: mismo esquema pero se transforma <em>después</em> de cargar. Más moderno, aprovecha la potencia de los data warehouses actuales.</p>
+              <p>Herramientas típicas: <span class="term">Fivetran</span>, <span class="term">Airbyte</span>, <span class="term">dbt</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Event-driven architecture</span>
+              <span class="component__hint">Kafka · RabbitMQ · SQS</span>
+            </summary>
+            <div class="component__body">
+              <p>Arquitectura en la que los sistemas no se llaman entre sí, sino que publican <span class="term">eventos</span> ("pedido creado", "pago fallido") en un canal común. Otros sistemas se suscriben y reaccionan. Es lo que hace posible que empresas como Amazon o Uber escalen a millones de operaciones por segundo.</p>
+              <p><span class="term">Kafka</span> es el nombre dominante; <span class="term">RabbitMQ</span> y <span class="term">SQS</span> juegan en la misma liga.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">API Gateway y rate limits</span>
+              <span class="component__hint">la puerta de entrada regulada</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">API Gateway</span>: pieza que centraliza todas las llamadas entrantes a las APIs de una empresa. Aplica autenticación, cuotas, versionado, monitorización. Un cliente conoce siempre la misma URL, aunque por detrás haya cien servicios.</p>
+              <p><span class="term">Rate limit</span>: número máximo de peticiones por minuto que un cliente puede hacer. Aparece siempre en la conversación de pricing.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Necesitaríamos una API REST documentada con OpenAPI, webhooks para cambios de estado, y un rate limit de al menos 1.000 peticiones por minuto. ¿Podemos verlo en Postman?"</blockquote>
+          <p class="meeting__note">Traducción: piden una API estándar, con documentación formal, avisos automáticos cuando algo cambie y capacidad para hacer muchas peticiones. Postman es la herramienta de prueba habitual. Todo esto es lenguaje comercial; no requiere ser ingeniero para responderlo.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 07 ==================== -->
+    <section class="layer" id="l07" style="--layer-color: var(--c-l07)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 07</div>
+        <div>
+          <div class="layer__tag">La biblioteca del sistema</div>
+          <h2 class="layer__title">Conocimiento y RAG</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Un modelo de IA es potente, pero por defecto solo sabe lo que aprendió durante su entrenamiento. No conoce los precios de <em>tu</em> catálogo, las cláusulas de <em>tu</em> contrato marco ni el histórico de <em>tu</em> cliente. Esta capa es la que le da acceso, en el momento justo, a ese conocimiento propietario.</p>
+          <p>El mecanismo estrella se llama <em>RAG</em> (Retrieval-Augmented Generation): antes de contestar, el sistema busca en tus documentos los pasajes relevantes y se los pasa al modelo como contexto. Es lo que separa un asistente genérico de un asistente que "sabe" de tu empresa.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Embeddings</span>
+              <span class="component__hint">significado como coordenadas</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">embedding</span> es la traducción de un texto (o imagen, o audio) a un vector de números que representa su <em>significado</em>. Dos textos con significado parecido tienen vectores cercanos entre sí, aunque no compartan una sola palabra.</p>
+              <p>Es la pieza que permite buscar por concepto en lugar de por término literal. Los modelos que producen embeddings tienen precio propio y se contratan por millones de tokens.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Chunking</span>
+              <span class="component__hint">trocear el texto</span>
+            </summary>
+            <div class="component__body">
+              <p>Los documentos largos no se pueden dar de una vez a un modelo. Se parten en <span class="term">chunks</span> (trozos) de un tamaño razonable, cada uno con su embedding. La estrategia de chunking (por párrafos, por secciones, con solapamiento) marca la calidad final del sistema.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">RAG</span>
+              <span class="component__hint">búsqueda + generación</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Retrieval-Augmented Generation</span>. El flujo canónico: (1) el usuario pregunta, (2) la pregunta se convierte en embedding, (3) el sistema busca los chunks más parecidos en la base vectorial, (4) los adjunta al prompt del modelo, (5) el modelo responde citando ese contexto.</p>
+              <p>Es la arquitectura dominante hoy para asistentes empresariales. Barata comparada con reentrenar un modelo, y auditable.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Búsqueda semántica vs. léxica</span>
+              <span class="component__hint">significado vs. literalidad</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Búsqueda léxica</span> (BM25, Elasticsearch clásico): encuentra por palabras exactas y variantes.</p>
+              <p><span class="term">Búsqueda semántica</span> (vectorial): encuentra por parecido de significado.</p>
+              <p><span class="term">Búsqueda híbrida</span>: combina las dos y suele dar los mejores resultados. Es lo habitual en producción.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Fine-tuning vs. RAG vs. prompting</span>
+              <span class="component__hint">tres formas de personalizar</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Prompting</span>: solo se cambia la instrucción. Rápido y barato; sirve para casi todo.</p>
+              <p><span class="term">RAG</span>: se le añade contexto propio en el momento. Ideal cuando el conocimiento es amplio, cambiante o confidencial.</p>
+              <p><span class="term">Fine-tuning</span>: se reentrenan las capas superiores del modelo con ejemplos propios. Caro, más lento de iterar, pero produce un estilo o comportamiento muy específico.</p>
+              <p>Regla práctica: <strong>prompting primero, RAG después, fine-tuning solo si los dos anteriores no bastan.</strong></p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Reranking</span>
+              <span class="component__hint">afinar el orden de la búsqueda</span>
+            </summary>
+            <div class="component__body">
+              <p>Modelo adicional que, después de que el vector search devuelva los 20 candidatos más parecidos, los reordena para poner el más relevante arriba. Sube la calidad final del RAG de forma notable a coste bajo.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Ingesta y actualización</span>
+              <span class="component__hint">el flujo que mantiene viva la biblioteca</span>
+            </summary>
+            <div class="component__body">
+              <p>Un sistema RAG no vale nada si su biblioteca está desactualizada. Requiere un <span class="term">pipeline de ingesta</span> que detecte cambios en las fuentes (SharePoint, Confluence, Google Drive, base de datos), reindexe y actualice los embeddings. Esta pieza suele estar infravalorada en las propuestas comerciales y explota después.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"El asistente debería responder desde nuestra base documental, con citación de la fuente. Preferimos RAG antes que fine-tuning para no perder trazabilidad."</blockquote>
+          <p class="meeting__note">Traducción: quieren un asistente que se apoye en <em>sus</em> documentos y que muestre siempre de dónde saca la información. Prefieren no reentrenar el modelo para poder auditar y actualizar la base fácilmente. Es una decisión sensata en la mayoría de casos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 08 ==================== -->
+    <section class="layer" id="l08" style="--layer-color: var(--c-l08)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 08</div>
+        <div>
+          <div class="layer__tag">El cerebro</div>
+          <h2 class="layer__title">Modelos de IA (LLMs)</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Un <em>Large Language Model</em> es una red neuronal entrenada con cantidades masivas de texto que aprende a predecir la palabra siguiente. Ese mecanismo aparentemente simple, escalado, produce comportamiento que se parece a razonar: resumir, traducir, redactar, programar, planificar.</p>
+          <p>Un modelo no es infinito ni gratuito. Tiene <em>ventana de contexto</em> (cuánta información puede recibir de golpe), <em>precio por token</em> y <em>latencia</em>. Elegir modelo es una decisión de producto y de coste, no solo técnica.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">LLM</span>
+              <span class="component__hint">Large Language Model</span>
+            </summary>
+            <div class="component__body">
+              <p>Red neuronal masiva entrenada con texto. Familias dominantes en 2026:</p>
+              <ul>
+                <li><strong>GPT</strong> (OpenAI): la familia comercial más conocida.</li>
+                <li><strong>Claude</strong> (Anthropic): fuerte en razonamiento largo y seguridad.</li>
+                <li><strong>Gemini</strong> (Google): profundamente integrada con el ecosistema Google.</li>
+                <li><strong>Llama</strong> (Meta): abierta, base de muchas variantes propias.</li>
+                <li><strong>Mistral</strong>: familia europea, abierta y comercial.</li>
+                <li><strong>Qwen, DeepSeek</strong>: familias chinas, muy competitivas y abiertas.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Modelos abiertos vs. cerrados</span>
+              <span class="component__hint">el eje geoestratégico</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Cerrados</span>: los pesos no se publican; se consumen por API (GPT, Claude, Gemini). Fáciles de usar, pero atas tu producto al proveedor y sus políticas.</p>
+              <p><span class="term">Abiertos</span> (open-weights): los pesos son públicos y puedes desplegarlos en tu infraestructura (Llama, Mistral, Qwen). Más control, más soberanía, más responsabilidad operativa.</p>
+              <p>La decisión abierto/cerrado atraviesa toda la industria y define muchas conversaciones B2B.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Ventana de contexto</span>
+              <span class="component__hint">la memoria a corto plazo</span>
+            </summary>
+            <div class="component__body">
+              <p>Cantidad máxima de texto que un modelo puede procesar en una sola petición, medida en <span class="term">tokens</span>. Los modelos modernos manejan desde 8.000 hasta más de un millón de tokens (varios libros).</p>
+              <p>Una ventana grande no siempre es mejor: cuesta más, tarda más, y los modelos suelen "prestar menos atención" al centro del contexto largo.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Token y tokenización</span>
+              <span class="component__hint">la unidad de precio</span>
+            </summary>
+            <div class="component__body">
+              <p>Los modelos no ven palabras, ven <span class="term">tokens</span>: piezas subléxicas (aproximadamente 4 caracteres en inglés, algo menos en español). Todo lo que entra y sale se factura por token.</p>
+              <p>Regla mental: 1.000 tokens ≈ 750 palabras ≈ media página. Al planificar coste, calcula tokens de entrada <em>y</em> de salida.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Modelos multimodales</span>
+              <span class="component__hint">texto, imagen, voz, vídeo</span>
+            </summary>
+            <div class="component__body">
+              <p>Modelos que aceptan y producen más de un tipo de entrada: texto e imagen, o texto y voz, o texto y vídeo. GPT-4o, Claude Sonnet, Gemini y Qwen VL son ejemplos. En comercial, habilitan casos como "analiza esta foto del producto", "lee este contrato escaneado", "resume esta llamada".</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Small Language Models (SLM)</span>
+              <span class="component__hint">modelos pequeños, tareas concretas</span>
+            </summary>
+            <div class="component__body">
+              <p>Modelos entre 1B y 10B parámetros, diseñados para ejecutarse localmente (en un portátil, un móvil, un servidor pequeño). Phi, Gemma, Llama 3.2 3B, Mistral Small. Muy útiles para tareas concretas donde no hace falta un modelo de frontera.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Prompt engineering</span>
+              <span class="component__hint">la disciplina de pedir bien</span>
+            </summary>
+            <div class="component__body">
+              <p>Arte y técnica de escribir instrucciones que producen mejores resultados: dar rol, dar ejemplos (<span class="term">few-shot</span>), pedir razonamiento paso a paso (<span class="term">chain of thought</span>), estructurar con etiquetas. Es menos misterioso de lo que parece; sigue reglas.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Alucinación</span>
+              <span class="component__hint">el defecto conocido</span>
+            </summary>
+            <div class="component__body">
+              <p>Cuando un modelo inventa un dato con seguridad. Es un riesgo real y hay que diseñar contra él: RAG para citar fuentes, validaciones cruzadas, herramientas verificadoras, cultura de humano en el bucle. Nunca prometer "cero alucinaciones"; sí prometer arquitecturas que las minimizan y las detectan.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Guardrails y moderación</span>
+              <span class="component__hint">los raíles</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Guardrails</span>: reglas o modelos auxiliares que filtran entradas y salidas para evitar respuestas peligrosas, sesgadas o fuera de tema. En sectores regulados son obligatorios.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Coste, latencia y calidad</span>
+              <span class="component__hint">el triángulo de decisión</span>
+            </summary>
+            <div class="component__body">
+              <p>No se optimizan las tres a la vez. Un modelo de frontera es caro y lento pero preciso. Un modelo pequeño es barato y rápido pero limitado. La arquitectura típica moderna usa <span class="term">enrutado</span>: la pregunta fácil va al modelo barato, la difícil al caro. Ahorra hasta 80% del coste.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Vamos a orquestar: Claude Sonnet para razonamiento largo, un Mistral fine-tuneado en on-prem para el ámbito regulado, y un pequeño modelo local para clasificar. Todo detrás de guardrails."</blockquote>
+          <p class="meeting__note">Traducción: no usan un único modelo. Combinan tres, cada uno según lo que hace mejor y las restricciones legales, y filtran entradas y salidas por seguridad. Es una arquitectura moderna de producción; una respuesta razonable es interesarse por el enrutado y por los guardrails elegidos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 09 ==================== -->
+    <section class="layer" id="l09" style="--layer-color: var(--c-l09)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 09</div>
+        <div>
+          <div class="layer__tag">De asistentes a colaboradores</div>
+          <h2 class="layer__title">Agentes y orquestación</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Un modelo de IA que solo responde texto es útil. Un modelo que <em>además</em> puede consultar herramientas, ejecutar acciones y coordinarse con otros modelos es un <em>agente</em>. La diferencia comercial es enorme: los agentes no se limitan a asistir, ejecutan.</p>
+          <p>Esta capa es donde en 2026 se está produciendo la mayor innovación —y donde hay más humo. Vale la pena separar promesa de realidad: los agentes funcionan muy bien en tareas acotadas con buenas barandillas, y todavía requieren supervisión humana en flujos críticos.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Agente</span>
+              <span class="component__hint">modelo + herramientas + bucle</span>
+            </summary>
+            <div class="component__body">
+              <p>Sistema que combina un LLM con la capacidad de usar herramientas y decidir por sí mismo la siguiente acción. Ciclo típico: piensa → actúa → observa → piensa de nuevo, hasta cumplir el objetivo.</p>
+              <p>Los patrones canónicos son <span class="term">ReAct</span> (razonar y actuar alternando) y <span class="term">Plan-and-Execute</span> (planificar primero, ejecutar después).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Tool use (uso de herramientas)</span>
+              <span class="component__hint">manos del modelo</span>
+            </summary>
+            <div class="component__body">
+              <p>El modelo llama a funciones que ejecutan cosas: buscar en Google, consultar la base de datos, enviar un email, calcular con precisión. Sin tool use, el agente solo puede hablar. Con tool use, puede <em>hacer</em>.</p>
+              <p>Se llama también <span class="term">function calling</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Skills</span>
+              <span class="component__hint">habilidades reutilizables</span>
+            </summary>
+            <div class="component__body">
+              <p>Bloques de instrucciones y herramientas empaquetados que el agente puede activar bajo demanda. Una <span class="term">skill</span> puede ser "extraer factura de un PDF", "consultar CRM" o "redactar respuesta al cliente en tono formal". Reutilizables y componibles.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">MCP (Model Context Protocol)</span>
+              <span class="component__hint">el USB de los agentes</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Model Context Protocol</span>: estándar abierto propuesto por Anthropic en 2024 para que cualquier agente pueda conectarse a cualquier fuente de datos o herramienta mediante un protocolo común. Se está convirtiendo en el estándar del sector.</p>
+              <p>Analogía cotidiana: antes cada dispositivo tenía su cable propio; llegó el USB y todo se conectó igual. MCP juega ese papel en el mundo de los agentes.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">A2A (Agent-to-Agent)</span>
+              <span class="component__hint">agentes que se hablan entre sí</span>
+            </summary>
+            <div class="component__body">
+              <p>Protocolos y patrones para que dos agentes se comuniquen de forma estructurada, negocien, se deleguen tareas. Google impulsó una propuesta abierta en 2025. Está en fase temprana; conviene distinguir demos convincentes de despliegues estables.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Sistemas multi-agente</span>
+              <span class="component__hint">divide y vencerás</span>
+            </summary>
+            <div class="component__body">
+              <p>Varios agentes especializados colaborando en una tarea: uno investiga, otro redacta, otro revisa. Puede funcionar muy bien cuando la tarea es compleja y se puede descomponer con claridad. Puede degenerar en debates infinitos si el diseño es pobre.</p>
+              <p>Frameworks conocidos: <span class="term">CrewAI</span>, <span class="term">AutoGen</span>, <span class="term">LangGraph</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Human-in-the-loop</span>
+              <span class="component__hint">el humano en el bucle</span>
+            </summary>
+            <div class="component__body">
+              <p>Diseño en el que el agente propone pero un humano aprueba antes de ejecutar acciones críticas: enviar dinero, publicar contenido, tomar decisiones que afectan a personas. Es obligatorio en la mayoría de casos de uso serios.</p>
+              <p>El EU AI Act lo exige explícitamente para sistemas de alto riesgo.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Sandboxing y permisos</span>
+              <span class="component__hint">el entorno controlado</span>
+            </summary>
+            <div class="component__body">
+              <p>Un agente autónomo con permisos amplios es un riesgo operativo. Se ejecutan en entornos aislados (<span class="term">sandbox</span>) con permisos mínimos: solo puede leer los archivos que necesita, solo puede llamar a los servicios acordados. Buen diseño de seguridad hace agentes útiles y no peligrosos.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Queremos un agente que resuelva incidencias de nivel 1 en un sandbox con permisos limitados, con MCP para las herramientas internas y humano en el bucle antes de cerrar cualquier ticket."</blockquote>
+          <p class="meeting__note">Traducción: piden un agente autónomo bien vallado. Se conecta a las herramientas internas por un protocolo estándar, y no toma decisiones definitivas sin que un humano lo apruebe. Es lo que un despliegue serio de agentes debería ser hoy.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 10 ==================== -->
+    <section class="layer" id="l10" style="--layer-color: var(--c-l10)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 10</div>
+        <div>
+          <div class="layer__tag">Donde el sistema se hace visible</div>
+          <h2 class="layer__title">Aplicaciones y experiencia</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>El usuario final —cliente, empleado, proveedor— no ve casi nada de las capas anteriores. Ve una pantalla, una conversación, un botón. Esta capa es <em>toda</em> la superficie visible del ecosistema, y por tanto es donde se juega la percepción de calidad.</p>
+          <p>La conversación comercial rara vez se gana en la arquitectura invisible; se gana o se pierde aquí. Un mal diseño mata un buen backend; un buen diseño perdona muchos defectos internos.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Frontend (React, Vue, Svelte)</span>
+              <span class="component__hint">la parte que se ve</span>
+            </summary>
+            <div class="component__body">
+              <p>Código que se ejecuta en el navegador y produce la interfaz visual. <span class="term">React</span> es dominante en aplicaciones empresariales, <span class="term">Vue</span> y <span class="term">Svelte</span> son alternativas conocidas. Cuando alguien dice "hicimos el frontend en React", habla de esto.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Aplicaciones móviles</span>
+              <span class="component__hint">iOS · Android · híbridas</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Nativas</span>: escritas en el lenguaje propio de la plataforma (Swift para iOS, Kotlin para Android). Máximo rendimiento, doble esfuerzo.</p>
+              <p><span class="term">Híbridas</span>: un solo código para las dos (React Native, Flutter). Menor coste, algunas concesiones de rendimiento.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">No-code y low-code</span>
+              <span class="component__hint">construir sin programar</span>
+            </summary>
+            <div class="component__body">
+              <p>Plataformas que permiten construir aplicaciones arrastrando bloques: <span class="term">Bubble</span>, <span class="term">Retool</span>, <span class="term">Airtable</span>, <span class="term">Power Apps</span>, <span class="term">Glide</span>. Democratizan la creación de herramientas internas y prototipos. Muy útiles hasta cierta escala; después suelen requerir migración a código.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Copilot y chat embebido</span>
+              <span class="component__hint">IA dentro de las aplicaciones</span>
+            </summary>
+            <div class="component__body">
+              <p>Patrón dominante en 2026: la IA no es una aplicación aparte, es un panel dentro de las que ya usa el equipo (Excel, Salesforce, Slack, correo). El usuario no cambia de contexto; el asistente aparece donde ya está trabajando.</p>
+              <p>Nombres: <span class="term">Microsoft Copilot</span>, <span class="term">Salesforce Einstein</span>, <span class="term">HubSpot AI</span>, <span class="term">Claude for Excel</span>, <span class="term">Notion AI</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Chat interfaces</span>
+              <span class="component__hint">la conversación como UI</span>
+            </summary>
+            <div class="component__body">
+              <p>Interfaz mínima donde el usuario escribe y el sistema responde. Barata de desarrollar, universal, ideal para casos exploratorios. Es también la puerta de entrada de la mayoría de asistentes empresariales.</p>
+              <p>Buenas plantillas para producto: <span class="term">Slack app</span>, <span class="term">Microsoft Teams bot</span>, <span class="term">Telegram bot</span>, chat web integrado.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Dashboards y BI</span>
+              <span class="component__hint">Power BI · Tableau · Looker</span>
+            </summary>
+            <div class="component__body">
+              <p>Herramientas que convierten datos del warehouse en informes visuales y paneles interactivos para dirección. <span class="term">Power BI</span> domina en entornos Microsoft, <span class="term">Tableau</span> es histórico, <span class="term">Looker</span> vive en Google. <span class="term">Streamlit</span> y <span class="term">Metabase</span> juegan en categorías cercanas más ligeras.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">UX y diseño de sistemas</span>
+              <span class="component__hint">experiencia y consistencia</span>
+            </summary>
+            <div class="component__body">
+              <p>La experiencia de usuario (<span class="term">UX</span>) no es "hacerlo bonito"; es reducir fricción, hacer entendible el flujo y minimizar los errores. Un <span class="term">design system</span> es la biblioteca de componentes que garantiza que todo el producto se ve y comporta con coherencia.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Accesibilidad (A11y)</span>
+              <span class="component__hint">para todos los usuarios</span>
+            </summary>
+            <div class="component__body">
+              <p>Diseño y desarrollo que permite usar la aplicación a personas con discapacidad visual, motora o cognitiva. Es una obligación legal creciente (<span class="term">WCAG</span>, <span class="term">European Accessibility Act</span>), y una buena práctica que además mejora la usabilidad para todo el mundo.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Preferimos integrar tu IA como copilot dentro de nuestro Salesforce, no como aplicación aparte. Tiene que ser accesible WCAG AA y coherente con nuestro design system."</blockquote>
+          <p class="meeting__note">Traducción: no quieren que sus comerciales cambien de aplicación. Quieren la IA embebida donde ya trabajan. Además exigen cumplimiento de accesibilidad y coherencia visual. Son requisitos maduros; el foco de la venta no será la IA, será la integración fina.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 11 ==================== -->
+    <section class="layer" id="l11" style="--layer-color: var(--c-l11)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 11</div>
+        <div>
+          <div class="layer__tag">Ver dentro del sistema</div>
+          <h2 class="layer__title">Observabilidad y telemetría</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Un sistema complejo no puede confiar en la suerte. Necesita instrumentación que registre qué ocurre, cuánto tarda, cuándo falla y por qué. Esta capa es la que responde en producción a la pregunta <em>"¿esto va bien o va mal?"</em> antes de que el cliente se dé cuenta.</p>
+          <p>La observabilidad tiene tres pilares clásicos: <em>logs</em> (crónicas), <em>traces</em> (recorridos) y <em>metrics</em> (medidas). Con IA se ha añadido un cuarto: <em>evaluaciones</em> (calidad).</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Logs</span>
+              <span class="component__hint">las crónicas</span>
+            </summary>
+            <div class="component__body">
+              <p>Mensajes que la aplicación va escribiendo describiendo lo que hace o le ocurre: "usuario X inició sesión", "fallo al procesar factura", "modelo devolvió respuesta en 1.240 ms". Se almacenan en sistemas centralizados donde se pueden buscar y correlacionar.</p>
+              <p>Nombres: <span class="term">Datadog</span>, <span class="term">New Relic</span>, <span class="term">Splunk</span>, <span class="term">Grafana Loki</span>, <span class="term">Elastic Stack</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Traces (trazas)</span>
+              <span class="component__hint">el recorrido completo</span>
+            </summary>
+            <div class="component__body">
+              <p>Una petición del usuario puede pasar por diez servicios antes de completarse. Un <span class="term">trace</span> sigue esa petición entera, midiendo dónde se gastó cada milisegundo y qué componente falló si algo salió mal. Herramienta imprescindible para diagnosticar sistemas distribuidos.</p>
+              <p>Estándar: <span class="term">OpenTelemetry</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Metrics</span>
+              <span class="component__hint">las medidas continuas</span>
+            </summary>
+            <div class="component__body">
+              <p>Números que se van registrando periódicamente: peticiones por segundo, uso de CPU, latencia media, tasa de errores. Se ven en dashboards y disparan <span class="term">alertas</span> si superan umbrales.</p>
+              <p><span class="term">Prometheus</span> y <span class="term">Grafana</span> son la pareja abierta más común.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">SLA, SLO, SLI</span>
+              <span class="component__hint">los compromisos de servicio</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">SLA</span> (Service Level Agreement): compromiso contractual con el cliente. Ej.: "99,9% de disponibilidad".</p>
+              <p><span class="term">SLO</span> (Objective): objetivo interno más estricto para tener margen.</p>
+              <p><span class="term">SLI</span> (Indicator): la medida real que se compara con el SLO.</p>
+              <p>Toda venta seria acaba negociando SLAs. Son la traducción operacional de la fiabilidad.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Evaluaciones de IA (evals)</span>
+              <span class="component__hint">medir calidad de respuestas</span>
+            </summary>
+            <div class="component__body">
+              <p>Con IA no basta con medir latencia; hay que medir <em>calidad</em>. Se usan conjuntos de casos de referencia, jurados humanos y <span class="term">LLM-as-Judge</span> (un modelo evaluando a otro) para producir métricas de calidad que se siguen a lo largo del tiempo.</p>
+              <p>Sin evals, cambiar de modelo o de prompt es un salto a ciegas.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">A/B testing y feature flags</span>
+              <span class="component__hint">experimentar en producción</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Feature flags</span>: interruptores en el código que permiten encender o apagar funcionalidades sin desplegar. <span class="term">A/B testing</span>: mostrar dos variantes a segmentos de usuarios y medir cuál funciona mejor. Base de la mejora continua orientada por datos.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Alertas y on-call</span>
+              <span class="component__hint">cuando algo se rompe</span>
+            </summary>
+            <div class="component__body">
+              <p>Un sistema serio tiene equipo de guardia (<span class="term">on-call</span>) al que las <span class="term">alertas</span> despiertan cuando algo cruza umbrales críticos. Herramientas como <span class="term">PagerDuty</span> u <span class="term">Opsgenie</span> gestionan los turnos y las escalaciones.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Ofrecemos SLA 99,9% con evals continuas y trazas distribuidas exportables por OpenTelemetry. Alertamos al on-call si la calidad cae por debajo del SLO."</blockquote>
+          <p class="meeting__note">Traducción: se comprometen a estar disponibles el 99,9% del tiempo, miden constantemente la calidad de las respuestas de la IA, permiten que el cliente vea las trazas en su propia herramienta, y avisan a su equipo si la calidad baja. Es un despliegue maduro.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 12 ==================== -->
+    <section class="layer" id="l12" style="--layer-color: var(--c-l12)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 12</div>
+        <div>
+          <div class="layer__tag">Producción responsable</div>
+          <h2 class="layer__title">MLOps y gobierno de IA</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Poner un modelo en una demo es fácil. Mantenerlo en producción, mejorándolo, documentándolo, cumpliendo requisitos regulatorios y sin sorpresas, es un trabajo continuo. Esta capa cubre esa disciplina: <em>MLOps</em>, la primera generación de prácticas; <em>AI Governance</em>, la segunda —más amplia, con foco en riesgo, transparencia y responsabilidad—.</p>
+          <p>Aunque suene lejano para una función comercial, en muchas ventas actuales es <em>lo primero</em> que preguntará el comité del cliente. Sobre todo desde que la Ley de IA de la UE empieza a exigir documentación y trazabilidad.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">MLOps</span>
+              <span class="component__hint">DevOps aplicado a modelos</span>
+            </summary>
+            <div class="component__body">
+              <p>Conjunto de prácticas para desarrollar, desplegar, monitorizar y actualizar modelos de manera reproducible y segura. Herramientas: <span class="term">MLflow</span>, <span class="term">Weights &amp; Biases</span>, <span class="term">Kubeflow</span>, <span class="term">Vertex AI</span>, <span class="term">SageMaker</span>.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">CI/CD para modelos</span>
+              <span class="component__hint">automatización del ciclo</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">CI/CD</span> (Continuous Integration / Continuous Deployment) llevado al mundo de la IA. Cada cambio en un prompt, en un dataset o en un modelo pasa por pruebas automáticas, evaluaciones y despliegue controlado.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Model registry</span>
+              <span class="component__hint">catálogo de modelos versionados</span>
+            </summary>
+            <div class="component__body">
+              <p>Sistema que guarda cada versión entrenada de un modelo con sus métricas, sus datos de entrenamiento y su documentación. Necesario para poder <em>volver atrás</em>, comparar versiones y demostrar trazabilidad.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Data drift y model drift</span>
+              <span class="component__hint">cuando el mundo cambia</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Data drift</span>: la realidad cambia (nuevos productos, nuevos patrones de compra) y los datos de entrada dejan de parecerse a los que usaste para entrenar. <span class="term">Model drift</span>: el rendimiento del modelo baja como consecuencia. Detectarlo pronto es un trabajo permanente.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Model cards y datasheets</span>
+              <span class="component__hint">documentación estandarizada</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Model card</span>: ficha estandarizada de un modelo (para qué sirve, con qué datos se entrenó, en qué casos falla, qué riesgos tiene). <span class="term">Datasheet for datasets</span>: equivalente para los datasets. Ambos son casi obligatorios para cumplir con la Ley de IA y con normas ISO/IEC 42001.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Bias, fairness y sesgo</span>
+              <span class="component__hint">responsabilidad social del modelo</span>
+            </summary>
+            <div class="component__body">
+              <p>Los modelos heredan sesgos de sus datos. Un modelo de scoring que penalice sistemáticamente a un colectivo es problema legal y reputacional. Existen métricas de <span class="term">fairness</span> y auditorías especializadas. Es un tema técnico que atraviesa lo ético y lo comercial.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Red teaming</span>
+              <span class="component__hint">ataques deliberados al sistema</span>
+            </summary>
+            <div class="component__body">
+              <p>Ejercicio de atacar el propio sistema con casos maliciosos, prompts hostiles o intentos de bypass antes de que lo haga alguien real. Es al mismo tiempo higiene de seguridad y requisito regulatorio en sistemas de alto riesgo.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Explicabilidad (XAI)</span>
+              <span class="component__hint">explicar por qué el modelo decide</span>
+            </summary>
+            <div class="component__body">
+              <p>Técnicas para explicar decisiones de un modelo. Esencial en sectores donde una decisión negativa debe justificarse: crédito, seguros, RRHH, salud. Con LLMs es especialmente complicado, y hay activo debate sobre qué contamos y qué no al usuario final.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">EU AI Act aplicado</span>
+              <span class="component__hint">la ley se traduce en arquitectura</span>
+            </summary>
+            <div class="component__body">
+              <p>La Ley de IA europea clasifica los sistemas por riesgo (inaceptable, alto, limitado, mínimo) y obliga a cada categoría a distintas medidas: documentación, evaluación de conformidad, marcado de contenido generado por IA (Art. 50), supervisión humana. Vale la pena tener claro en qué categoría cae cada producto que vendéis o compráis.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">ISO/IEC 42001 y otros marcos</span>
+              <span class="component__hint">el ISO de la IA</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">ISO/IEC 42001</span> es la primera norma internacional para sistemas de gestión de IA. Emergente pero pedida cada vez con más frecuencia en licitaciones. Coexiste con marcos como <span class="term">NIST AI RMF</span> (americano) y buenas prácticas de <span class="term">responsible AI</span> de los grandes proveedores.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Necesitamos model cards de todos los modelos que se usen, evaluación de sesgo documentada, red teaming trimestral, y compatibilidad con nuestro programa de gobernanza ISO 42001."</blockquote>
+          <p class="meeting__note">Traducción: es un comprador maduro, probablemente regulado. No pide funcionalidad, pide <em>documentación y proceso</em>. En estas ventas el diferencial no es la tecnología, es la capacidad demostrada de gobernarla.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== GLOSSARY ==================== -->
+    <section class="glossary" id="glosario">
+      <header class="glossary__header">
+        <div class="glossary__num">§ · REFERENCIA</div>
+        <h2 class="glossary__title">Glosario ampliado</h2>
+        <p class="glossary__lead">Diccionario de términos que aparecen a lo largo del mapa, cada uno etiquetado con la capa a la que pertenece. Úsalo antes o después de una reunión: buscar por palabra o filtrar por capa.</p>
+      </header>
+
+      <div class="search">
+        <input type="text" id="glossary-search" class="search__input" placeholder="Buscar término (ej. embedding, SLA, VPC)…" aria-label="Buscar en el glosario">
+        <span class="search__icon">⌕</span>
+      </div>
+
+      <div class="filter-chips" id="filter-chips">
+        <button class="chip is-active" data-filter="all">Todas las capas</button>
+        <button class="chip" data-filter="01" style="--layer-color: var(--c-l01)">01 · Infra</button>
+        <button class="chip" data-filter="02" style="--layer-color: var(--c-l02)">02 · SO/Contenedores</button>
+        <button class="chip" data-filter="03" style="--layer-color: var(--c-l03)">03 · Datos</button>
+        <button class="chip" data-filter="04" style="--layer-color: var(--c-l04)">04 · Redes</button>
+        <button class="chip" data-filter="05" style="--layer-color: var(--c-l05)">05 · Seguridad</button>
+        <button class="chip" data-filter="06" style="--layer-color: var(--c-l06)">06 · APIs</button>
+        <button class="chip" data-filter="07" style="--layer-color: var(--c-l07)">07 · RAG</button>
+        <button class="chip" data-filter="08" style="--layer-color: var(--c-l08)">08 · LLMs</button>
+        <button class="chip" data-filter="09" style="--layer-color: var(--c-l09)">09 · Agentes</button>
+        <button class="chip" data-filter="10" style="--layer-color: var(--c-l10)">10 · Apps</button>
+        <button class="chip" data-filter="11" style="--layer-color: var(--c-l11)">11 · Observabilidad</button>
+        <button class="chip" data-filter="12" style="--layer-color: var(--c-l12)">12 · Gobernanza</button>
+      </div>
+
+      <div class="glossary__grid" id="glossary-grid">
+        <!-- Los términos se inyectan por JS al final del script -->
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p><strong>MIT · Digital Fluency for Commercial Leadership.</strong> Este documento es una cartografía introductoria. La velocidad del sector implica que algunos términos evolucionen; el marco por capas es estable, los ejemplos concretos convendrá actualizarlos periódicamente.</p>
+      <p>Diseñado como material único, autocontenido y exportable como URL. Impresión soportada: usa el diálogo de impresión del navegador para generar un PDF con todas las capas expandidas.</p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+/* ========================= DATOS DEL GLOSARIO ========================= */
+const GLOSSARY = [
+  // === CAPA 01 ===
+  {t: "Cloud computing", l: "01", d: "Alquiler de infraestructura de cómputo (servidores, almacenamiento, red) a un proveedor externo, facturado por uso."},
+  {t: "Hyperscaler", l: "01", d: "Los grandes proveedores globales de nube pública: AWS, Azure, GCP. Concentran la mayoría del cómputo mundial."},
+  {t: "Data center", l: "01", d: "Instalación física con miles de servidores, refrigeración industrial y redundancia eléctrica donde vive la nube."},
+  {t: "Región", l: "01", d: "Zona geográfica donde un proveedor de nube tiene infraestructura. Se elige por latencia, cumplimiento y coste."},
+  {t: "Zona de disponibilidad", l: "01", d: "Data center independiente dentro de una región. Distribuir un servicio en varias zonas aumenta la resiliencia."},
+  {t: "CPU", l: "01", d: "Procesador de propósito general. Ejecuta tareas en serie con mucha versatilidad."},
+  {t: "GPU", l: "01", d: "Procesador paralelo masivo, esencial para entrenar y ejecutar modelos de IA."},
+  {t: "TPU", l: "01", d: "Chip diseñado por Google específicamente para cargas de IA. Alternativa a la GPU en su ecosistema."},
+  {t: "On-premise", l: "01", d: "Infraestructura instalada en las oficinas o data center propio del cliente. Control total, coste fijo alto."},
+  {t: "Multicloud", l: "01", d: "Estrategia de usar varios proveedores de nube deliberadamente para reducir dependencia."},
+  {t: "Soberanía del dato", l: "01", d: "Garantía de que los datos residen y se procesan en una jurisdicción concreta."},
+
+  // === CAPA 02 ===
+  {t: "Linux", l: "02", d: "Sistema operativo abierto dominante en servidores. Base de la mayor parte de la nube."},
+  {t: "Contenedor", l: "02", d: "Empaquetado ligero y portátil de una aplicación con todas sus dependencias, ejecutable igual en cualquier sitio."},
+  {t: "Docker", l: "02", d: "Herramienta que popularizó los contenedores. En la práctica, sinónimo de contenedor."},
+  {t: "Imagen", l: "02", d: "Plantilla congelada de un contenedor: código, librerías y configuración empaquetadas."},
+  {t: "Registro de contenedores", l: "02", d: "Repositorio donde se almacenan imágenes de contenedores para su distribución."},
+  {t: "Kubernetes (K8s)", l: "02", d: "Orquestador que gestiona miles de contenedores: los despliega, replica, reinicia y balancea."},
+  {t: "Pod", l: "02", d: "Unidad más pequeña en Kubernetes: uno o varios contenedores que comparten red y almacenamiento."},
+  {t: "Serverless", l: "02", d: "Modelo en el que se ejecuta código sin gestionar servidores. Se paga por milisegundo de ejecución."},
+  {t: "Máquina virtual (VM)", l: "02", d: "Ordenador simulado por software, con su propio sistema operativo. Más pesada que un contenedor."},
+  {t: "Autoescalado", l: "02", d: "Ajuste automático del número de instancias en función de la carga en cada momento."},
+  {t: "Despliegue canary", l: "02", d: "Estrategia de liberar una versión nueva a un pequeño porcentaje de usuarios primero para detectar problemas."},
+
+  // === CAPA 03 ===
+  {t: "SQL", l: "03", d: "Lenguaje estándar para consultar bases de datos relacionales. Sinónimo, en la práctica, de base de datos tabular."},
+  {t: "PostgreSQL", l: "03", d: "Base de datos relacional open-source, extremadamente extendida en aplicaciones modernas."},
+  {t: "NoSQL", l: "03", d: "Familia de bases de datos flexibles (documentos, clave-valor, grafos), pensadas para escalar y estructuras variables."},
+  {t: "Object storage", l: "03", d: "Almacenamiento de archivos como objetos identificados por clave. Ejemplo canónico: Amazon S3."},
+  {t: "Data warehouse", l: "03", d: "Base de datos analítica optimizada para consultas complejas sobre grandes volúmenes. Snowflake, BigQuery, Redshift."},
+  {t: "Data lake", l: "03", d: "Repositorio que almacena grandes cantidades de datos en su formato original, sin estructurar."},
+  {t: "Lakehouse", l: "03", d: "Arquitectura moderna que combina la flexibilidad del data lake con la gobernanza del warehouse."},
+  {t: "Base de datos vectorial", l: "03", d: "Almacena embeddings y permite buscar por similitud semántica. Ej.: Pinecone, Qdrant, Weaviate."},
+  {t: "pgvector", l: "03", d: "Extensión de PostgreSQL que añade búsqueda vectorial, sin migrar a una base especializada."},
+  {t: "Git", l: "03", d: "Sistema de control de versiones que registra todos los cambios del código fuente. Estándar universal."},
+  {t: "Repositorio", l: "03", d: "Contenedor de un proyecto Git con su historial completo y sus ramas de trabajo."},
+
+  // === CAPA 04 ===
+  {t: "TCP/IP", l: "04", d: "Conjunto de protocolos que rige el intercambio de datos en internet. Base invisible de todo lo demás."},
+  {t: "HTTP", l: "04", d: "Protocolo mediante el que un navegador pide páginas a un servidor. Base de la web y de las APIs REST."},
+  {t: "HTTPS", l: "04", d: "Versión cifrada de HTTP. El candado del navegador. Estándar mínimo hoy."},
+  {t: "DNS", l: "04", d: "Sistema que traduce nombres humanos (brompton.com) a direcciones IP que las máquinas entienden."},
+  {t: "Endpoint", l: "04", d: "URL específica de una API que representa una operación concreta. Ej.: /clientes, /pedidos/42."},
+  {t: "VPN", l: "04", d: "Túnel cifrado entre redes remotas que las hace comportarse como si fueran una sola."},
+  {t: "VPC", l: "04", d: "Red virtual privada dentro de un hyperscaler, aislada del resto de la nube pública."},
+  {t: "CDN", l: "04", d: "Red de servidores repartidos globalmente que sirven contenido desde cerca del usuario. Ej.: Cloudflare."},
+  {t: "Load balancer", l: "04", d: "Componente que reparte el tráfico entrante entre varios servidores para escalar y no caer."},
+  {t: "Latencia", l: "04", d: "Tiempo que tarda una petición en ir y volver, medido en milisegundos."},
+  {t: "Ancho de banda", l: "04", d: "Cantidad de datos que caben por segundo en un enlace. Se mide en Mbps o Gbps."},
+  {t: "TLS", l: "04", d: "Protocolo de cifrado subyacente en HTTPS y en muchas otras comunicaciones seguras."},
+
+  // === CAPA 05 ===
+  {t: "Autenticación", l: "05", d: "Proceso de verificar la identidad de un usuario o sistema."},
+  {t: "Autorización", l: "05", d: "Proceso de decidir qué recursos y acciones se permiten a una identidad ya autenticada."},
+  {t: "MFA", l: "05", d: "Autenticación multifactor: además de la contraseña, un segundo elemento (código, huella, llave)."},
+  {t: "SSO", l: "05", d: "Single Sign-On: iniciar sesión una vez y acceder a todas las aplicaciones autorizadas."},
+  {t: "OAuth", l: "05", d: "Protocolo que permite conceder acceso a terceros sin compartir la contraseña. Base del \"entrar con Google\"."},
+  {t: "SAML", l: "05", d: "Estándar de intercambio de identidades entre organizaciones. Muy usado en SSO corporativo."},
+  {t: "OpenID Connect", l: "05", d: "Capa de identidad sobre OAuth 2.0. Estándar moderno de autenticación federada."},
+  {t: "JWT", l: "05", d: "JSON Web Token: cadena firmada que prueba una identidad y sus permisos durante un tiempo limitado."},
+  {t: "RBAC", l: "05", d: "Control de acceso basado en roles. Los permisos se agrupan en roles y los usuarios se asignan a esos roles."},
+  {t: "ABAC", l: "05", d: "Control de acceso basado en atributos (departamento, país, hora). Más granular que RBAC."},
+  {t: "Cifrado en tránsito", l: "05", d: "Los datos van cifrados por la red mientras viajan de un sistema a otro."},
+  {t: "Cifrado en reposo", l: "05", d: "Los datos van cifrados en el disco donde se almacenan."},
+  {t: "KMS", l: "05", d: "Key Management Service: sistema que gestiona claves criptográficas de forma segura."},
+  {t: "BYOK", l: "05", d: "Bring Your Own Key. El cliente aporta y controla sus propias claves de cifrado."},
+  {t: "Firewall", l: "05", d: "Filtro que controla qué tráfico entra y sale de una red."},
+  {t: "WAF", l: "05", d: "Firewall especializado en aplicaciones web. Bloquea ataques de tipo inyección, bots, tráfico anómalo."},
+  {t: "Zero Trust", l: "05", d: "Filosofía de seguridad que no confía en nadie por defecto; verifica en cada petición."},
+  {t: "GDPR", l: "05", d: "Reglamento europeo de protección de datos personales. Aplicable desde 2018."},
+  {t: "EU AI Act", l: "05", d: "Reglamento europeo de inteligencia artificial. Clasifica sistemas por riesgo y exige medidas por categoría."},
+  {t: "DORA", l: "05", d: "Reglamento europeo de resiliencia digital operativa para el sector financiero. Vigente desde 2025."},
+  {t: "NIS2", l: "05", d: "Directiva europea de ciberseguridad para infraestructuras críticas y servicios esenciales."},
+  {t: "SOC 2", l: "05", d: "Auditoría americana de seguridad y gestión de datos. Muy solicitada en ventas B2B de SaaS."},
+  {t: "ISO 27001", l: "05", d: "Norma internacional de gestión de la seguridad de la información."},
+  {t: "Audit log", l: "05", d: "Registro inalterable de accesos y acciones sensibles. Base de auditorías y compliance."},
+  {t: "Data lineage", l: "05", d: "Trazabilidad del recorrido de un dato desde su origen hasta su uso final."},
+
+  // === CAPA 06 ===
+  {t: "API", l: "06", d: "Interfaz por la que un sistema deja que otros le pidan datos o acciones de forma programática."},
+  {t: "REST", l: "06", d: "Estilo arquitectónico dominante de API sobre HTTP. Simple, universal, entendible."},
+  {t: "GraphQL", l: "06", d: "Alternativa a REST donde el cliente describe exactamente qué campos necesita en cada petición."},
+  {t: "Webhook", l: "06", d: "URL que un sistema llama automáticamente cuando ocurre un evento en otro sistema. Modelo push."},
+  {t: "OpenAPI", l: "06", d: "Estándar para describir formalmente APIs REST. Permite generar documentación y clientes automáticos."},
+  {t: "Postman", l: "06", d: "Herramienta muy extendida para probar APIs manualmente y compartir colecciones de peticiones."},
+  {t: "Workflow", l: "06", d: "Secuencia de pasos automatizados que resuelven un proceso de negocio de principio a fin."},
+  {t: "Pipeline", l: "06", d: "Cadena de transformaciones sobre datos u operaciones. Muy usado en ingeniería de datos y ML."},
+  {t: "iPaaS", l: "06", d: "Plataformas de integración como servicio, típicamente low-code. Ej.: Zapier, Make, n8n."},
+  {t: "ETL", l: "06", d: "Extract, Transform, Load. Patrón de mover datos de un sistema a otro transformándolos en el camino."},
+  {t: "ELT", l: "06", d: "Variante moderna: cargar primero al warehouse y transformar dentro. Aprovecha el poder de cómputo del destino."},
+  {t: "Kafka", l: "06", d: "Plataforma de mensajes de alta escala. Base de arquitecturas dirigidas por eventos."},
+  {t: "API Gateway", l: "06", d: "Pieza que centraliza y regula el acceso a todas las APIs de una organización."},
+  {t: "Rate limit", l: "06", d: "Número máximo de peticiones permitidas por unidad de tiempo. Aparece en pricing y en SLAs."},
+  {t: "Event-driven", l: "06", d: "Arquitectura donde los sistemas se comunican publicando y consumiendo eventos."},
+
+  // === CAPA 07 ===
+  {t: "Embedding", l: "07", d: "Vector numérico que representa el significado de un texto, imagen o audio. Permite comparar por parecido."},
+  {t: "RAG", l: "07", d: "Retrieval-Augmented Generation. Buscar contexto propio antes de que el modelo responda."},
+  {t: "Chunking", l: "07", d: "Trocear documentos largos en fragmentos manejables para poder indexarlos y recuperarlos."},
+  {t: "Búsqueda semántica", l: "07", d: "Encuentra por parecido de significado, no por palabra exacta."},
+  {t: "Búsqueda léxica", l: "07", d: "Encuentra por coincidencia de palabras. Modelo tradicional (BM25, Elasticsearch)."},
+  {t: "Búsqueda híbrida", l: "07", d: "Combina búsqueda léxica y semántica; suele dar los mejores resultados."},
+  {t: "Reranking", l: "07", d: "Reordenar los resultados de una búsqueda usando un modelo especializado para poner arriba lo más relevante."},
+  {t: "Fine-tuning", l: "07", d: "Reentrenar un modelo con ejemplos propios para que adopte un estilo o comportamiento específico."},
+  {t: "Prompting", l: "07", d: "Escribir buenas instrucciones para orientar la respuesta del modelo sin modificarlo."},
+  {t: "Pipeline de ingesta", l: "07", d: "Flujo que detecta cambios en las fuentes documentales, procesa y actualiza los embeddings."},
+  {t: "Knowledge base", l: "07", d: "Repositorio estructurado de conocimiento propietario del que se nutre un asistente."},
+
+  // === CAPA 08 ===
+  {t: "LLM", l: "08", d: "Large Language Model. Red neuronal masiva entrenada con texto que aprende a predecir la siguiente palabra."},
+  {t: "GPT", l: "08", d: "Familia de LLMs de OpenAI. La más conocida por el gran público."},
+  {t: "Claude", l: "08", d: "Familia de LLMs de Anthropic. Reconocida por capacidad de razonamiento largo y seguridad."},
+  {t: "Gemini", l: "08", d: "Familia de LLMs multimodales de Google. Integrada en su ecosistema."},
+  {t: "Llama", l: "08", d: "Familia de LLMs abiertos de Meta. Base de muchos modelos derivados."},
+  {t: "Mistral", l: "08", d: "Familia de LLMs europea, con modelos abiertos y comerciales."},
+  {t: "Token", l: "08", d: "Unidad subléxica que procesa el modelo. Todo se factura por tokens de entrada y salida."},
+  {t: "Ventana de contexto", l: "08", d: "Cantidad máxima de tokens que un modelo procesa en una sola petición."},
+  {t: "Multimodal", l: "08", d: "Modelo que acepta y produce más de un tipo de entrada: texto, imagen, voz, vídeo."},
+  {t: "Small Language Model (SLM)", l: "08", d: "Modelo pequeño (1B–10B) apto para ejecutarse en dispositivos o servidores modestos."},
+  {t: "Modelo abierto", l: "08", d: "Modelo cuyos pesos son públicos y se pueden desplegar en infraestructura propia."},
+  {t: "Modelo cerrado", l: "08", d: "Modelo accesible solo por API del proveedor. No se pueden inspeccionar sus pesos."},
+  {t: "Prompt engineering", l: "08", d: "Disciplina de redactar instrucciones que maximizan la calidad de la respuesta del modelo."},
+  {t: "Chain of thought", l: "08", d: "Técnica que pide al modelo razonar paso a paso antes de dar la respuesta final."},
+  {t: "Few-shot", l: "08", d: "Incluir en el prompt varios ejemplos de la tarea para guiar mejor al modelo."},
+  {t: "Alucinación", l: "08", d: "Cuando el modelo inventa datos con seguridad aparente. Riesgo real que hay que mitigar."},
+  {t: "Guardrails", l: "08", d: "Reglas o modelos auxiliares que filtran entradas y salidas para evitar respuestas problemáticas."},
+  {t: "Temperatura", l: "08", d: "Parámetro que controla la aleatoriedad de la respuesta. Baja = más determinista; alta = más creativa."},
+  {t: "Enrutado de modelos", l: "08", d: "Estrategia de mandar cada petición al modelo más adecuado (barato o caro) según su dificultad."},
+
+  // === CAPA 09 ===
+  {t: "Agente", l: "09", d: "Sistema que combina LLM y herramientas para decidir y ejecutar acciones de forma iterativa."},
+  {t: "ReAct", l: "09", d: "Patrón de agente que alterna razonamiento y acción en cada iteración."},
+  {t: "Plan-and-Execute", l: "09", d: "Patrón de agente que primero planifica todos los pasos y luego los ejecuta uno a uno."},
+  {t: "Tool use", l: "09", d: "Capacidad del modelo de invocar funciones o APIs para hacer cosas más allá de responder texto."},
+  {t: "Function calling", l: "09", d: "Sinónimo práctico de tool use. Nombre usado por OpenAI y otros proveedores."},
+  {t: "Skill", l: "09", d: "Habilidad reutilizable empaquetada (instrucciones + herramientas) que un agente puede activar."},
+  {t: "MCP", l: "09", d: "Model Context Protocol. Estándar abierto que unifica cómo los agentes se conectan a herramientas y datos."},
+  {t: "A2A", l: "09", d: "Agent-to-Agent. Protocolos para que agentes se comuniquen y deleguen entre sí."},
+  {t: "Multi-agente", l: "09", d: "Sistema con varios agentes especializados que colaboran en una tarea compleja."},
+  {t: "Human-in-the-loop", l: "09", d: "Diseño en el que el agente propone y un humano aprueba antes de ejecutar acciones sensibles."},
+  {t: "Sandbox", l: "09", d: "Entorno aislado y con permisos limitados donde un agente puede actuar sin riesgo para el resto del sistema."},
+  {t: "LangGraph", l: "09", d: "Framework para construir grafos de ejecución de agentes con estado y control fino."},
+  {t: "AutoGen", l: "09", d: "Framework de Microsoft para diseñar conversaciones entre múltiples agentes."},
+
+  // === CAPA 10 ===
+  {t: "Frontend", l: "10", d: "Código que se ejecuta en el navegador y produce la interfaz gráfica que ve el usuario."},
+  {t: "React", l: "10", d: "Librería JavaScript dominante para construir interfaces web. Muy usada en producto empresarial."},
+  {t: "Vue", l: "10", d: "Librería JavaScript alternativa a React, con enfoque más accesible."},
+  {t: "No-code", l: "10", d: "Plataformas para crear aplicaciones sin escribir código, usando bloques visuales."},
+  {t: "Low-code", l: "10", d: "Plataformas que combinan desarrollo visual con la posibilidad de código puntual."},
+  {t: "Copilot", l: "10", d: "Patrón de asistente de IA embebido dentro de aplicaciones existentes (Office, Salesforce, IDEs)."},
+  {t: "Chatbot", l: "10", d: "Interfaz conversacional entre el usuario y un sistema, normalmente asistida por LLM."},
+  {t: "Dashboard", l: "10", d: "Panel visual con métricas e informes construido sobre datos del warehouse."},
+  {t: "Power BI", l: "10", d: "Herramienta de business intelligence de Microsoft. Muy extendida en empresas europeas."},
+  {t: "Tableau", l: "10", d: "Herramienta clásica de visualización analítica y BI."},
+  {t: "Streamlit", l: "10", d: "Framework Python para crear dashboards y apps de datos con muy poco código."},
+  {t: "Design system", l: "10", d: "Biblioteca de componentes visuales y de interacción que garantiza coherencia en todo el producto."},
+  {t: "WCAG", l: "10", d: "Estándar internacional de accesibilidad web. AA es el nivel habitual exigido."},
+
+  // === CAPA 11 ===
+  {t: "Log", l: "11", d: "Mensaje que la aplicación va escribiendo describiendo lo que ocurre en cada momento."},
+  {t: "Trace", l: "11", d: "Recorrido completo de una petición a través de todos los servicios que la atienden."},
+  {t: "Metric", l: "11", d: "Número que se registra periódicamente para vigilar el estado del sistema."},
+  {t: "OpenTelemetry", l: "11", d: "Estándar abierto para instrumentar aplicaciones con logs, traces y metrics."},
+  {t: "Prometheus", l: "11", d: "Sistema open-source de recolección y consulta de métricas. Muy usado en Kubernetes."},
+  {t: "Grafana", l: "11", d: "Herramienta de visualización para métricas y logs. Complementa a Prometheus."},
+  {t: "Datadog", l: "11", d: "Plataforma comercial de observabilidad que integra logs, traces, metrics y alertas."},
+  {t: "SLA", l: "11", d: "Service Level Agreement. Compromiso contractual con el cliente sobre el nivel de servicio."},
+  {t: "SLO", l: "11", d: "Objetivo interno de nivel de servicio, típicamente más estricto que el SLA."},
+  {t: "SLI", l: "11", d: "Indicador que se mide realmente y se compara con el SLO."},
+  {t: "Uptime", l: "11", d: "Porcentaje de tiempo que un servicio está disponible. 99,9% ≈ 8h de caída al año."},
+  {t: "Alerta", l: "11", d: "Notificación automática que dispara un equipo de guardia cuando algo cruza un umbral crítico."},
+  {t: "On-call", l: "11", d: "Turno de guardia en el que un ingeniero está disponible para responder a incidentes fuera de horario."},
+  {t: "Eval", l: "11", d: "Evaluación sistemática de la calidad de respuestas de un modelo o pipeline de IA."},
+  {t: "LLM-as-Judge", l: "11", d: "Uso de un LLM como evaluador de las salidas de otro modelo o sistema."},
+  {t: "Feature flag", l: "11", d: "Interruptor en el código que permite activar o desactivar funcionalidades sin desplegar."},
+  {t: "A/B test", l: "11", d: "Experimento controlado que compara dos variantes ante segmentos de usuarios."},
+
+  // === CAPA 12 ===
+  {t: "MLOps", l: "12", d: "Prácticas y herramientas para desarrollar, desplegar y mantener modelos de IA en producción."},
+  {t: "CI/CD", l: "12", d: "Integración y despliegue continuos. Automatización del ciclo de entrega de software y modelos."},
+  {t: "Model registry", l: "12", d: "Catálogo versionado de modelos entrenados, con sus métricas y metadatos."},
+  {t: "MLflow", l: "12", d: "Herramienta open-source para gestión del ciclo de vida de modelos de ML."},
+  {t: "Data drift", l: "12", d: "Cambio en la distribución de los datos de entrada respecto a los usados para entrenar."},
+  {t: "Model drift", l: "12", d: "Deterioro del rendimiento del modelo con el tiempo, típicamente por data drift."},
+  {t: "Model card", l: "12", d: "Ficha estandarizada que documenta un modelo: uso previsto, datos, riesgos, métricas."},
+  {t: "Datasheet for datasets", l: "12", d: "Ficha estandarizada que documenta un dataset: origen, sesgos, licencia, procesamiento."},
+  {t: "Fairness", l: "12", d: "Propiedad de un modelo de no discriminar sistemáticamente a grupos protegidos."},
+  {t: "Red teaming", l: "12", d: "Ataque deliberado y organizado al propio sistema para descubrir vulnerabilidades antes de la publicación."},
+  {t: "Explicabilidad (XAI)", l: "12", d: "Conjunto de técnicas para explicar por qué un modelo tomó una decisión concreta."},
+  {t: "ISO/IEC 42001", l: "12", d: "Primera norma internacional para sistemas de gestión de IA. Emergente en licitaciones."},
+  {t: "NIST AI RMF", l: "12", d: "Marco de gestión de riesgos de IA del NIST estadounidense. Muy referenciado internacionalmente."},
+  {t: "AI Act (Art. 50)", l: "12", d: "Artículo del Reglamento europeo de IA sobre transparencia y etiquetado de contenido generado por IA."},
+  {t: "Responsible AI", l: "12", d: "Conjunto de principios y prácticas para desarrollar IA de forma segura, justa y transparente."},
+  {t: "Sandbox regulatorio", l: "12", d: "Espacio autorizado por un regulador para probar sistemas de IA innovadores en condiciones controladas."},
+];
+
+/* ========================= INYECCIÓN DEL GLOSARIO ========================= */
+const layerColorVar = (l) => `var(--c-l${l})`;
+const grid = document.getElementById("glossary-grid");
+const frag = document.createDocumentFragment();
+
+// Ordenar alfabéticamente
+GLOSSARY.sort((a, b) => a.t.localeCompare(b.t, "es"));
+
+GLOSSARY.forEach(term => {
+  const el = document.createElement("article");
+  el.className = "gterm";
+  el.dataset.layer = term.l;
+  el.dataset.search = (term.t + " " + term.d).toLowerCase();
+  el.style.setProperty("--layer-color", layerColorVar(term.l));
+  el.innerHTML = `
+    <div class="gterm__head">
+      <h3 class="gterm__title">${term.t}</h3>
+      <span class="gterm__layer">${term.l}</span>
+    </div>
+    <p class="gterm__def">${term.d}</p>
+  `;
+  frag.appendChild(el);
+});
+grid.appendChild(frag);
+
+/* ========================= BÚSQUEDA DEL GLOSARIO ========================= */
+const searchInput = document.getElementById("glossary-search");
+let currentFilter = "all";
+
+function applyFilters() {
+  const q = searchInput.value.trim().toLowerCase();
+  const terms = grid.querySelectorAll(".gterm");
+  terms.forEach(t => {
+    const matchesLayer = currentFilter === "all" || t.dataset.layer === currentFilter;
+    const matchesSearch = !q || t.dataset.search.includes(q);
+    t.hidden = !(matchesLayer && matchesSearch);
+  });
+}
+
+searchInput.addEventListener("input", applyFilters);
+
+document.querySelectorAll(".chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("is-active"));
+    chip.classList.add("is-active");
+    currentFilter = chip.dataset.filter;
+    applyFilters();
+  });
+});
+
+/* ========================= SCROLLSPY ========================= */
+const navLinks = document.querySelectorAll(".nav-item");
+const sections = Array.from(document.querySelectorAll(".layer, .glossary"));
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(link => {
+        link.classList.toggle("is-active", link.getAttribute("href") === "#" + id);
+      });
+    }
+  });
+}, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
+
+sections.forEach(s => observer.observe(s));
+
+/* ========================= MOBILE SIDEBAR ========================= */
+const sidebar = document.getElementById("sidebar");
+const toggle = document.getElementById("mobile-toggle");
+toggle.addEventListener("click", () => {
+  sidebar.classList.toggle("is-open");
+  toggle.textContent = sidebar.classList.contains("is-open") ? "Cerrar" : "Índice";
+});
+// cerrar al hacer clic en enlace en móvil
+navLinks.forEach(l => l.addEventListener("click", () => {
+  if (window.innerWidth <= 1000) {
+    sidebar.classList.remove("is-open");
+    toggle.textContent = "Índice";
+  }
+}));
+
+/* ========================= EXPANDIR TODO AL IMPRIMIR ========================= */
+window.addEventListener("beforeprint", () => {
+  document.querySelectorAll("details.component").forEach(d => d.setAttribute("open", ""));
+});
+</script>
+
+</body>
+</html>
