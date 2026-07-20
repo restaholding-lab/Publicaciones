@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Construir tu primera herramienta digital · Curso MIT para Dirección Comercial · Vol. II</title>
+<meta name="description" content="Guía por capas para directivos de ventas y marketing que quieren construir su primera herramienta profesional con ayuda de IA, desde su portátil hasta una URL pública.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ========== TOKENS ========== */
+:root {
+  --paper: #F4EFE6;
+  --paper-2: #EDE7DA;
+  --paper-3: #E4DDCB;
+  --ink: #1A1712;
+  --ink-2: #4A4238;
+  --ink-3: #7A6F5F;
+  --line: #C9BFA9;
+  --line-soft: #DED4BE;
+  --accent: #B33A2A;
+
+  /* Colores por capa (8) */
+  --c-l01: #5C6E82;
+  --c-l02: #4A6B4E;
+  --c-l03: #A67F2E;
+  --c-l04: #2F5D8A;
+  --c-l05: #6B4A85;
+  --c-l06: #9A3A2E;
+  --c-l07: #B76A24;
+  --c-l08: #3E3560;
+  --c-glo: #6B4A2E;
+
+  --f-display: "Fraunces", Georgia, serif;
+  --f-body: "IBM Plex Sans", -apple-system, system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --sidebar-w: 320px;
+  --content-max: 900px;
+  --radius: 2px;
+  --shadow-1: 0 1px 0 rgba(26,23,18,0.06);
+  --shadow-2: 0 10px 30px -12px rgba(26,23,18,0.18);
+}
+
+/* ========== RESET ========== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+  background-image:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: 0 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(244,239,230,0.88), rgba(244,239,230,0.94));
+  pointer-events: none;
+  z-index: -1;
+}
+img, svg { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ========== LAYOUT ========== */
+.wrap {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 100vh;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 32px 24px 40px 32px;
+  border-right: 1px solid var(--line);
+  background: var(--paper-2);
+  background-image: linear-gradient(180deg, var(--paper-2) 0%, var(--paper) 100%);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.brand__mark {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.brand__dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+.brand__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 6px 0 4px;
+  color: var(--ink);
+}
+.brand__sub {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.nav-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.nav-list { list-style: none; padding: 0; margin: 0; }
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 10px 8px 14px;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.18s ease;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.nav-item:hover {
+  color: var(--ink);
+  background: rgba(179, 58, 42, 0.04);
+  border-left-color: var(--line);
+}
+.nav-item.is-active {
+  color: var(--ink);
+  background: rgba(26,23,18,0.05);
+  border-left-color: var(--layer-color, var(--accent));
+  font-weight: 500;
+}
+.nav-item__num {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+  min-width: 20px;
+  font-weight: 500;
+}
+.nav-item.is-active .nav-item__num { color: var(--layer-color, var(--accent)); }
+.nav-item__label { line-height: 1.35; }
+
+.sidebar-footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  line-height: 1.55;
+}
+.sidebar-footer strong { color: var(--ink-2); font-weight: 500; }
+
+/* ========== MAIN ========== */
+.main {
+  padding: 48px 56px 120px;
+  max-width: calc(var(--content-max) + 112px);
+}
+
+/* ========== HERO ========== */
+.hero {
+  margin-bottom: 96px;
+  padding-top: 24px;
+}
+.hero__eyebrow {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero__eyebrow::before {
+  content: "";
+  width: 24px; height: 1px;
+  background: var(--accent);
+}
+.hero__title {
+  font-family: var(--f-display);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: clamp(38px, 5.6vw, 68px);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0 0 32px;
+  max-width: 820px;
+}
+.hero__title em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--accent);
+}
+.hero__lead {
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 640px;
+  margin: 0 0 40px;
+}
+.hero__meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 720px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.hero__meta > div {
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.hero__meta dt {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+.hero__meta dd {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.reading-guide {
+  margin-top: 56px;
+  padding: 28px 32px;
+  background: var(--paper-2);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.reading-guide__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+.reading-guide p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+.reading-guide p:last-child { margin-bottom: 0; }
+.reading-guide kbd {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  padding: 1px 6px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink);
+}
+
+/* ========== LAYER SECTION ========== */
+.layer {
+  margin-bottom: 88px;
+  scroll-margin-top: 40px;
+  position: relative;
+}
+.layer__header {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 28px;
+  align-items: start;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.layer__num {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  padding-top: 12px;
+  position: relative;
+}
+.layer__num::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 32px;
+  height: 3px;
+  background: var(--layer-color, var(--accent));
+}
+.layer__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(28px, 3.6vw, 42px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.layer__tag {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--layer-color, var(--accent));
+  font-weight: 500;
+}
+
+.layer__intro {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 28px;
+  margin-bottom: 32px;
+}
+.layer__intro-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 4px;
+}
+.layer__intro-body p {
+  margin: 0 0 14px;
+  font-size: 16.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.layer__intro-body p:last-child { margin-bottom: 0; }
+.layer__intro-body em {
+  font-style: italic;
+  color: var(--layer-color, var(--accent));
+  font-weight: 500;
+  padding: 0 2px;
+}
+
+.components {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 28px;
+  margin-bottom: 32px;
+}
+.components__label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 4px;
+}
+.components__list {
+  border-top: 1px solid var(--line);
+}
+details.component {
+  border-bottom: 1px solid var(--line);
+  transition: background 0.2s ease;
+}
+details.component[open] {
+  background: linear-gradient(180deg, transparent, var(--paper-2));
+}
+details.component summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 4px 18px 40px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+  position: relative;
+  transition: color 0.15s ease;
+}
+details.component summary::-webkit-details-marker { display: none; }
+details.component summary::before {
+  content: "+";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  font-family: var(--f-mono);
+  font-size: 20px;
+  color: var(--layer-color, var(--accent));
+  font-weight: 300;
+  transition: transform 0.25s ease;
+  line-height: 1;
+}
+details.component[open] summary::before {
+  content: "−";
+}
+details.component summary:hover .component__title { color: var(--layer-color, var(--accent)); }
+.component__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  transition: color 0.15s ease;
+}
+.component__hint {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  text-transform: lowercase;
+}
+.component__body {
+  padding: 4px 4px 24px 40px;
+}
+.component__body p {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.component__body p:last-child { margin-bottom: 0; }
+.component__body ul {
+  margin: 12px 0;
+  padding-left: 20px;
+}
+.component__body li {
+  margin-bottom: 6px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.component__body li strong { color: var(--ink); font-weight: 500; }
+
+.term {
+  font-family: var(--f-mono);
+  font-size: 0.88em;
+  padding: 1px 5px;
+  background: rgba(179, 58, 42, 0.06);
+  border-radius: 3px;
+  color: var(--layer-color, var(--accent));
+  font-weight: 500;
+  border-bottom: 1px dotted var(--layer-color, var(--accent));
+  cursor: help;
+}
+
+/* Meeting talkbox */
+.meeting {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 28px;
+  margin-top: 8px;
+}
+.meeting__label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 20px;
+}
+.meeting__body {
+  padding: 24px 28px;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+.meeting__body::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 4px;
+  background: var(--layer-color, var(--accent));
+}
+.meeting__title {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-3);
+  margin: 0 0 12px;
+}
+.meeting__quote {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--paper);
+  margin: 0 0 14px;
+  letter-spacing: -0.005em;
+}
+.meeting__note {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--paper-3);
+  margin: 0;
+}
+
+/* ========== GLOSSARY ========== */
+.glossary {
+  margin-top: 96px;
+  scroll-margin-top: 40px;
+}
+.glossary__header {
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.glossary__num {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+}
+.glossary__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(32px, 4.5vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+.glossary__lead {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 620px;
+  margin: 0 0 28px;
+}
+
+.search {
+  position: relative;
+  max-width: 480px;
+  margin-bottom: 40px;
+}
+.search__input {
+  width: 100%;
+  padding: 14px 44px 14px 16px;
+  font-family: var(--f-body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search__input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(179, 58, 42, 0.1);
+}
+.search__input::placeholder { color: var(--ink-3); }
+.search__icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 32px;
+}
+.chip {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  border-radius: 20px;
+  transition: all 0.15s;
+}
+.chip:hover { border-color: var(--ink-2); color: var(--ink); }
+.chip.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.glossary__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2px;
+  background: var(--line-soft);
+  border: 1px solid var(--line);
+}
+.gterm {
+  padding: 18px 20px;
+  background: var(--paper);
+  transition: background 0.15s;
+  position: relative;
+}
+.gterm:hover { background: var(--paper-2); }
+.gterm[hidden] { display: none; }
+.gterm__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.gterm__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 15.5px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.gterm__layer {
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: var(--layer-color, var(--ink-3));
+  color: var(--paper);
+  white-space: nowrap;
+  font-weight: 500;
+}
+.gterm__def {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* ========== FOOTER ========== */
+.footer {
+  margin-top: 120px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--ink-3);
+  line-height: 1.6;
+}
+.footer strong { color: var(--ink-2); font-weight: 500; }
+
+/* ========== MOBILE ========== */
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-2);
+}
+
+@media (max-width: 1000px) {
+  .wrap { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 88%; max-width: 340px;
+    z-index: 90;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: var(--shadow-2);
+  }
+  .sidebar.is-open { transform: translateX(0); }
+  .mobile-toggle { display: block; }
+  .main { padding: 72px 24px 80px; }
+  .layer__header, .layer__intro, .components, .meeting {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .layer__num::before { top: -6px; }
+  .hero__meta { grid-template-columns: 1fr; }
+}
+
+@media print {
+  .sidebar, .mobile-toggle, .search, .filter-chips { display: none; }
+  .wrap { grid-template-columns: 1fr; }
+  .main { padding: 20px; max-width: none; }
+  details.component[open] summary::before,
+  details.component summary::before { content: "▸"; }
+  details.component summary { padding-left: 20px; }
+  details.component .component__body { display: block !important; }
+  details.component { break-inside: avoid; }
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+</style>
+</head>
+<body>
+
+<button class="mobile-toggle" id="mobile-toggle" aria-label="Abrir índice">Índice</button>
+
+<div class="wrap">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand__dot"></span>
+      <span class="brand__mark">MIT · Vol. II</span>
+    </div>
+    <h1 class="brand__title">Construir tu primera herramienta digital</h1>
+    <p class="brand__sub">Volumen II del curso condensado. De la máquina local a la URL pública, con IA de copiloto.</p>
+
+    <div class="nav-label">Capas del recorrido</div>
+    <ul class="nav-list">
+      <li><a class="nav-item" href="#l01" style="--layer-color: var(--c-l01)"><span class="nav-item__num">01</span><span class="nav-item__label">Máquina local y sistema operativo</span></a></li>
+      <li><a class="nav-item" href="#l02" style="--layer-color: var(--c-l02)"><span class="nav-item__num">02</span><span class="nav-item__label">Línea de comandos</span></a></li>
+      <li><a class="nav-item" href="#l03" style="--layer-color: var(--c-l03)"><span class="nav-item__num">03</span><span class="nav-item__label">Runtimes y gestores de paquetes</span></a></li>
+      <li><a class="nav-item" href="#l04" style="--layer-color: var(--c-l04)"><span class="nav-item__num">04</span><span class="nav-item__label">Lenguajes de programación</span></a></li>
+      <li><a class="nav-item" href="#l05" style="--layer-color: var(--c-l05)"><span class="nav-item__num">05</span><span class="nav-item__label">Frameworks y stack técnico</span></a></li>
+      <li><a class="nav-item" href="#l06" style="--layer-color: var(--c-l06)"><span class="nav-item__num">06</span><span class="nav-item__label">IA como copiloto de desarrollo</span></a></li>
+      <li><a class="nav-item" href="#l07" style="--layer-color: var(--c-l07)"><span class="nav-item__num">07</span><span class="nav-item__label">Ejecución local</span></a></li>
+      <li><a class="nav-item" href="#l08" style="--layer-color: var(--c-l08)"><span class="nav-item__num">08</span><span class="nav-item__label">Repositorio y despliegue público</span></a></li>
+    </ul>
+
+    <div class="nav-label">Referencia</div>
+    <ul class="nav-list">
+      <li><a class="nav-item" href="#glosario" style="--layer-color: var(--c-glo)"><span class="nav-item__num">§</span><span class="nav-item__label">Glosario ampliado</span></a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <strong>Cómo se lee este mapa.</strong> Ocho capas ordenadas por el flujo natural de trabajo: la 01 es tu portátil apagado, la 08 es una URL pública que un cliente puede abrir. En medio, todo lo que ocurre para pasar de una a otra con la IA de tu lado.
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN ==================== -->
+  <main class="main">
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+      <div class="hero__eyebrow">Curso 2026 · Volumen II · Digital Fluency for Commercial Leadership</div>
+      <h2 class="hero__title">Construir tu primera herramienta digital <em>sin</em> ser programador.</h2>
+      <p class="hero__lead">El primer volumen enseñaba a hablar de tecnología. Este segundo enseña a hacer algo con ella. Ocho capas te llevan de tu portátil apagado a una URL pública con una herramienta funcionando —una calculadora de scoring de leads, un integrador con CRM, un panel de campañas—. En el camino se adquiere el vocabulario que permite sostener conversaciones técnicas con clientes que hasta hoy no podrías tener.</p>
+      <dl class="hero__meta">
+        <div>
+          <dt>Duración</dt>
+          <dd>Autoguiado · 90 min de lectura activa</dd>
+        </div>
+        <div>
+          <dt>Formato</dt>
+          <dd>Ocho capas desplegables + glosario</dd>
+        </div>
+        <div>
+          <dt>Objetivo</dt>
+          <dd>De cero a URL pública, con IA</dd>
+        </div>
+      </dl>
+
+      <div class="reading-guide">
+        <h3 class="reading-guide__title">Cómo usar este documento</h3>
+        <p>Este volumen presupone una decisión: no vas a estudiar programación de manera académica, vas a <em>construir algo pequeño</em> con la ayuda de un asistente IA. El material que sigue es el mapa del terreno que atravesarás.</p>
+        <p>Cada capa contiene tres bloques: una <em>idea central</em>, los <em>componentes</em> desplegables (haz clic en el <kbd>+</kbd>) y un cuadro final <em>"En una reunión"</em> con la frase que suele oírse y su traducción a lenguaje comercial.</p>
+        <p>Los términos técnicos aparecen así: <span class="term" style="--layer-color: var(--accent)">endpoint</span>. Todos están recogidos en el glosario final, filtrable por capa. Si vienes del Volumen I, ese glosario y este son complementarios: el primero es más de arquitectura; este, de artesanía.</p>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 01 ==================== -->
+    <section class="layer" id="l01" style="--layer-color: var(--c-l01)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 01</div>
+        <div>
+          <div class="layer__tag">El punto de partida</div>
+          <h2 class="layer__title">Máquina local y sistema operativo</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Todo programa se construye en algún sitio antes de llegar al usuario. Ese sitio es tu propia máquina: un portátil, con su sistema operativo, un editor donde escribir el código y un lugar donde guardar los archivos del proyecto. Suena obvio, pero es la primera fuente de fricción cuando alguien empieza.</p>
+          <p>Hay que distinguir dos cosas que se confunden: el <em>sistema operativo</em> (Windows, macOS, Linux) y el <em>entorno de desarrollo</em> (el editor y las herramientas que instalas encima). Muchas veces se instala una capa Linux dentro de Windows para que las herramientas modernas funcionen sin roces. Todas las capas siguientes se apoyan en esta.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Sistema operativo</span>
+              <span class="component__hint">Windows · macOS · Linux</span>
+            </summary>
+            <div class="component__body">
+              <p>El software base que gestiona el hardware y coordina el resto de programas. Los tres dominantes son <span class="term">Windows</span> (Microsoft), <span class="term">macOS</span> (Apple) y <span class="term">Linux</span> (familia de sistemas abiertos).</p>
+              <p>Para desarrollar, macOS y Linux comparten una base común (Unix) que los hace muy amigos de las herramientas técnicas. Windows tradicionalmente ha sido menos amigable, pero desde hace años Microsoft ha resuelto eso con WSL.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Distribución de Linux</span>
+              <span class="component__hint">Ubuntu · Debian · Fedora</span>
+            </summary>
+            <div class="component__body">
+              <p>Linux no es un producto único; es una familia de <span class="term">distribuciones</span> (o "distros"), cada una con su gestión de paquetes y su comunidad. <span class="term">Ubuntu</span> es la más popular para principiantes y se ha convertido en el estándar de facto en entornos de desarrollo y en servidores.</p>
+              <p>Cuando alguien dice "instalé Ubuntu", se refiere a la distribución. Cuando dice "en Linux", se refiere a la familia.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">WSL</span>
+              <span class="component__hint">Ubuntu dentro de Windows</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Windows Subsystem for Linux</span>. Una capa oficial de Microsoft que permite ejecutar Ubuntu (u otras distros) dentro de Windows sin la sobrecarga de una máquina virtual. Es lo que hoy usan la mayoría de desarrolladores en Windows para que las herramientas de línea de comandos se comporten como en un servidor Linux real.</p>
+              <p>Traducción práctica: puedes tener el Explorer de Windows para tus documentos y una terminal Ubuntu para trabajar con el código.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Editor de código y IDE</span>
+              <span class="component__hint">VS Code · Cursor · JetBrains</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">editor de código</span> es un programa donde escribes y editas archivos de código. Un <span class="term">IDE</span> (Integrated Development Environment) es un editor más las herramientas adyacentes: depurador, terminal, control de versiones.</p>
+              <p><span class="term">VS Code</span> es el editor gratuito de Microsoft. Se ha convertido en el estándar de facto. Ligero, extensible, con soporte para prácticamente todos los lenguajes.</p>
+              <p>Existen variantes con IA integrada de fábrica —<span class="term">Cursor</span> y <span class="term">Windsurf</span>— y opciones profesionales de pago como los IDEs de <span class="term">JetBrains</span> (WebStorm, PyCharm, IntelliJ).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Extensiones del editor</span>
+              <span class="component__hint">marketplace</span>
+            </summary>
+            <div class="component__body">
+              <p>VS Code y equivalentes tienen un <span class="term">marketplace</span> con miles de <span class="term">extensiones</span> gratuitas que añaden capacidades: soporte para un lenguaje, integración con Git, IA de código, formateadores automáticos, temas visuales.</p>
+              <p>La mayoría de la fricción de arranque desaparece instalando cuatro o cinco extensiones básicas. La comunidad publica listas de recomendaciones para cada tipo de proyecto.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Sistema de archivos y rutas</span>
+              <span class="component__hint">carpetas, paths y permisos</span>
+            </summary>
+            <div class="component__body">
+              <p>La manera en la que el SO organiza los archivos en disco. Cada archivo tiene una <span class="term">ruta</span> que lo identifica de forma única (por ejemplo, <em>/home/usuario/proyectos/mi-app/index.js</em>).</p>
+              <p>En Linux y macOS los archivos tienen <span class="term">permisos</span> explícitos (lectura, escritura, ejecución). En Windows también existen, pero suelen quedar más ocultos al usuario.</p>
+              <p>Toda esta capa es invisible en el día a día hasta que aparece un error de "permiso denegado" y se convierte en el primer obstáculo real que te encuentras.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"El equipo trabaja en macOS y en Windows con WSL Ubuntu; el editor estándar es VS Code con extensiones para Git y Copilot."</blockquote>
+          <p class="meeting__note">Traducción: uso mixto de sistemas operativos, con Ubuntu virtualizado dentro de los Windows para que las herramientas se comporten igual en ambas máquinas. Usan el mismo editor con las mismas extensiones para que el código se vea y se maneje igual, quien sea el que lo escriba.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 02 ==================== -->
+    <section class="layer" id="l02" style="--layer-color: var(--c-l02)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 02</div>
+        <div>
+          <div class="layer__tag">Hablar directo con la máquina</div>
+          <h2 class="layer__title">Línea de comandos</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Casi cualquier herramienta técnica pide, tarde o temprano, abrir una pantalla negra y escribir comandos. Esa pantalla es lo más antiguo del ordenador y, paradójicamente, sigue siendo <em>el idioma nativo</em> de los desarrolladores. Aunque suene retro, es donde el 90% de las tareas técnicas ocurren.</p>
+          <p>La buena noticia: no hace falta aprenderla entera. Con seis o siete comandos básicos y confianza para pegarle instrucciones que la IA te dicte, se avanza muchísimo. La <em>fluidez con el terminal</em> es probablemente la habilidad con mayor retorno por hora invertida en toda esta capa.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">CLI y GUI</span>
+              <span class="component__hint">texto vs. ventanas</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">CLI</span> (Command Line Interface): interfaz basada en texto. Escribes un comando, la máquina responde. Sin ratón, sin ventanas.</p>
+              <p><span class="term">GUI</span> (Graphical User Interface): interfaz visual con ventanas, iconos y botones. Es lo que usas cada día en Word, en un navegador o en el explorador de archivos.</p>
+              <p>Muchas tareas técnicas solo existen en CLI, o van mucho más rápido allí. Por eso la ganamos al principio, no al final.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Terminal y shell</span>
+              <span class="component__hint">aplicación y motor</span>
+            </summary>
+            <div class="component__body">
+              <p>La <span class="term">terminal</span> es la aplicación que abre la ventana negra. El <span class="term">shell</span> es el programa que interpreta lo que escribes: recibe tu comando, lo ejecuta y te devuelve el resultado.</p>
+              <p>Los shells más comunes: <span class="term">PowerShell</span> (nativo de Windows, potente para administración), <span class="term">Bash</span> (tradicional de Unix/Linux, estándar en servidores) y <span class="term">Zsh</span> (moderno, popular en macOS).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Prompt de terminal</span>
+              <span class="component__hint">la señal de que espera</span>
+            </summary>
+            <div class="component__body">
+              <p>El símbolo (típicamente <em>$</em> en Linux/macOS o <em>&gt;</em> en Windows) que indica que el shell está listo para recibir tu siguiente instrucción. Suele ir precedido por información útil: usuario, máquina, carpeta actual, rama de Git.</p>
+              <p>No hay que confundirlo con el "prompt" de la IA. Ambos son "invitaciones a escribir", pero uno se dirige a la máquina y el otro a un modelo.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Anatomía de un comando</span>
+              <span class="component__hint">comando + argumentos + flags</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">comando</span> se compone típicamente de tres partes: el nombre del programa que quieres ejecutar, cero o más <span class="term">argumentos</span> (sobre qué actúa) y opcionalmente <span class="term">flags</span> u opciones (modificadores del comportamiento).</p>
+              <p>Ejemplo: en <em>ls -l documentos</em>, "ls" es el comando (listar), "-l" es un flag (formato de lista larga) y "documentos" es un argumento (qué listar).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Comandos básicos de navegación</span>
+              <span class="component__hint">cd, ls, mkdir, cat</span>
+            </summary>
+            <div class="component__body">
+              <p>Los que aparecen en cualquier tutorial:</p>
+              <ul>
+                <li><strong>cd</strong> (change directory): cambia la carpeta en la que estás.</li>
+                <li><strong>ls</strong> o <strong>dir</strong>: lista lo que hay en la carpeta actual.</li>
+                <li><strong>mkdir</strong>: crea una carpeta nueva.</li>
+                <li><strong>cat</strong>: muestra el contenido de un archivo por pantalla.</li>
+                <li><strong>pwd</strong>: te dice en qué carpeta estás.</li>
+              </ul>
+              <p>Con estos cinco, ya te mueves con soltura.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Directorio de trabajo</span>
+              <span class="component__hint">la carpeta actual</span>
+            </summary>
+            <div class="component__body">
+              <p>El <span class="term">directorio de trabajo</span> es la carpeta en la que el shell te sitúa por defecto. Todos los comandos que ejecutes se aplicarán ahí, salvo que especifiques otra ruta.</p>
+              <p>Cuando alguien dice "sitúate en la raíz del proyecto", está pidiendo que uses <em>cd</em> para llegar a la carpeta principal antes de la siguiente instrucción.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Variables de entorno</span>
+              <span class="component__hint">configuración accesible al shell</span>
+            </summary>
+            <div class="component__body">
+              <p>Valores nombrados que existen para el shell y para los programas que arranca. Algunas son universales (como <em>PATH</em>, que dice dónde buscar los ejecutables), otras son propias de un proyecto (como una clave API o la URL de una base de datos).</p>
+              <p>Se guardan típicamente en archivos <em>.env</em> que <strong>no</strong> se suben a repositorios públicos por seguridad.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Abre una terminal, sitúate en la raíz del proyecto y ejecuta el comando con los flags que te pasa la IA. Comprueba que las variables de entorno están cargadas."</blockquote>
+          <p class="meeting__note">Traducción: abre el shell, ve a la carpeta principal del código, pega el comando que la IA te haya dicho tal cual, y asegúrate de que el archivo con las claves de configuración está en su sitio. Ninguna de estas cuatro cosas requiere saber programar; requiere haber usado la terminal media hora antes.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 03 ==================== -->
+    <section class="layer" id="l03" style="--layer-color: var(--c-l03)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 03</div>
+        <div>
+          <div class="layer__tag">Traer código ajeno</div>
+          <h2 class="layer__title">Runtimes y gestores de paquetes</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Nadie construye software moderno partiendo del vacío. Se combinan piezas que otros ya escribieron y compartieron abiertamente: enviar correos, autenticar con Google, procesar Excel, generar PDF. Cada una de esas piezas es un <em>paquete</em>.</p>
+          <p>Necesitas dos cosas para vivir en ese mundo: un <em>runtime</em> (el motor que hace correr esas piezas) y un <em>gestor de paquetes</em> (la biblioteca desde donde las descargas). Node.js con npm es el binomio más común; Python con pip es el equivalente en su ecosistema.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Runtime</span>
+              <span class="component__hint">el motor de ejecución</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">runtime</span> es el programa que ejecuta código escrito en un lenguaje concreto. <span class="term">Node.js</span> es el runtime que permite ejecutar JavaScript fuera del navegador, en tu portátil o en un servidor.</p>
+              <p>Alternativas modernas a Node: <span class="term">Deno</span> y <span class="term">Bun</span>, con foco en seguridad y velocidad. En el mundo Python, el runtime es simplemente "el intérprete de Python".</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Gestor de paquetes</span>
+              <span class="component__hint">npm · yarn · pnpm · pip</span>
+            </summary>
+            <div class="component__body">
+              <p>Herramienta que instala, actualiza y organiza las dependencias de tu proyecto. En Node.js se usan <span class="term">npm</span> (viene por defecto), <span class="term">yarn</span> o <span class="term">pnpm</span>. En Python el estándar es <span class="term">pip</span>.</p>
+              <p>Todos hacen lo mismo esencial: bajan código ajeno desde un registro público y lo dejan listo para que tu proyecto lo use.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Paquete y dependencia</span>
+              <span class="component__hint">unidad de código reutilizable</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">paquete</span> es una unidad de código publicada por terceros, con nombre, versión y documentación. Una <span class="term">dependencia</span> es un paquete que tu proyecto necesita.</p>
+              <p>Un proyecto sencillo puede tener 20 dependencias directas y, a través de ellas, tirar de cientos de <span class="term">dependencias transitivas</span> (dependencias de tus dependencias). Todo eso se instala automáticamente.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">package.json y requirements.txt</span>
+              <span class="component__hint">el manifiesto del proyecto</span>
+            </summary>
+            <div class="component__body">
+              <p>En Node.js, <span class="term">package.json</span> es el archivo central del proyecto: nombre, versión, dependencias, scripts. En Python el equivalente es <span class="term">requirements.txt</span> (o modernamente <em>pyproject.toml</em>).</p>
+              <p>Cuando alguien te comparte un proyecto, con un <em>npm install</em> o <em>pip install -r requirements.txt</em> reconstruyes todo su entorno.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Lockfile</span>
+              <span class="component__hint">versiones congeladas</span>
+            </summary>
+            <div class="component__body">
+              <p>Archivo generado automáticamente que guarda las versiones <em>exactas</em> de todas las dependencias, directas y transitivas. Ejemplos: <span class="term">package-lock.json</span> (npm), <span class="term">yarn.lock</span>, <span class="term">pnpm-lock.yaml</span>.</p>
+              <p>Sirve para reproducibilidad: si tú y otro colega instaláis el proyecto la misma semana, ambos obtenéis exactamente las mismas versiones. Debe subirse al repositorio.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Versión semántica (semver)</span>
+              <span class="component__hint">1.2.3 significa algo</span>
+            </summary>
+            <div class="component__body">
+              <p>Convención universal para numerar versiones de un paquete: <em>MAYOR.MENOR.PARCHE</em>. Un cambio de "parche" (1.2.3 → 1.2.4) arregla bugs sin cambiar el comportamiento. Uno "menor" (1.2 → 1.3) añade cosas sin romper. Uno "mayor" (1.x → 2.0) rompe la compatibilidad.</p>
+              <p>En la práctica sirve para saber si actualizar puede romper algo o no.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Registro público de paquetes</span>
+              <span class="component__hint">npm · PyPI</span>
+            </summary>
+            <div class="component__body">
+              <p>Servidor público desde el que se descargan los paquetes. El <span class="term">npm registry</span> aloja millones de paquetes JavaScript. <span class="term">PyPI</span> hace lo mismo para Python. Son bienes comunes de la industria; casi todos los paquetes que instalas vienen de ellos.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Instálalo con npm install, mira el package.json para ver qué dependencias tira, y no olvides commitear el lockfile."</blockquote>
+          <p class="meeting__note">Traducción: usa el gestor de paquetes para bajar todas las librerías, revisa el archivo descriptor del proyecto para ver qué está usando, y asegúrate de guardar en el repositorio el archivo que congela las versiones exactas para que otros puedan reproducir tu entorno.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 04 ==================== -->
+    <section class="layer" id="l04" style="--layer-color: var(--c-l04)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 04</div>
+        <div>
+          <div class="layer__tag">El alfabeto que la máquina obedece</div>
+          <h2 class="layer__title">Lenguajes de programación</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Un <em>lenguaje de programación</em> es un conjunto de reglas para expresar instrucciones que la máquina puede ejecutar. Hay decenas, y cada uno tiene una comunidad, un dominio dominante y una curva de aprendizaje distintos.</p>
+          <p>Para el producto comercial (webs, dashboards, integraciones con CRM) hay tres nombres que aparecen sin falta: <em>JavaScript</em> y su versión mejorada <em>TypeScript</em> en el frontend, y <em>Python</em> en el backend y análisis de datos. Con esos tres se cubre el 90% de lo que probablemente necesites.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Compilado vs. interpretado</span>
+              <span class="component__hint">dos maneras de ejecutar</span>
+            </summary>
+            <div class="component__body">
+              <p>Un lenguaje <span class="term">compilado</span> traduce todo el código a un archivo ejecutable antes de correrlo. Rápido en producción, más rígido para iterar. Ejemplos: <span class="term">Go</span>, <span class="term">Rust</span>, C.</p>
+              <p>Un lenguaje <span class="term">interpretado</span> se ejecuta línea a línea por un runtime. Más flexible y rápido de iterar, algo más lento en ejecución. Ejemplos: JavaScript, Python.</p>
+              <p>Es distinción académica pero se filtra en las conversaciones cuando se habla de rendimiento.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Tipado estático vs. dinámico</span>
+              <span class="component__hint">chequeo antes o después</span>
+            </summary>
+            <div class="component__body">
+              <p>En <span class="term">tipado estático</span> el tipo de cada variable (número, texto, lista) se declara y se comprueba antes de ejecutar. Detecta errores temprano; obliga a más disciplina. Ejemplos: TypeScript, Go.</p>
+              <p>En <span class="term">tipado dinámico</span> los tipos se comprueban al ejecutar. Más flexible, más rápido de escribir, más fácil de romper. Ejemplos: JavaScript puro, Python.</p>
+              <p>Para proyectos serios, el tipado estático suele ganar. Para prototipos rápidos, el dinámico.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">JavaScript</span>
+              <span class="component__hint">el lenguaje universal de la web</span>
+            </summary>
+            <div class="component__body">
+              <p>El único lenguaje que ejecutan todos los navegadores del mundo. Nació para pequeños scripts de página, hoy corre desde la web hasta servidores (Node.js), aplicaciones móviles (React Native) y servidores de escritorio (Electron).</p>
+              <p>Es imposible construir para la web sin tocar, aunque sea de refilón, JavaScript.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">TypeScript</span>
+              <span class="component__hint">JavaScript con red de seguridad</span>
+            </summary>
+            <div class="component__body">
+              <p>Extensión de JavaScript creada por Microsoft que añade <em>tipado estático</em>. En la práctica: te avisa mientras escribes de errores que en JavaScript solo verías al ejecutar. Es el estándar en producto empresarial serio y el favorito de la IA porque le da más pistas.</p>
+              <p>Se escribe casi igual que JavaScript. Antes de ejecutarse se traduce ("transpila") a JavaScript normal.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Python</span>
+              <span class="component__hint">datos, IA y automatización</span>
+            </summary>
+            <div class="component__body">
+              <p>Lenguaje interpretado con sintaxis muy legible ("casi como leer inglés"). Domina en tres dominios: análisis de datos, IA/machine learning, y automatización de procesos (scripts, ETL, integraciones).</p>
+              <p>Si tu herramienta va a leer Excel, cruzar CSV con bases de datos o llamar a modelos de IA, Python es probablemente la elección natural.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Otros lenguajes que oirás</span>
+              <span class="component__hint">Go, Rust, Java, C#</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Go</span>: lenguaje compilado de Google. Usado en infraestructura y microservicios.</p>
+              <p><span class="term">Rust</span>: compilado, foco en rendimiento y seguridad de memoria. Emergente.</p>
+              <p><span class="term">Java</span>: histórico, base de sistemas empresariales. Corre en cualquier sitio.</p>
+              <p><span class="term">C#</span>: el equivalente de Microsoft, base del ecosistema <span class="term">.NET</span>. Muy común en corporaciones que ya viven en Windows.</p>
+              <p>No los necesitas para tu primer proyecto, pero aparecerán en conversaciones con clientes.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">HTML y CSS</span>
+              <span class="component__hint">no son de programación, pero conviene saberlo</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">HTML</span> es un lenguaje de <em>marcado</em>: describe qué elementos hay en una página (títulos, párrafos, botones, imágenes). <span class="term">CSS</span> es un lenguaje de <em>estilos</em>: dice cómo se ven esos elementos (colores, tamaños, disposición).</p>
+              <p>Ninguno es de programación en sentido estricto, pero cualquier interfaz web se compone de HTML + CSS + JavaScript. Los frameworks modernos (Capa 05) los generan por ti, pero el nombre aparece constantemente.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Linter y formateador</span>
+              <span class="component__hint">buen estilo automatizado</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">linter</span> analiza tu código y avisa de errores obvios y de estilos malos antes de ejecutarlo (ESLint para JS/TS, Ruff para Python). Un <span class="term">formateador</span> reordena y reindenta el código para que siga un estilo consistente (Prettier para JS/TS, Black para Python).</p>
+              <p>Los dos se ejecutan automáticamente al guardar y te ahorran discusiones estéticas eternas.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"El backend en Python con FastAPI, el frontend en TypeScript con React. Prettier y ESLint activos, con Ruff en el lado Python."</blockquote>
+          <p class="meeting__note">Traducción: dos lenguajes, uno en cada lado del producto. Utilizan formateadores y linters que aseguran que el código de todo el equipo se ve y comporta igual. Es una elección estándar y madura; no requiere debate técnico.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 05 ==================== -->
+    <section class="layer" id="l05" style="--layer-color: var(--c-l05)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 05</div>
+        <div>
+          <div class="layer__tag">Materiales elegidos con propósito</div>
+          <h2 class="layer__title">Frameworks y stack técnico</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Sobre los lenguajes se apoyan los <em>frameworks</em>: paquetes grandes de código pre-hecho que resuelven problemas comunes —renderizar interfaces, gestionar rutas web, conectarse a bases de datos, autenticar usuarios—. Sin framework, tendrías que reinventar todo eso cada vez.</p>
+          <p>Elegir un <em>stack</em> —la combinación de lenguaje + framework + herramientas— es la primera decisión estratégica de cualquier proyecto. La buena noticia: para casos comerciales comunes, existen combinaciones estándar que la industria ya usa. No necesitas inventar; necesitas reconocer.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Framework vs. librería</span>
+              <span class="component__hint">quién llama a quién</span>
+            </summary>
+            <div class="component__body">
+              <p>Una <span class="term">librería</span> es un conjunto de funciones que tú llamas cuando quieres. Un <span class="term">framework</span> es una estructura completa: tú escribes tu código dentro de sus reglas, y él te llama a ti cuando corresponde.</p>
+              <p>Metafóricamente: una librería es una caja de herramientas; un framework es un taller ya montado con normas de trabajo.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Frontend, backend y full stack</span>
+              <span class="component__hint">las dos mitades del producto</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Frontend</span>: la parte que ve el usuario en el navegador o la app. Botones, formularios, gráficas.</p>
+              <p><span class="term">Backend</span>: la parte que corre en un servidor, invisible para el usuario. Lógica de negocio, acceso a base de datos, APIs.</p>
+              <p><span class="term">Full stack</span>: perfil o proyecto que abarca las dos. Muchos proyectos pequeños son full stack por definición.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">React y Next.js</span>
+              <span class="component__hint">el estándar del frontend moderno</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">React</span> es una librería de JavaScript (creada por Facebook) para construir interfaces con <span class="term">componentes</span> reutilizables. Es dominante en producto empresarial.</p>
+              <p><span class="term">Next.js</span> es un framework que envuelve React y le añade lo que le falta: sistema de rutas, renderizado en servidor, optimizaciones, despliegue integrado con Vercel. En 2026 es la base habitual de webs de producto.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Alternativas: Vue, Svelte, Astro</span>
+              <span class="component__hint">otras familias del frontend</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Vue</span>: alternativa a React con enfoque más accesible. Muy popular en Asia y Europa.</p>
+              <p><span class="term">Svelte</span>: framework moderno que compila a JavaScript ultraligero. Buen rendimiento con poco código.</p>
+              <p><span class="term">Astro</span>: enfocado a webs orientadas a contenido (blogs, documentación), con muy poca sobrecarga en el navegador.</p>
+              <p>Todas son elecciones legítimas. Para una primera herramienta, la comunidad que hay detrás de React/Next es lo que suele decantar la balanza.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Tailwind CSS</span>
+              <span class="component__hint">estilos por composición</span>
+            </summary>
+            <div class="component__body">
+              <p>Sistema de estilos que aporta cientos de <span class="term">clases utilitarias</span> pequeñas (padding, colores, tipografías, layouts) que se combinan directamente en el HTML. Elimina la necesidad de escribir CSS a mano y produce interfaces coherentes rápido.</p>
+              <p>Se ha convertido en el compañero habitual de React y Next.js en producción.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Backends comunes</span>
+              <span class="component__hint">Express, FastAPI, Django</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Express</span>: framework mínimo para backends en Node.js. Rápido y sin opiniones fuertes.</p>
+              <p><span class="term">FastAPI</span>: framework moderno de Python especializado en APIs. Muy rápido, con tipado.</p>
+              <p><span class="term">Django</span>: framework veterano de Python, "batteries included" (base de datos, autenticación, panel de admin fuera de la caja).</p>
+              <p>Para una primera herramienta con IA, FastAPI es una elección muy natural.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Boilerplate y estructura</span>
+              <span class="component__hint">el esqueleto de un proyecto</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Boilerplate</span>: código repetitivo mínimo necesario para arrancar un proyecto. Muchas plantillas y comandos (<em>create-next-app</em>, <em>npm create vite</em>) lo generan por ti en segundos.</p>
+              <p>La <span class="term">estructura de carpetas</span> típica separa la interfaz (<em>/src/components</em>, <em>/src/pages</em>), la lógica (<em>/src/lib</em>) y los recursos estáticos (<em>/public</em>).</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Componente y estado</span>
+              <span class="component__hint">los átomos del frontend</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">componente</span> es un bloque reutilizable de interfaz: un botón, una tarjeta, un formulario. Los componentes se combinan como piezas de lego para construir pantallas.</p>
+              <p>El <span class="term">estado</span> son los datos que la aplicación mantiene en memoria y que cambian con la interacción (qué texto has escrito, qué opción has seleccionado). Gestionar bien el estado es la mitad del trabajo de un frontend.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">MVP y arquitectura dimensionada</span>
+              <span class="component__hint">no construir una catedral</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">MVP</span> (Minimum Viable Product) es una versión mínima de un producto que ya aporta valor. La disciplina de dimensionar bien: si tu herramienta solo va a usarla tu equipo de 5 personas, no necesita la arquitectura que sostiene a Amazon.</p>
+              <p>Este es probablemente el punto más importante de toda la capa: la mayoría de proyectos fallan por sobreingeniería, no por falta de recursos.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Vamos a levantar el MVP con Next.js y Tailwind, backend en FastAPI y una base de datos ligera. Estructura por componentes y sin sobreingeniería."</blockquote>
+          <p class="meeting__note">Traducción: eligen un stack estándar, ampliamente adoptado, para poner en marcha una versión mínima funcional. Están anunciando que no van a construir una catedral: van a resolver el caso de uso con lo justo. Es una respuesta pragmática y madura.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 06 ==================== -->
+    <section class="layer" id="l06" style="--layer-color: var(--c-l06)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 06</div>
+        <div>
+          <div class="layer__tag">El aprendiz que también ejecuta</div>
+          <h2 class="layer__title">IA como copiloto de desarrollo</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>La IA ha cambiado el desarrollo. No sustituye al programador experto, pero acelera brutalmente al que sabe pedirle bien. Y —esta es la puerta que abre este volumen— hace posible que alguien sin formación técnica formal construya herramientas útiles a partir de conversaciones bien dirigidas con un asistente.</p>
+          <p>La clave está menos en escribir código que en <em>saber describir problemas</em>: qué quieres que haga la herramienta, qué debe pasar cuando algo no funciona, qué es aceptable y qué no. La capa lingüística sube de nivel; la capa técnica baja.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">LLMs generalistas</span>
+              <span class="component__hint">ChatGPT · Claude · Gemini</span>
+            </summary>
+            <div class="component__body">
+              <p>Los modelos de lenguaje grandes son la base. <span class="term">ChatGPT</span> (OpenAI) fue el primer asistente popular en mainstream. <span class="term">Claude</span> (Anthropic) destaca por su calidad en tareas de razonamiento largo y código. <span class="term">Gemini</span> (Google) se integra con su ecosistema.</p>
+              <p>Cualquiera de los tres, bien pedido, produce código funcional para tareas comerciales típicas.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Autocompletado en el editor</span>
+              <span class="component__hint">GitHub Copilot</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">GitHub Copilot</span> fue el primer producto masivo: sugerencias de código en línea mientras escribes, aceptables con la tecla Tab. Funciona sobre VS Code y otros editores.</p>
+              <p>No sustituye la conversación; complementa. Es útil especialmente cuando ya sabes lo que quieres escribir y solo necesitas agilidad.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Editores agenticos</span>
+              <span class="component__hint">Cursor · Windsurf · Claude Code</span>
+            </summary>
+            <div class="component__body">
+              <p>La generación siguiente: editores que no solo autocompletan, sino que <em>leen tu proyecto entero</em>, entienden el contexto y son capaces de modificar varios archivos a la vez a partir de una instrucción en lenguaje natural.</p>
+              <ul>
+                <li><span class="term">Cursor</span>: variante de VS Code con IA integrada. Muy popular.</li>
+                <li><span class="term">Windsurf</span>: equivalente, con enfoque en flujos agenticos.</li>
+                <li><span class="term">Claude Code</span>: herramienta de línea de comandos de Anthropic para delegar tareas de código.</li>
+                <li><span class="term">Aider</span>: cliente open-source similar, desde la terminal.</li>
+              </ul>
+              <p>Son el punto donde alguien sin formación técnica puede construir productivamente.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Prompt y contexto</span>
+              <span class="component__hint">las dos palancas</span>
+            </summary>
+            <div class="component__body">
+              <p>El <span class="term">prompt</span> es tu instrucción a la IA. Su calidad determina la calidad del resultado. Un buen prompt describe el <em>qué</em> (objetivo), el <em>cómo</em> (estilo, restricciones) y el <em>cuándo funcionaría</em> (criterio de éxito).</p>
+              <p>El <span class="term">contexto</span> es todo lo demás que la IA tiene a mano al responder: archivos abiertos, mensajes previos, documentación adjunta. Un prompt vago con buen contexto puede funcionar mejor que un prompt largo sin contexto.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Referencia de archivos</span>
+              <span class="component__hint">@archivo, /add</span>
+            </summary>
+            <div class="component__body">
+              <p>Casi todas las herramientas modernas permiten adjuntar archivos concretos al contexto del asistente (<em>@nombre-archivo</em>, <em>/add</em>). Es la manera más eficaz de decirle a la IA sobre qué queremos que actúe.</p>
+              <p>Regla práctica: mejor tres archivos bien seleccionados que veinte irrelevantes.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Vibe coding y desarrollo dirigido</span>
+              <span class="component__hint">dos modos legítimos</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Vibe coding</span>: programar guiado por intuición, iterando con la IA sin planificación previa. Muy útil para prototipar rápido y descubrir qué queremos.</p>
+              <p><span class="term">Desarrollo dirigido</span>: planificar la estructura, escribir prompts claros, revisar cada cambio. Necesario cuando el código va a producción.</p>
+              <p>Los dos modos son legítimos si sabes en cuál estás. El error es hacer vibe coding y creer que ya está listo para producción.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Riesgos que hay que conocer</span>
+              <span class="component__hint">alucinaciones, dependencia oscura, bugs sutiles</span>
+            </summary>
+            <div class="component__body">
+              <p>La IA a veces inventa funciones o librerías que no existen (<em>alucinaciones de código</em>). Puede introducir paquetes desconocidos como dependencia (<em>dependencia oscura</em>). Puede resolver un caso obvio y fallar en uno raro (<em>bugs sutiles</em>).</p>
+              <p>Contramedidas: revisar cada cambio grande, ejecutar el código en local antes de aprobarlo, mantener un buen conjunto de datos de prueba y —si el proyecto lo justifica— pedir a un desarrollador humano una revisión antes de publicarlo.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Prototipé la landing con Cursor y Claude, adjunté los tres archivos relevantes al contexto, y revisamos el diff antes de commitear."</blockquote>
+          <p class="meeting__note">Traducción: usaron un editor con IA para escribir el primer código, le pasaron los archivos del proyecto para que la IA entendiera el contexto, y aun así revisaron manualmente los cambios antes de guardarlos formalmente. Es un flujo de trabajo maduro con IA; no es magia, es dirección.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 07 ==================== -->
+    <section class="layer" id="l07" style="--layer-color: var(--c-l07)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 07</div>
+        <div>
+          <div class="layer__tag">Cobrar vida en tu propia máquina</div>
+          <h2 class="layer__title">Ejecución local</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>Antes de compartirlo con el mundo, tu programa se prueba en tu propia máquina. Enciendes un <em>servidor de desarrollo</em>, tu portátil se convierte por un momento en un pequeño servidor web, y abres el resultado en una dirección peculiar: <em>localhost:3000</em>.</p>
+          <p>Este ciclo entre escribir código, ver el cambio en el navegador en segundos y volver al editor es la esencia del desarrollo moderno. La productividad de todo lo que hagas después depende de que este ciclo esté bien engrasado.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Servidor de desarrollo</span>
+              <span class="component__hint">tu portátil como servidor</span>
+            </summary>
+            <div class="component__body">
+              <p>Un proceso que corre en tu propia máquina y sirve tu aplicación mientras la desarrollas. Se arranca con un comando (típicamente <em>npm run dev</em>) y queda vivo hasta que lo paras.</p>
+              <p>Ese servidor es <em>solo tuyo</em>: nadie de fuera puede acceder. Es el entorno de pruebas privado donde iteras a máxima velocidad.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">localhost y puertos</span>
+              <span class="component__hint">tu propia dirección</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">localhost</span> es el nombre reservado que apunta a tu propio ordenador. Cuando el servidor de desarrollo se arranca, tu navegador puede visitarlo escribiendo <em>localhost:3000</em>.</p>
+              <p>Ese <span class="term">3000</span> es el <span class="term">puerto</span>: un número que identifica un servicio dentro de una máquina. Los frameworks suelen usar puertos por defecto (3000 en Next.js, 5173 en Vite, 8000 en FastAPI). Si el puerto ya está ocupado, saltará automáticamente al siguiente.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Script npm</span>
+              <span class="component__hint">atajos definidos en package.json</span>
+            </summary>
+            <div class="component__body">
+              <p>En <em>package.json</em> se declaran comandos con nombre: <em>dev</em>, <em>build</em>, <em>test</em>, <em>lint</em>. Se ejecutan con <em>npm run &lt;nombre&gt;</em>. Sirven para no tener que recordar comandos largos: <em>npm run dev</em> arranca el servidor de desarrollo tal y como el proyecto está configurado.</p>
+              <p>Cuando abres un proyecto nuevo, mirar los scripts definidos es la mejor manera de saber qué puedes hacer con él.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Compilación (build)</span>
+              <span class="component__hint">de desarrollo a producción</span>
+            </summary>
+            <div class="component__body">
+              <p>La <span class="term">compilación</span> o <span class="term">build</span> es el proceso de traducir el código fuente a una versión optimizada, comprimida y lista para producción. Los frameworks modernos lo hacen automáticamente con un solo comando.</p>
+              <p>Producto lateral: mientras el modo desarrollo prioriza velocidad de iteración, el build prioriza tamaño y velocidad de carga final. Nunca se sirve al usuario el código de desarrollo tal cual.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Bundler</span>
+              <span class="component__hint">Vite · Webpack · esbuild</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">bundler</span> es la herramienta que toma decenas de archivos de código y los junta en unos pocos optimizados. Es la pieza que hace posible el paso de "diez mil líneas repartidas" a "una web que carga en 200 ms".</p>
+              <p><span class="term">Vite</span> es el bundler moderno y muy rápido, estándar en proyectos recientes. <span class="term">Webpack</span> es el histórico, muy configurable pero lento. <span class="term">esbuild</span> es el motor ultrarrápido detrás de muchos otros.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Hot reload (HMR)</span>
+              <span class="component__hint">cambia y ve el cambio al instante</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Hot Module Replacement</span>. Cuando cambias un archivo del proyecto, el servidor de desarrollo recarga solo esa parte en el navegador sin reiniciar todo. En Vite o Next.js, el cambio suele reflejarse en menos de un segundo.</p>
+              <p>Esta capacidad, que hace 10 años era exótica, es hoy la base de la productividad de cualquier proyecto frontend.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">DevTools del navegador</span>
+              <span class="component__hint">la ventana al interior</span>
+            </summary>
+            <div class="component__body">
+              <p>Herramientas incorporadas en cualquier navegador moderno (F12 en la mayoría). Permiten inspeccionar el HTML renderizado, los estilos aplicados, las peticiones de red, los mensajes de la <span class="term">consola</span>, y el rendimiento.</p>
+              <p>Son la primera parada cuando algo no funciona como esperas. La IA suele pedirte "abre la consola y dime qué ves".</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Variables de entorno (.env)</span>
+              <span class="component__hint">configuración local, no versionada</span>
+            </summary>
+            <div class="component__body">
+              <p>Un archivo <em>.env</em> guarda valores sensibles o dependientes del entorno: claves API, URLs de bases de datos, credenciales. Cada desarrollador tiene el suyo local; nunca se sube al repositorio (por eso <em>.env</em> aparece siempre en <em>.gitignore</em>).</p>
+              <p>Es el primer sitio donde miran los desarrolladores cuando algo no arranca. Es también uno de los orígenes de incidentes de seguridad más frecuentes cuando se sube por error.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Depuración: logs, breakpoints, stack traces</span>
+              <span class="component__hint">encontrar por qué falla</span>
+            </summary>
+            <div class="component__body">
+              <p>Cuando algo no funciona, tienes tres armas: <span class="term">logs</span> (mensajes que la aplicación escribe describiendo lo que hace), <span class="term">breakpoints</span> (puntos donde el código se para y puedes inspeccionar todo) y <span class="term">stack traces</span> (el rastro del error a través de las funciones que lo produjeron).</p>
+              <p>La IA es muy buena leyendo stack traces. Pásaselo tal cual: te dará una hipótesis en segundos.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"Arranca el dev server con npm run dev en localhost:3000, verás el hot reload a cada cambio. Si algo peta, mira la consola y pásale el stack trace a Claude."</blockquote>
+          <p class="meeting__note">Traducción: enciende el entorno local de pruebas en tu propia máquina. Cuando cambies el código lo verás reflejado al instante. Si algo falla, abre el panel del navegador donde salen los errores y copia el mensaje completo al asistente de IA para diagnosticarlo. Es el ciclo estándar de trabajo diario.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LAYER 08 ==================== -->
+    <section class="layer" id="l08" style="--layer-color: var(--c-l08)">
+      <header class="layer__header">
+        <div class="layer__num">CAPA 08</div>
+        <div>
+          <div class="layer__tag">De tu portátil al mundo</div>
+          <h2 class="layer__title">Repositorio y despliegue público</h2>
+        </div>
+      </header>
+
+      <div class="layer__intro">
+        <div class="layer__intro-label">Idea central</div>
+        <div class="layer__intro-body">
+          <p>El último salto: sacar el código de tu portátil y ponerlo en un lugar donde otros puedan usarlo. Son dos movimientos combinados. Primero, guardar el código en un <em>repositorio remoto</em> (GitHub) para que no dependa de tu disco duro. Segundo, publicarlo en una <em>plataforma de despliegue</em> (Railway, Vercel, Netlify) que le dará una URL pública accesible desde cualquier sitio.</p>
+          <p>La belleza del ecosistema actual: bien configurado, cada vez que guardas un cambio en el repositorio, la plataforma lo despliega automáticamente. El flujo de "cambio local → producción" puede llegar a durar menos de un minuto.</p>
+        </div>
+      </div>
+
+      <div class="components">
+        <div class="components__label">Componentes</div>
+        <div class="components__list">
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Git y control de versiones</span>
+              <span class="component__hint">memoria completa del proyecto</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Git</span> es un sistema que registra cada cambio del código con quién lo hizo, cuándo y por qué. Permite volver atrás, comparar versiones, colaborar sin pisarse. Es la base invisible de todo el desarrollo profesional moderno.</p>
+              <p>Se usa desde la terminal o desde el propio VS Code. La IA lo maneja bien; en la práctica, con tres comandos (<em>add</em>, <em>commit</em>, <em>push</em>) haces el 90% del uso diario.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Repositorio (GitHub, GitLab, Bitbucket)</span>
+              <span class="component__hint">el archivo en la nube</span>
+            </summary>
+            <div class="component__body">
+              <p>Un <span class="term">repositorio</span> es el contenedor del código con su historial completo. <span class="term">GitHub</span> es la plataforma dominante que lo aloja en la nube: es simultáneamente archivo, red social de desarrolladores y sistema de colaboración.</p>
+              <p><span class="term">GitLab</span> y <span class="term">Bitbucket</span> son alternativas equivalentes, populares en entornos corporativos.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Commit, branch, merge</span>
+              <span class="component__hint">el vocabulario de Git</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Commit</span>: confirmar un conjunto de cambios en el historial, con un mensaje descriptivo.</p>
+              <p><span class="term">Branch</span> o rama: copia paralela del código donde trabajar sin afectar la línea principal. Se usa para probar cosas o desarrollar nuevas funcionalidades.</p>
+              <p><span class="term">Merge</span>: integrar los cambios de una rama en otra.</p>
+              <p>La rama principal se llama tradicionalmente <em>main</em> (antes <em>master</em>). Un flujo típico: crear una rama, hacer cambios, commitear, abrir un <span class="term">pull request</span>, revisar, mergear a main.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Push, pull y clone</span>
+              <span class="component__hint">sincronizar con la nube</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Clone</span>: descargar por primera vez un repositorio remoto para tener una copia local.</p>
+              <p><span class="term">Push</span>: enviar tus commits locales al repositorio remoto.</p>
+              <p><span class="term">Pull</span>: descargar los cambios remotos que otros hayan hecho.</p>
+              <p>Con estos tres verbos —clone, push, pull— más el trío add/commit/push del punto anterior, tienes la operativa diaria completa.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">.gitignore y README</span>
+              <span class="component__hint">qué ignorar, cómo presentarse</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">.gitignore</span>: archivo que lista qué carpetas y ficheros Git debe ignorar. Típicamente: <em>node_modules</em>, archivos <em>.env</em> con credenciales, carpetas de <em>build</em>.</p>
+              <p><span class="term">README</span>: documento de presentación del repositorio (formato Markdown). Describe qué es el proyecto, cómo instalarlo y cómo usarlo. Es lo primero que verá cualquier persona (o IA) que aterrice en tu repositorio.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Deploy (despliegue)</span>
+              <span class="component__hint">de código a servicio activo</span>
+            </summary>
+            <div class="component__body">
+              <p>El <span class="term">deploy</span> es el proceso por el que tu código pasa a estar corriendo en un servidor real, accesible por internet. Antaño requería configurar servidores manualmente; hoy plataformas especializadas lo automatizan por completo.</p>
+              <p>El patrón moderno: conectas la plataforma a tu repositorio de GitHub. Cada vez que haces push a la rama principal, la plataforma reconstruye y despliega la nueva versión automáticamente.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Plataformas de despliegue</span>
+              <span class="component__hint">Vercel · Netlify · Railway · Render</span>
+            </summary>
+            <div class="component__body">
+              <p><span class="term">Vercel</span>: especializada en frontends modernos (Next.js). Muy pulida, gratuita para proyectos pequeños.</p>
+              <p><span class="term">Netlify</span>: equivalente a Vercel, muy usada para webs estáticas y frontends.</p>
+              <p><span class="term">Railway</span>: enfocada a aplicaciones con backend y bases de datos. Muy popular en prototipos con Python o Node.</p>
+              <p><span class="term">Cloudflare Pages</span>: opción gratuita generosa, apoyada en la red global de Cloudflare.</p>
+              <p><span class="term">Render</span>: alternativa versátil para apps con backend y datos persistentes.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Build automático y CI/CD</span>
+              <span class="component__hint">el ciclo desatendido</span>
+            </summary>
+            <div class="component__body">
+              <p>Las plataformas modernas ejecutan un <span class="term">build automático</span> cada vez que detectan un push: descargan el código, instalan las dependencias, compilan y despliegan. Todo esto sin intervención humana.</p>
+              <p>El concepto general se llama <span class="term">CI/CD</span> (Continuous Integration / Continuous Deployment). En un proyecto pequeño está ya montado por defecto; en uno grande se personaliza mucho.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">URL, dominio y subdominio</span>
+              <span class="component__hint">la dirección que compartes</span>
+            </summary>
+            <div class="component__body">
+              <p>La <span class="term">URL pública</span> es la dirección accesible desde internet. Al principio será una URL genérica que te asigna la plataforma (<em>mi-herramienta.vercel.app</em>).</p>
+              <p>Después puedes conectarla a un <span class="term">dominio</span> propio (<em>brompton.com</em>) o a un <span class="term">subdominio</span> (<em>leads.brompton.com</em>). Los dominios se compran a un registrador (Namecheap, Cloudflare, Google Domains) por precios modestos.</p>
+            </div>
+          </details>
+
+          <details class="component">
+            <summary>
+              <span class="component__title">Rollback</span>
+              <span class="component__hint">volver atrás cuando algo falla</span>
+            </summary>
+            <div class="component__body">
+              <p>Todas las plataformas modernas permiten hacer <span class="term">rollback</span> instantáneo: volver a una versión anterior con un solo clic si el último deploy rompe algo. Combinado con el historial de Git, hace que trabajar con miedo a "romperlo todo" sea absurdo.</p>
+              <p>Este es el punto donde la infraestructura moderna deja de ser un lujo y se convierte en una red de seguridad para quien empieza.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="meeting">
+        <div class="meeting__label">En una reunión</div>
+        <div class="meeting__body">
+          <p class="meeting__title">Lo que oirás</p>
+          <blockquote class="meeting__quote">"El repo está en GitHub con deploy automático a Railway; cada push a main dispara build y despliegue en la URL pública. Si algo falla, rollback en un clic."</blockquote>
+          <p class="meeting__note">Traducción: el código está guardado en la nube. Cada cambio confirmado en la rama principal genera automáticamente una versión nueva accesible por internet. Y si esa versión rompe algo, se vuelve atrás al instante. Es el flujo de trabajo profesional estándar en 2026 —y está al alcance sin escribir una sola línea de configuración manual.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== GLOSSARY ==================== -->
+    <section class="glossary" id="glosario">
+      <header class="glossary__header">
+        <div class="glossary__num">§ · REFERENCIA</div>
+        <h2 class="glossary__title">Glosario ampliado</h2>
+        <p class="glossary__lead">Diccionario de términos que aparecen a lo largo del recorrido, cada uno etiquetado con la capa a la que pertenece. Complementa el glosario del Volumen I: aquel es de arquitectura; este es de artesanía. Úsalo antes o después de una reunión: puedes buscar por palabra o filtrar por capa.</p>
+      </header>
+
+      <div class="search">
+        <input type="text" id="glossary-search" class="search__input" placeholder="Buscar término (ej. lockfile, hot reload, WSL)…" aria-label="Buscar en el glosario">
+        <span class="search__icon">⌕</span>
+      </div>
+
+      <div class="filter-chips" id="filter-chips">
+        <button class="chip is-active" data-filter="all">Todas las capas</button>
+        <button class="chip" data-filter="01" style="--layer-color: var(--c-l01)">01 · SO local</button>
+        <button class="chip" data-filter="02" style="--layer-color: var(--c-l02)">02 · CLI</button>
+        <button class="chip" data-filter="03" style="--layer-color: var(--c-l03)">03 · Runtimes</button>
+        <button class="chip" data-filter="04" style="--layer-color: var(--c-l04)">04 · Lenguajes</button>
+        <button class="chip" data-filter="05" style="--layer-color: var(--c-l05)">05 · Frameworks</button>
+        <button class="chip" data-filter="06" style="--layer-color: var(--c-l06)">06 · IA copiloto</button>
+        <button class="chip" data-filter="07" style="--layer-color: var(--c-l07)">07 · Ejecución local</button>
+        <button class="chip" data-filter="08" style="--layer-color: var(--c-l08)">08 · Despliegue</button>
+      </div>
+
+      <div class="glossary__grid" id="glossary-grid">
+        <!-- Los términos se inyectan por JS -->
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p><strong>MIT · Digital Fluency for Commercial Leadership · Volumen II.</strong> Este material completa al primero: donde el Volumen I mapeaba el terreno completo del stack, este te lleva por el flujo real de construcción. La combinación cubre la doble cara de la fluidez digital: entender lo que se dice, y ser capaz de producirlo.</p>
+      <p>Diseñado como material único, autocontenido y exportable como URL. Impresión soportada: usa el diálogo de impresión del navegador para generar un PDF con todas las capas expandidas.</p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+/* ========================= DATOS DEL GLOSARIO ========================= */
+const GLOSSARY = [
+  // === CAPA 01 · Máquina local y SO ===
+  {t: "Sistema operativo", l: "01", d: "Software base que gestiona el hardware y coordina el resto de programas. Windows, macOS y Linux son los tres dominantes."},
+  {t: "Windows", l: "01", d: "Sistema operativo de Microsoft, dominante en PC de oficina y muy común en entornos corporativos."},
+  {t: "macOS", l: "01", d: "Sistema operativo de Apple, basado en Unix. Común en equipos creativos y de desarrollo."},
+  {t: "Linux", l: "01", d: "Familia de sistemas operativos abiertos basados en el núcleo Linux. Dominante en servidores."},
+  {t: "Ubuntu", l: "01", d: "Distribución de Linux popular, orientada a facilidad de uso. Muy usada como entorno de desarrollo dentro de Windows."},
+  {t: "Distribución (distro)", l: "01", d: "Versión concreta de Linux con su propio conjunto de programas y comunidad. Ubuntu, Debian, Fedora son distros."},
+  {t: "WSL", l: "01", d: "Windows Subsystem for Linux. Capa que permite ejecutar Ubuntu (u otras distros) dentro de Windows sin virtualización pesada."},
+  {t: "IDE", l: "01", d: "Integrated Development Environment. Programa que reúne editor de código, depurador y herramientas en una interfaz."},
+  {t: "Editor de código", l: "01", d: "Programa que permite escribir y editar código. VS Code, Sublime, Vim son ejemplos."},
+  {t: "VS Code", l: "01", d: "Editor de código gratuito de Microsoft. Estándar de facto en desarrollo moderno."},
+  {t: "Cursor", l: "01", d: "Editor derivado de VS Code enfocado en IA. Incorpora chat, edición y agentes."},
+  {t: "Windsurf", l: "01", d: "Editor con IA equivalente a Cursor, con capacidad agentica."},
+  {t: "JetBrains", l: "01", d: "Familia de IDEs profesionales de pago: WebStorm (JS/TS), PyCharm (Python), IntelliJ (Java)."},
+  {t: "Extensión", l: "01", d: "Programa adicional que amplía un editor con funciones (soporte de lenguajes, IA, git, etc.)."},
+  {t: "Marketplace de extensiones", l: "01", d: "Catálogo integrado en el editor desde el que se descargan e instalan extensiones."},
+  {t: "Sistema de archivos", l: "01", d: "Manera en la que el sistema operativo organiza y localiza los archivos en disco."},
+  {t: "Ruta (path)", l: "01", d: "Dirección completa de un archivo o carpeta en el sistema de archivos."},
+  {t: "Permisos de archivo", l: "01", d: "Reglas que determinan quién puede leer, escribir o ejecutar cada archivo. Muy explícitos en Linux y macOS."},
+
+  // === CAPA 02 · CLI ===
+  {t: "CLI", l: "02", d: "Command Line Interface. Interfaz de texto donde escribes comandos que la máquina ejecuta."},
+  {t: "GUI", l: "02", d: "Graphical User Interface. Interfaz visual con ventanas, botones y ratón."},
+  {t: "Terminal", l: "02", d: "Aplicación que abre una ventana de texto para trabajar con la CLI."},
+  {t: "Shell", l: "02", d: "Programa que interpreta los comandos que escribes. PowerShell, Bash y Zsh son shells."},
+  {t: "PowerShell", l: "02", d: "Shell nativo de Windows, potente para automatización administrativa."},
+  {t: "Bash", l: "02", d: "Shell tradicional de Unix y Linux. Estándar en servidores y en WSL."},
+  {t: "Zsh", l: "02", d: "Shell moderno, popular en macOS. Extiende y mejora Bash."},
+  {t: "Prompt de terminal", l: "02", d: "Símbolo (típicamente $ o >) que indica que el shell está listo para recibir un comando."},
+  {t: "Comando", l: "02", d: "Instrucción escrita que ejecutas en la CLI."},
+  {t: "Argumento", l: "02", d: "Valor que se pasa a un comando para especificar sobre qué actúa."},
+  {t: "Flag / opción", l: "02", d: "Modificador que altera el comportamiento de un comando (ej. -l en 'ls -l')."},
+  {t: "cd", l: "02", d: "Change Directory. Cambia la carpeta actual en la que trabaja el shell."},
+  {t: "ls / dir", l: "02", d: "Lista los archivos y carpetas del directorio actual."},
+  {t: "mkdir", l: "02", d: "Make Directory. Crea una carpeta nueva."},
+  {t: "cat", l: "02", d: "Muestra el contenido de un archivo directamente en la terminal."},
+  {t: "Directorio de trabajo", l: "02", d: "Carpeta actual en la que se ejecutan los comandos del shell."},
+  {t: "Variables de entorno", l: "02", d: "Valores nombrados accesibles al shell y a los programas. Guardan configuración y credenciales."},
+
+  // === CAPA 03 · Runtimes y paquetes ===
+  {t: "Runtime", l: "03", d: "Programa que ejecuta código escrito en un lenguaje concreto. Node.js es el runtime de JavaScript fuera del navegador."},
+  {t: "Node.js", l: "03", d: "Runtime de JavaScript que permite ejecutarlo en el servidor y en herramientas de línea de comandos."},
+  {t: "Deno", l: "03", d: "Runtime moderno alternativo a Node.js, con foco en seguridad."},
+  {t: "Bun", l: "03", d: "Runtime moderno alternativo a Node.js, con foco en velocidad."},
+  {t: "Gestor de paquetes", l: "03", d: "Herramienta que instala, actualiza y organiza librerías de terceros. npm, pip, yarn son ejemplos."},
+  {t: "npm", l: "03", d: "Gestor de paquetes por defecto de Node.js. También el registro público más grande del mundo."},
+  {t: "yarn", l: "03", d: "Gestor de paquetes alternativo a npm."},
+  {t: "pnpm", l: "03", d: "Gestor de paquetes moderno que ahorra espacio compartiendo dependencias entre proyectos."},
+  {t: "pip", l: "03", d: "Gestor de paquetes de Python."},
+  {t: "Paquete", l: "03", d: "Unidad reutilizable de código publicada por terceros e instalable con un gestor de paquetes."},
+  {t: "Dependencia", l: "03", d: "Paquete que tu proyecto necesita para funcionar."},
+  {t: "Dependencia transitiva", l: "03", d: "Dependencia de una dependencia. Se instala automáticamente cuando instalas la principal."},
+  {t: "package.json", l: "03", d: "Fichero descriptivo del proyecto Node.js: nombre, versión, dependencias y scripts."},
+  {t: "requirements.txt", l: "03", d: "Equivalente de Python: lista las dependencias del proyecto."},
+  {t: "Lockfile", l: "03", d: "Fichero que congela las versiones exactas de todas las dependencias para reproducibilidad."},
+  {t: "package-lock.json", l: "03", d: "Lockfile de npm. Debe subirse al repositorio para que todo el equipo tenga las mismas versiones."},
+  {t: "Semver", l: "03", d: "Semantic Versioning. Convención MAYOR.MENOR.PARCHE para numerar versiones de paquetes."},
+  {t: "node_modules", l: "03", d: "Carpeta donde npm descarga todas las dependencias del proyecto. Puede pesar cientos de MB."},
+  {t: "Registro de paquetes", l: "03", d: "Servidor público donde se alojan los paquetes. npm registry, PyPI son los principales."},
+  {t: "PyPI", l: "03", d: "Python Package Index. Registro público de paquetes Python."},
+
+  // === CAPA 04 · Lenguajes ===
+  {t: "Lenguaje de programación", l: "04", d: "Conjunto de reglas para escribir instrucciones ejecutables por una máquina."},
+  {t: "Sintaxis", l: "04", d: "Reglas gramaticales de un lenguaje: qué símbolos y estructuras son válidos."},
+  {t: "Compilado", l: "04", d: "Lenguaje que se traduce a un ejecutable antes de correr. Ej.: Go, Rust, C."},
+  {t: "Interpretado", l: "04", d: "Lenguaje que se ejecuta línea a línea por un runtime. Ej.: Python, JavaScript."},
+  {t: "Tipado estático", l: "04", d: "El tipo de cada variable se declara y se comprueba antes de ejecutar. Ej.: TypeScript, Go."},
+  {t: "Tipado dinámico", l: "04", d: "Los tipos se comprueban al ejecutar. Ej.: Python, JavaScript."},
+  {t: "JavaScript", l: "04", d: "Lenguaje universal de la web. Se ejecuta en todo navegador y en el servidor vía Node.js."},
+  {t: "TypeScript", l: "04", d: "Extensión de JavaScript que añade tipado estático. Muy usado en frontend empresarial."},
+  {t: "Python", l: "04", d: "Lenguaje interpretado con sintaxis clara. Estándar en datos, IA y automatización."},
+  {t: "Go", l: "04", d: "Lenguaje compilado creado en Google. Muy usado en infraestructura y microservicios."},
+  {t: "Rust", l: "04", d: "Lenguaje compilado orientado a rendimiento y seguridad de memoria. Emergente."},
+  {t: "Java", l: "04", d: "Lenguaje empresarial clásico. Base de muchos sistemas corporativos legacy."},
+  {t: "C#", l: "04", d: "Lenguaje de Microsoft. Estándar en aplicaciones empresariales sobre Windows."},
+  {t: ".NET", l: "04", d: "Plataforma de desarrollo de Microsoft sobre la que se ejecutan C# y otros lenguajes."},
+  {t: "HTML", l: "04", d: "Lenguaje de marcado para estructurar contenido en la web. No es de programación en sentido estricto."},
+  {t: "CSS", l: "04", d: "Lenguaje de estilos para dar aspecto a HTML. Tampoco es de programación en sentido estricto."},
+  {t: "Linter", l: "04", d: "Herramienta que analiza el código y detecta errores o estilos malos antes de ejecutarlo. Ej.: ESLint, Ruff."},
+  {t: "Formateador", l: "04", d: "Herramienta que reformatea código para seguir un estilo uniforme. Ej.: Prettier, Black."},
+
+  // === CAPA 05 · Frameworks y stack ===
+  {t: "Framework", l: "05", d: "Estructura de código preexistente que impone patrones y ofrece piezas para no partir de cero."},
+  {t: "Librería", l: "05", d: "Conjunto de funciones reutilizables. A diferencia del framework, tú controlas cuándo la llamas."},
+  {t: "Stack tecnológico", l: "05", d: "Combinación de lenguajes, frameworks y servicios que forman un producto. Ej.: MERN, LAMP, JAMstack."},
+  {t: "Frontend", l: "05", d: "Parte del producto que ve el usuario en el navegador o app."},
+  {t: "Backend", l: "05", d: "Parte del producto que corre en servidor: lógica, datos, APIs."},
+  {t: "Full stack", l: "05", d: "Perfil o proyecto que abarca frontend y backend."},
+  {t: "React", l: "05", d: "Librería de JavaScript para construir interfaces. Dominante en producto empresarial."},
+  {t: "Next.js", l: "05", d: "Framework de React que añade rutas, renderizado y despliegue. Base habitual de webs modernas."},
+  {t: "Vue", l: "05", d: "Alternativa a React con enfoque más accesible."},
+  {t: "Svelte", l: "05", d: "Framework moderno que compila a JavaScript ultraligero."},
+  {t: "Astro", l: "05", d: "Framework para webs orientado a contenido, con muy poca sobrecarga en el navegador."},
+  {t: "Tailwind CSS", l: "05", d: "Librería de utilidades CSS. Ampliamente adoptada como compañero de React."},
+  {t: "Express", l: "05", d: "Framework mínimo para backends en Node.js."},
+  {t: "FastAPI", l: "05", d: "Framework moderno de Python para APIs. Rápido y con tipado."},
+  {t: "Django", l: "05", d: "Framework de Python veterano, con muchas piezas incluidas ('batteries included')."},
+  {t: "Boilerplate", l: "05", d: "Código repetitivo mínimo para arrancar un proyecto. Muchas plantillas lo generan por ti."},
+  {t: "Estructura de carpetas", l: "05", d: "Organización estándar del código de un proyecto en directorios con propósito claro."},
+  {t: "Componente", l: "05", d: "Bloque reutilizable de interfaz (un botón, una tarjeta, un formulario)."},
+  {t: "Estado (state)", l: "05", d: "Datos que la aplicación mantiene en memoria y que cambian con la interacción del usuario."},
+  {t: "MVP", l: "05", d: "Minimum Viable Product. Versión mínima de un producto que ya aporta valor."},
+
+  // === CAPA 06 · IA copiloto ===
+  {t: "LLM", l: "06", d: "Large Language Model. El modelo que genera texto o código a partir de instrucciones."},
+  {t: "ChatGPT", l: "06", d: "Interfaz de chat de OpenAI. Uno de los primeros asistentes populares para generar código."},
+  {t: "Claude", l: "06", d: "Asistente de Anthropic. Reconocido por razonamiento largo y calidad en código."},
+  {t: "Gemini", l: "06", d: "Asistente de Google, con integración a su ecosistema."},
+  {t: "GitHub Copilot", l: "06", d: "Autocompletado de código con IA integrado en el editor. Producto de GitHub y Microsoft."},
+  {t: "Claude Code", l: "06", d: "Herramienta de Anthropic para programar con Claude desde la terminal o el editor."},
+  {t: "Aider", l: "06", d: "Cliente open-source que orquesta un LLM sobre un repositorio local desde la terminal."},
+  {t: "Autocompletado inteligente", l: "06", d: "Sugerencias de código en línea mientras escribes, aceptables con Tab."},
+  {t: "Chat lateral", l: "06", d: "Panel de conversación con la IA dentro del editor, con contexto del proyecto."},
+  {t: "Agentic coding", l: "06", d: "Modo en el que la IA lee archivos, edita varios y ejecuta cambios de manera autónoma."},
+  {t: "Prompt", l: "06", d: "Instrucción escrita a la IA. La calidad del prompt determina la calidad del resultado."},
+  {t: "Contexto", l: "06", d: "Información disponible para la IA al responder: archivos abiertos, mensajes previos, documentación adjunta."},
+  {t: "Referencia de archivos", l: "06", d: "Mecanismo (@archivo, /add) para adjuntar ficheros al contexto del asistente."},
+  {t: "Vibe coding", l: "06", d: "Programación guiada por intuición y feedback continuo con la IA, sin planificación previa. Útil para prototipar."},
+  {t: "Rubber duck", l: "06", d: "Técnica de explicar un problema en voz alta (o al chat) para entenderlo mejor. La IA amplifica esta técnica."},
+  {t: "Alucinación de código", l: "06", d: "Cuando la IA inventa funciones o librerías que no existen. Riesgo a vigilar."},
+
+  // === CAPA 07 · Ejecución local ===
+  {t: "Compilación (build)", l: "07", d: "Proceso de traducir código fuente a un formato ejecutable u optimizado."},
+  {t: "Bundler", l: "07", d: "Herramienta que junta y optimiza todos los archivos del proyecto en pocos. Vite, Webpack, esbuild."},
+  {t: "Vite", l: "07", d: "Bundler moderno, muy rápido. Estándar en proyectos frontend recientes."},
+  {t: "Webpack", l: "07", d: "Bundler histórico, muy configurable pero más lento."},
+  {t: "esbuild", l: "07", d: "Motor de bundling ultrarrápido, escrito en Go. Base de muchas herramientas modernas."},
+  {t: "Script npm", l: "07", d: "Comando definido en package.json que ejecuta tareas comunes (dev, build, test)."},
+  {t: "npm run dev", l: "07", d: "Convención habitual para arrancar el servidor de desarrollo."},
+  {t: "Servidor de desarrollo", l: "07", d: "Proceso que sirve tu aplicación en tu propia máquina mientras la desarrollas."},
+  {t: "localhost", l: "07", d: "Nombre reservado que apunta a tu propio ordenador. localhost:3000 abre el servidor local en el puerto 3000."},
+  {t: "Puerto", l: "07", d: "Número que identifica un servicio dentro de una máquina. 3000, 5173, 8000 son habituales en desarrollo."},
+  {t: "Hot reload", l: "07", d: "Recarga automática del código cambiado sin reiniciar todo el servidor."},
+  {t: "HMR", l: "07", d: "Hot Module Replacement. Nombre técnico del hot reload en frameworks modernos."},
+  {t: "Consola del navegador", l: "07", d: "Panel donde el navegador muestra logs, errores y permite ejecutar JavaScript."},
+  {t: "DevTools", l: "07", d: "Herramientas del navegador para inspeccionar HTML, red, rendimiento y depurar. Se abren con F12."},
+  {t: "Modo desarrollo", l: "07", d: "Configuración con más logs y menos optimización, pensada para iterar rápido."},
+  {t: "Modo producción", l: "07", d: "Configuración optimizada, con código minificado, sin logs de depuración."},
+  {t: ".env", l: "07", d: "Archivo local con configuración sensible (claves API, URLs). No se sube al repositorio."},
+  {t: "Debug", l: "07", d: "Proceso de encontrar y corregir errores en el código."},
+  {t: "Breakpoint", l: "07", d: "Punto donde el código se para para inspeccionar el estado. Herramienta esencial de depuración."},
+  {t: "Log", l: "07", d: "Mensaje que la aplicación escribe para informar de lo que hace."},
+  {t: "Stack trace", l: "07", d: "Rastreo del recorrido de un error a través de las funciones. La primera línea suele ser la más informativa."},
+
+  // === CAPA 08 · Repositorio y despliegue ===
+  {t: "Control de versiones", l: "08", d: "Sistema que registra cada cambio del código con quién lo hizo, cuándo y por qué."},
+  {t: "Git", l: "08", d: "Sistema de control de versiones dominante. Base de la colaboración moderna."},
+  {t: "GitHub", l: "08", d: "Plataforma comercial de repositorios Git. Estándar del sector."},
+  {t: "GitLab", l: "08", d: "Alternativa a GitHub, popular en entornos corporativos y con foco en DevOps."},
+  {t: "Bitbucket", l: "08", d: "Plataforma de repositorios de Atlassian, integrada con Jira y Confluence."},
+  {t: "Repositorio", l: "08", d: "Contenedor del código de un proyecto, con su historial completo."},
+  {t: "Commit", l: "08", d: "Confirmación de un cambio en el historial. Debe llevar mensaje descriptivo."},
+  {t: "Branch", l: "08", d: "Rama. Copia paralela del código donde trabajar sin afectar la línea principal."},
+  {t: "main / master", l: "08", d: "Rama principal del repositorio, considerada estable."},
+  {t: "Merge", l: "08", d: "Integrar los cambios de una rama en otra."},
+  {t: "Pull request", l: "08", d: "PR. Propuesta de merge con revisión previa. Modelo estándar de colaboración en GitHub."},
+  {t: "Clone", l: "08", d: "Copia local de un repositorio remoto."},
+  {t: "Push", l: "08", d: "Enviar tus commits locales al repositorio remoto."},
+  {t: "Pull", l: "08", d: "Descargar los cambios remotos al repositorio local."},
+  {t: ".gitignore", l: "08", d: "Fichero que lista qué archivos y carpetas Git debe ignorar (node_modules, .env, builds)."},
+  {t: "README", l: "08", d: "Documento Markdown de presentación del repositorio. Descripción, instalación y uso."},
+  {t: "Deploy", l: "08", d: "Proceso de subir el código a un entorno accesible por otros usuarios."},
+  {t: "Vercel", l: "08", d: "Plataforma de despliegue automático especializada en frontends. Muy pulida, gratuita para proyectos pequeños."},
+  {t: "Netlify", l: "08", d: "Plataforma equivalente a Vercel, con enfoque similar."},
+  {t: "Railway", l: "08", d: "Plataforma de despliegue de aplicaciones full stack. Muy usada para prototipos con backend y datos."},
+  {t: "Cloudflare Pages", l: "08", d: "Plataforma gratuita de despliegue estático de Cloudflare, apoyada en su red global."},
+  {t: "Render", l: "08", d: "Plataforma de despliegue versátil para apps con backend y bases de datos."},
+  {t: "Build automático", l: "08", d: "Compilación disparada automáticamente al hacer push a la rama principal."},
+  {t: "CI/CD", l: "08", d: "Continuous Integration / Continuous Deployment. Automatización del ciclo de integración y despliegue."},
+  {t: "Dominio", l: "08", d: "Nombre humano de un sitio en internet (ej. brompton.com)."},
+  {t: "Subdominio", l: "08", d: "Prefijo del dominio (ej. leads.brompton.com)."},
+  {t: "URL pública", l: "08", d: "Dirección accesible desde internet que apunta a tu despliegue."},
+  {t: "Rollback", l: "08", d: "Volver a una versión anterior si algo falla en el despliegue."},
+];
+
+/* ========================= INYECCIÓN DEL GLOSARIO ========================= */
+const layerColorVar = (l) => `var(--c-l${l})`;
+const grid = document.getElementById("glossary-grid");
+const frag = document.createDocumentFragment();
+
+GLOSSARY.sort((a, b) => a.t.localeCompare(b.t, "es"));
+
+GLOSSARY.forEach(term => {
+  const el = document.createElement("article");
+  el.className = "gterm";
+  el.dataset.layer = term.l;
+  el.dataset.search = (term.t + " " + term.d).toLowerCase();
+  el.style.setProperty("--layer-color", layerColorVar(term.l));
+  el.innerHTML = `
+    <div class="gterm__head">
+      <h3 class="gterm__title">${term.t}</h3>
+      <span class="gterm__layer">${term.l}</span>
+    </div>
+    <p class="gterm__def">${term.d}</p>
+  `;
+  frag.appendChild(el);
+});
+grid.appendChild(frag);
+
+/* ========================= BÚSQUEDA DEL GLOSARIO ========================= */
+const searchInput = document.getElementById("glossary-search");
+let currentFilter = "all";
+
+function applyFilters() {
+  const q = searchInput.value.trim().toLowerCase();
+  const terms = grid.querySelectorAll(".gterm");
+  terms.forEach(t => {
+    const matchesLayer = currentFilter === "all" || t.dataset.layer === currentFilter;
+    const matchesSearch = !q || t.dataset.search.includes(q);
+    t.hidden = !(matchesLayer && matchesSearch);
+  });
+}
+
+searchInput.addEventListener("input", applyFilters);
+
+document.querySelectorAll(".chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("is-active"));
+    chip.classList.add("is-active");
+    currentFilter = chip.dataset.filter;
+    applyFilters();
+  });
+});
+
+/* ========================= SCROLLSPY ========================= */
+const navLinks = document.querySelectorAll(".nav-item");
+const sections = Array.from(document.querySelectorAll(".layer, .glossary"));
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(link => {
+        link.classList.toggle("is-active", link.getAttribute("href") === "#" + id);
+      });
+    }
+  });
+}, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
+
+sections.forEach(s => observer.observe(s));
+
+/* ========================= MOBILE SIDEBAR ========================= */
+const sidebar = document.getElementById("sidebar");
+const toggle = document.getElementById("mobile-toggle");
+toggle.addEventListener("click", () => {
+  sidebar.classList.toggle("is-open");
+  toggle.textContent = sidebar.classList.contains("is-open") ? "Cerrar" : "Índice";
+});
+navLinks.forEach(l => l.addEventListener("click", () => {
+  if (window.innerWidth <= 1000) {
+    sidebar.classList.remove("is-open");
+    toggle.textContent = "Índice";
+  }
+}));
+
+/* ========================= EXPANDIR TODO AL IMPRIMIR ========================= */
+window.addEventListener("beforeprint", () => {
+  document.querySelectorAll("details.component").forEach(d => d.setAttribute("open", ""));
+});
+</script>
+
+</body>
+</html>
