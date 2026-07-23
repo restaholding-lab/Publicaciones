@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Endpoint Agent — Diccionario-Guía Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0d10;
+    --bg-elevated: #16181c;
+    --bg-deeper: #08090b;
+    --bg-card: #14161a;
+    --text: #e8e6e0;
+    --text-muted: #95928a;
+    --text-faint: #5e5c56;
+    --accent: #c8a06b;
+    --accent-dim: #8a6f4a;
+    --accent-bright: #e0b97a;
+    --accent-secondary: #5f7a8c;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.16);
+    --border-accent: rgba(200,160,107,0.3);
+    --success: #6b8e6f;
+    --warning: #c88e6b;
+    --danger: #b56b6b;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-serif: 'Crimson Pro', Georgia, serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 16px; line-height: 1.65; font-weight: 400; letter-spacing: -0.005em; -webkit-font-smoothing: antialiased; }
+
+  /* HEADER */
+  header.top { position: sticky; top: 0; z-index: 50; background: rgba(12,13,16,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+  header.top .inner { max-width: 1240px; margin: 0 auto; padding: 1.1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-family: var(--font-serif); font-weight: 500; font-size: 1.05rem; letter-spacing: 0.04em; }
+  .brand span { color: var(--accent); margin-left: 0.3rem; font-style: italic; }
+  nav ul { display: flex; gap: 2rem; margin: 0; padding: 0; list-style: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.18em; }
+  nav a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; cursor: pointer; }
+  nav a:hover { color: var(--accent); }
+  @media (max-width: 880px) { nav ul { display: none; } }
+
+  /* HERO */
+  .hero { max-width: 1240px; margin: 0 auto; padding: 7rem 2rem 5rem; }
+  .hero .pre { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.5rem; }
+  .hero h1 { font-family: var(--font-serif); font-weight: 300; font-size: clamp(2.4rem, 5.5vw, 4.2rem); line-height: 1.05; margin: 0 0 1.8rem; letter-spacing: -0.025em; max-width: 950px; }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .hero .subtitle { font-size: 1.15rem; color: var(--text-muted); max-width: 760px; margin: 0 0 3rem; line-height: 1.6; }
+  .hero-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+  @media (max-width: 720px) { .hero-cards { grid-template-columns: repeat(2, 1fr); } }
+  .hero-card { padding: 1.3rem 1.4rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 4px; }
+  .hero-card .num { font-family: var(--font-mono); font-size: 1.6rem; color: var(--accent); font-weight: 500; line-height: 1; margin-bottom: 0.5rem; }
+  .hero-card .lbl { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-faint); letter-spacing: 0.12em; text-transform: uppercase; }
+
+  /* SECTIONS */
+  section { max-width: 1240px; margin: 0 auto; padding: 5rem 2rem; }
+  section.alt { background: var(--bg-deeper); max-width: none; margin: 0; padding: 5rem 2rem; }
+  section.alt > .inner { max-width: 1240px; margin: 0 auto; }
+  .section-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.5rem; }
+  h2 { font-family: var(--font-serif); font-weight: 300; font-size: clamp(2rem, 4vw, 2.8rem); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 1.5rem; max-width: 900px; }
+  h2 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .section-lead { font-size: 1.05rem; color: var(--text-muted); max-width: 800px; line-height: 1.65; margin: 0 0 2rem; }
+
+  /* VERTEBRAL CONCEPTS */
+  .vert-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .vert-card { background: var(--bg-elevated); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: 4px; padding: 1.8rem 1.7rem; transition: all 0.2s; }
+  .vert-card:hover { border-color: var(--border-strong); border-left-color: var(--accent-bright); transform: translateY(-2px); }
+  .vert-num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.18em; margin-bottom: 0.8rem; }
+  .vert-term { font-family: var(--font-serif); font-weight: 500; font-size: 1.4rem; color: var(--text); margin: 0 0 0.4rem; line-height: 1.2; }
+  .vert-pron { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-faint); margin-bottom: 1rem; letter-spacing: 0.04em; }
+  .vert-analogy { font-style: italic; color: var(--accent); font-family: var(--font-serif); font-size: 1.02rem; line-height: 1.45; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px dashed var(--border); }
+  .vert-explain { font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.6; }
+  .vert-explain strong { color: var(--text); font-weight: 500; }
+
+  /* SEARCH */
+  .search-block { max-width: 1240px; margin: 0 auto; padding: 4rem 2rem 2rem; }
+  .search-wrap { display: grid; grid-template-columns: 1fr; gap: 1.2rem; }
+  .search-input-wrap { position: relative; }
+  .search-input { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border-strong); border-radius: 4px; padding: 1.1rem 1.3rem 1.1rem 3rem; font-family: var(--font-sans); font-size: 1rem; color: var(--text); transition: border-color 0.2s; }
+  .search-input:focus { outline: none; border-color: var(--accent); }
+  .search-input::placeholder { color: var(--text-faint); }
+  .search-icon { position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); color: var(--text-faint); font-size: 1.1rem; }
+  .search-stats { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-faint); letter-spacing: 0.1em; }
+  .filter-wrap { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .filter-btn { background: transparent; border: 1px solid var(--border-strong); color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 20px; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+  .filter-btn:hover { color: var(--accent); border-color: var(--accent-dim); }
+  .filter-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  /* DICTIONARY */
+  .dict-section { padding: 2rem 2rem 4rem; max-width: 1240px; margin: 0 auto; }
+  .cat-block { margin-bottom: 3rem; }
+  .cat-header { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .cat-title { font-family: var(--font-serif); font-weight: 500; font-size: 1.6rem; margin: 0; color: var(--text); }
+  .cat-count { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-faint); letter-spacing: 0.1em; }
+  .term-grid { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
+  .term { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; transition: border-color 0.2s; }
+  .term:hover { border-color: var(--border-strong); }
+  .term-head { padding: 1.3rem 1.6rem; display: grid; grid-template-columns: 1fr auto auto; gap: 1.5rem; align-items: center; cursor: pointer; transition: background 0.15s; }
+  .term-head:hover { background: rgba(255,255,255,0.015); }
+  .term-name { font-family: var(--font-serif); font-weight: 500; font-size: 1.1rem; color: var(--text); }
+  .term-name .sigla { color: var(--accent); font-family: var(--font-mono); font-size: 0.8rem; margin-left: 0.6rem; letter-spacing: 0.05em; font-weight: 400; }
+  .term-tagline { color: var(--text-muted); font-size: 0.88rem; font-style: italic; }
+  .term-toggle { color: var(--text-muted); font-size: 1rem; line-height: 1; transition: transform 0.3s; }
+  .term.open .term-toggle { transform: rotate(45deg); color: var(--accent); }
+  .term-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .term.open .term-body { max-height: 1000px; }
+  .term-body-inner { padding: 0 1.6rem 1.8rem; border-top: 1px solid var(--border); padding-top: 1.5rem; margin-top: 0; display: grid; gap: 1.3rem; }
+  .term-block-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.18em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .term-analogy { font-family: var(--font-serif); font-style: italic; color: var(--accent); font-size: 1.05rem; line-height: 1.5; padding-left: 1rem; border-left: 2px solid var(--accent-dim); }
+  .term-block p { margin: 0; font-size: 0.92rem; color: var(--text-muted); line-height: 1.65; }
+  .term-block strong { color: var(--text); font-weight: 500; }
+  .term-block .phrase { background: rgba(200,160,107,0.06); border: 1px solid var(--border-accent); border-radius: 4px; padding: 1rem 1.2rem; font-size: 0.92rem; font-style: italic; color: var(--text); }
+  .term-block .phrase::before { content: '« '; color: var(--accent); }
+  .term-block .phrase::after { content: ' »'; color: var(--accent); }
+  .related { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem; }
+  .related a { font-family: var(--font-mono); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid var(--border-strong); border-radius: 20px; color: var(--text-muted); text-decoration: none; transition: all 0.2s; cursor: pointer; }
+  .related a:hover { color: var(--accent); border-color: var(--accent-dim); }
+  .cat-tag { display: inline-block; font-family: var(--font-mono); font-size: 0.65rem; padding: 0.25rem 0.65rem; border-radius: 3px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .cat-tag.base { background: rgba(95,122,140,0.12); color: var(--accent-secondary); }
+  .cat-tag.lang { background: rgba(200,160,107,0.1); color: var(--accent); }
+  .cat-tag.os { background: rgba(107,142,111,0.12); color: var(--success); }
+  .cat-tag.net { background: rgba(95,122,140,0.15); color: var(--accent-secondary); }
+  .cat-tag.data { background: rgba(200,142,107,0.12); color: var(--warning); }
+  .cat-tag.sec { background: rgba(181,107,107,0.1); color: var(--danger); }
+  .cat-tag.dep { background: rgba(200,160,107,0.1); color: var(--accent); }
+  .cat-tag.back { background: rgba(95,122,140,0.12); color: var(--accent-secondary); }
+
+  /* STORY (narrative section) */
+  .story-block { background: var(--bg-deeper); padding: 5rem 2rem; }
+  .story-inner { max-width: 900px; margin: 0 auto; }
+  .story-step { padding: 2.5rem 0; border-top: 1px solid var(--border); }
+  .story-step:last-child { border-bottom: 1px solid var(--border); }
+  .story-num { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 0.8rem; text-transform: uppercase; }
+  .story-step h3 { font-family: var(--font-serif); font-weight: 500; font-size: 1.6rem; margin: 0 0 1rem; line-height: 1.2; }
+  .story-step p { font-size: 1.02rem; color: var(--text-muted); line-height: 1.7; margin: 0 0 1rem; max-width: 100%; }
+  .story-step p strong { color: var(--text); font-weight: 500; }
+  .story-step .term-link { color: var(--accent); border-bottom: 1px dotted var(--accent-dim); cursor: pointer; transition: color 0.2s; }
+  .story-step .term-link:hover { color: var(--accent-bright); }
+
+  /* SALES SCRIPT */
+  .script-grid { display: grid; gap: 1rem; margin-top: 2rem; }
+  .script-item { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .script-q { padding: 1.3rem 1.6rem; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center; transition: background 0.15s; }
+  .script-q:hover { background: rgba(255,255,255,0.02); }
+  .script-q .q-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--danger); letter-spacing: 0.15em; margin-right: 0.8rem; }
+  .script-q .q-text { font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; color: var(--text); }
+  .script-q .q-toggle { color: var(--text-muted); font-size: 1rem; transition: transform 0.3s; }
+  .script-item.open .q-toggle { transform: rotate(45deg); color: var(--accent); }
+  .script-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .script-item.open .script-a { max-height: 500px; }
+  .script-a-inner { padding: 0 1.6rem 1.6rem; border-top: 1px solid var(--border); padding-top: 1.3rem; }
+  .script-a-label { font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 0.7rem; text-transform: uppercase; }
+  .script-a-inner p { margin: 0 0 0.8rem; font-size: 0.95rem; color: var(--text-muted); line-height: 1.65; }
+  .script-a-inner p:last-child { margin-bottom: 0; }
+  .script-a-inner p strong { color: var(--text); }
+
+  /* CLOSING */
+  .closing { padding: 5rem 2rem; }
+  .closing-inner { max-width: 850px; margin: 0 auto; text-align: center; }
+  .closing-quote { font-family: var(--font-serif); font-style: italic; font-weight: 300; font-size: clamp(1.3rem, 2.3vw, 1.7rem); line-height: 1.45; color: var(--text); margin: 0 0 1.5rem; }
+  .closing-author { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-faint); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; }
+  footer .inner { max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; }
+  footer .signature { font-family: var(--font-serif); font-style: italic; color: var(--text-muted); font-size: 0.92rem; }
+  footer .meta-foot { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-faint); letter-spacing: 0.12em; }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+  .hidden { display: none !important; }
+
+  /* HIGHLIGHT FLASH ON ANCHOR */
+  @keyframes flash { 0% { background: rgba(200,160,107,0.15); } 100% { background: transparent; } }
+  .term.flash { animation: flash 1.5s ease-out; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="brand">Hermes<span>Diccionario · Guía Comercial</span></div>
+    <nav>
+      <ul>
+        <li><a href="#vertebrales">Vertebrales</a></li>
+        <li><a href="#diccionario">Diccionario</a></li>
+        <li><a href="#historia">La historia</a></li>
+        <li><a href="#guion">Guion de venta</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="pre">Documento complementario · Para uso comercial · v1.0</div>
+  <h1>Cada término técnico de Hermes, traducido al <em>idioma del cliente.</em></h1>
+  <p class="subtitle">Esta guía recorre, una a una, todas las palabras técnicas que aparecen en el documento del Endpoint Agent. Cada entrada incluye una analogía del mundo real, una explicación funcional, por qué importa al cliente, y una frase lista para usar. Cuando termines de leerla, podrás defender el proyecto sin titubear delante de un CISO o un inversor.</p>
+  <div class="hero-cards">
+    <div class="hero-card"><div class="num">10</div><div class="lbl">Conceptos vertebrales</div></div>
+    <div class="hero-card"><div class="num">68</div><div class="lbl">Términos definidos</div></div>
+    <div class="hero-card"><div class="num">8</div><div class="lbl">Pasos del flujo</div></div>
+    <div class="hero-card"><div class="num">10</div><div class="lbl">Respuestas comerciales</div></div>
+  </div>
+</div>
+
+<!-- VERTEBRAL CONCEPTS -->
+<section id="vertebrales">
+  <p class="section-label">01 — Los diez conceptos vertebrales</p>
+  <h2>Si dominas estos diez, <em>entiendes el proyecto entero.</em></h2>
+  <p class="section-lead">El resto del documento es ampliación. Estos son los conceptos sin los cuales nada del flujo Hermes cobra sentido. Léelos primero. Si dudas con cualquiera, vuelve a esta sección antes de seguir.</p>
+
+  <div class="vert-grid">
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 01</div>
+      <h3 class="vert-term">Endpoint</h3>
+      <div class="vert-pron">"end-point"</div>
+      <p class="vert-analogy">Imagina cada empleado con su ordenador o móvil de empresa. Cada uno de esos dispositivos es un endpoint.</p>
+      <p class="vert-explain">Es el último eslabón de la red corporativa: <strong>el punto donde la persona se encuentra con la tecnología de la empresa</strong>. Hermes vive en cada uno de esos puntos como software silencioso.</p>
+    </div>
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 02</div>
+      <h3 class="vert-term">Agente</h3>
+      <div class="vert-pron">"agent"</div>
+      <p class="vert-analogy">Como un asistente personal invisible que trabaja en segundo plano dentro del ordenador del empleado.</p>
+      <p class="vert-explain">Programa pequeño que observa lo que ocurre, aprende, propone mejoras y ejecuta tareas. <strong>No interrumpe al usuario</strong>: simplemente está ahí, recogiendo patrones útiles.</p>
+    </div>
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 03</div>
+      <h3 class="vert-term">Skill</h3>
+      <div class="vert-pron">"skill"</div>
+      <p class="vert-analogy">Una receta de cocina escrita para la inteligencia artificial. Dice qué hacer, cuándo y con qué ingredientes.</p>
+      <p class="vert-explain">Es una <strong>habilidad procedimental</strong>: instrucciones que el agente sigue para automatizar una tarea concreta. Cada skill es un activo de la empresa que Hermes protege y mejora.</p>
+    </div>
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 04</div>
+      <h3 class="vert-term">Sensor</h3>
+      <div class="vert-pron">"sensor"</div>
+      <p class="vert-analogy">Como las cámaras de seguridad de un edificio, pero cada una mira solo lo que se le ha autorizado mirar.</p>
+      <p class="vert-explain">Componente del agente que <strong>observa una fuente específica</strong> de información (archivos, navegador, email...). Hermes tiene cinco sensores, todos opt-in y configurables.</p>
+    </div>
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 05</div>
+      <h3 class="vert-term">API</h3>
+      <div class="vert-pron">"a-p-i" · Application Programming Interface</div>
+      <p class="vert-analogy">El enchufe estándar que permite a dos programas hablar entre sí, sin tener que ver cómo está hecho el otro.</p>
+      <p class="vert-explain">"Vía oficial de entrada y salida" de un programa. Cuando decimos que usamos <strong>la API oficial de Microsoft</strong>, queremos decir que pedimos las cosas por la puerta legítima, no por la ventana.</p>
+    </div>
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 06</div>
+      <h3 class="vert-term">Telemetría</h3>
+      <div class="vert-pron">"telemetría"</div>
+      <p class="vert-analogy">Como el panel de instrumentos de un coche: te dice qué está pasando en tiempo real sin tener que abrir el motor.</p>
+      <p class="vert-explain">Conjunto de <strong>datos técnicos que un sistema emite sobre sí mismo</strong>: qué procesos arrancan, qué archivos se abren, qué ventanas están activas. Hermes captura telemetría legítima del SO, no del usuario.</p>
+    </div>
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 07</div>
+      <h3 class="vert-term">Backend / Frontend</h3>
+      <div class="vert-pron">"back-end / front-end"</div>
+      <p class="vert-analogy">La cocina del restaurante (backend) y la sala donde comen los clientes (frontend). Una invisible, otra visible.</p>
+      <p class="vert-explain">El <strong>frontend</strong> es lo que el usuario ve. El <strong>backend</strong> es donde se procesa la información, se guardan los datos y se ejecuta la lógica. Hermes tiene un backend de gobernanza llamado Sentinel.</p>
+    </div>
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 08</div>
+      <h3 class="vert-term">On-premise · Cloud</h3>
+      <div class="vert-pron">"on-premis / claud"</div>
+      <p class="vert-analogy">On-premise es tener el servidor en el sótano de tu propia empresa. Cloud es alquilarlo en un edificio compartido de otro.</p>
+      <p class="vert-explain"><strong>On-premise:</strong> el cliente aloja todo en sus servidores, sin que los datos salgan. <strong>Cloud:</strong> servicio gestionado por el proveedor. Hermes ofrece ambas modalidades, lo que es crítico en banca y defensa.</p>
+    </div>
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 09</div>
+      <h3 class="vert-term">Cifrado</h3>
+      <div class="vert-pron">"cifrado"</div>
+      <p class="vert-analogy">Una caja fuerte con combinación que solo conocen el remitente y el destinatario. Cualquiera que abra la caja sin la combinación encuentra ruido.</p>
+      <p class="vert-explain">Proceso matemático que convierte la información en algo <strong>ilegible sin la clave correcta</strong>. Hermes cifra todo: lo que guarda localmente, lo que envía por la red, las skills antes de desplegarlas.</p>
+    </div>
+
+    <div class="vert-card">
+      <div class="vert-num">N.º 10</div>
+      <h3 class="vert-term">EDR · CISO</h3>
+      <div class="vert-pron">"e-d-r" · "ci-so"</div>
+      <p class="vert-analogy">EDR es el guardia de seguridad que vigila el ordenador. CISO es el jefe de seguridad de toda la empresa, quien decide si dejar entrar a Hermes.</p>
+      <p class="vert-explain"><strong>EDR (Endpoint Detection and Response):</strong> antivirus moderno que vigila comportamientos sospechosos (CrowdStrike, SentinelOne...). <strong>CISO (Chief Information Security Officer):</strong> la persona que aprueba o veta Hermes en su empresa. Ambos son las dos miradas que el producto debe pasar.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- SEARCH -->
+<div class="search-block" id="diccionario">
+  <p class="section-label" style="margin-bottom: 1rem;">02 — Diccionario completo</p>
+  <h2 style="margin-bottom: 2rem;">Cada término. Cada sigla. <em>Cada palabra rara.</em></h2>
+
+  <div class="search-wrap">
+    <div class="search-input-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" class="search-input" id="searchBox" placeholder="Busca un término: ETW, Rust, API, OAuth, MSI, Kubernetes...">
+    </div>
+    <div class="filter-wrap" id="filterWrap">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="base">Conceptos base</button>
+      <button class="filter-btn" data-filter="lang">Lenguajes</button>
+      <button class="filter-btn" data-filter="os">Sistema operativo</button>
+      <button class="filter-btn" data-filter="net">Redes y comunicación</button>
+      <button class="filter-btn" data-filter="data">Datos y almacenamiento</button>
+      <button class="filter-btn" data-filter="sec">Seguridad y compliance</button>
+      <button class="filter-btn" data-filter="dep">Despliegue</button>
+      <button class="filter-btn" data-filter="back">Backend e infraestructura</button>
+    </div>
+    <div class="search-stats" id="searchStats"></div>
+  </div>
+</div>
+
+<!-- DICTIONARY -->
+<div class="dict-section">
+  <div id="dictContainer"></div>
+</div>
+
+<!-- STORY -->
+<div class="story-block" id="historia">
+  <div class="story-inner">
+    <p class="section-label" style="margin-bottom: 1rem;">03 — La historia, paso a paso</p>
+    <h2 style="margin-bottom: 1.5rem;">Cómo funciona Hermes contado <em>como una película.</em></h2>
+    <p class="section-lead">Lee esta sección de corrido. Es el flujo completo desde que se instala el agente hasta que despliega una skill. Cuando aparezca un término técnico, está enlazado al diccionario — pulsa para abrir su entrada.</p>
+
+    <div class="story-step">
+      <div class="story-num">Acto 01 — La instalación</div>
+      <h3>El agente entra en el ordenador sin que nadie tenga que apretar un botón.</h3>
+      <p>El departamento de IT del cliente usa una herramienta corporativa llamada <span class="term-link" data-jump="mdm">MDM</span> (en Windows, normalmente <span class="term-link" data-jump="intune">Intune</span>) para instalar nuestro paquete en miles de ordenadores de golpe. El paquete es un <span class="term-link" data-jump="msi">MSI</span> firmado con un <span class="term-link" data-jump="ev">certificado EV</span>, lo que significa que Windows reconoce que es legítimo y no lo bloquea con su filtro de seguridad. Para el empleado, la instalación es invisible: ni clics, ni reinicios, ni avisos.</p>
+      <p>La primera vez que el empleado enciende el ordenador después, ve un único mensaje que le explica qué va a recoger Hermes y le da la opción de desactivar canales concretos. Este consentimiento no es opcional: lo exige el <span class="term-link" data-jump="gdpr">GDPR</span>, y sin él el comité de empresa nunca firmaría el despliegue.</p>
+    </div>
+
+    <div class="story-step">
+      <div class="story-num">Acto 02 — Los sensores se encienden</div>
+      <h3>Cinco "ojos" del agente empiezan a observar, cada uno con su especialidad.</h3>
+      <p>Ahora hay cinco <span class="term-link" data-jump="sensor">sensores</span> activos:</p>
+      <p>El primero usa <span class="term-link" data-jump="etw">ETW</span> en Windows o <span class="term-link" data-jump="ebpf">eBPF</span> en Linux — sistemas oficiales que el propio sistema operativo ofrece para que programas autorizados sepan qué está pasando. <strong>No es espionaje:</strong> es la misma tubería que usan los antivirus profesionales como CrowdStrike.</p>
+      <p>El segundo es un vigilante de archivos: ve cuándo se crea un Excel, dónde se guarda, qué carpeta destino se usa. El tercero es una extensión instalada en el navegador (formato <span class="term-link" data-jump="webext">WebExtension MV3</span>) que captura qué webs visita el empleado y qué pregunta a ChatGPT o Gemini. El cuarto se conecta a Microsoft 365 vía <span class="term-link" data-jump="graph">Microsoft Graph</span> con permisos <span class="term-link" data-jump="oauth">OAuth</span> limitados para entender patrones de email. El quinto son plug-ins dentro de Office y otras apps que capturan contexto específico de cada herramienta.</p>
+    </div>
+
+    <div class="story-step">
+      <div class="story-num">Acto 03 — Todo pasa por la criba</div>
+      <h3>Los eventos llegan al cerebro del agente y se limpian antes de tocar disco.</h3>
+      <p>El cerebro se llama <strong>Event Pipeline</strong> y está escrito en <span class="term-link" data-jump="rust">Rust</span>, un lenguaje de programación moderno que ocupa muy poco espacio y es muy difícil de manipular. Aquí los eventos se transforman a un formato único llamado <span class="term-link" data-jump="ecs">schema ECS</span> y se aplican filtros estrictos: no se guarda contenido literal, solo metadatos. Los nombres de archivo se <span class="term-link" data-jump="token">tokenizan</span> (se sustituyen por etiquetas genéricas), las palabras largas se reemplazan por su <span class="term-link" data-jump="hash">hash</span> (una huella digital irreversible).</p>
+    </div>
+
+    <div class="story-step">
+      <div class="story-num">Acto 04 — Tres armarios cifrados guardan lo aprendido</div>
+      <h3>Tres almacenes locales, cada uno con su función y todos bajo llave.</h3>
+      <p>El primero es <span class="term-link" data-jump="sqlcipher">SQLCipher</span>: una base de datos pequeña cifrada con un estándar militar (<span class="term-link" data-jump="aes">AES-256-GCM</span>) donde los eventos viven un máximo de siete días antes de borrarse. El segundo es el <strong>Pattern Store</strong>: aquí se guardan los patrones derivados y los <span class="term-link" data-jump="embed">embeddings</span> (números que representan el significado de cada acción). El tercero es el <strong>Audit Log</strong>: una bitácora que solo deja añadir, nunca borrar, firmada con una cadena criptográfica llamada <span class="term-link" data-jump="merkle">Merkle hash chain</span>, lo que la hace imposible de manipular sin que se note.</p>
+    </div>
+
+    <div class="story-step">
+      <div class="story-num">Acto 05 — El motor GEPA encuentra patrones útiles</div>
+      <h3>Cada seis horas el agente piensa: "¿Qué se repite aquí que merezca convertirse en una skill?".</h3>
+      <p>El motor <span class="term-link" data-jump="gepa">GEPA</span> es lo que nos diferencia. Usa algoritmos llamados <span class="term-link" data-jump="prefix">PrefixSpan</span> y <span class="term-link" data-jump="hdbscan">HDBSCAN</span> para detectar secuencias de acciones que se repiten lo suficiente como para merecer automatización. Por ejemplo: "este empleado, todos los viernes, descarga el mismo informe, lo edita, y lo manda al mismo grupo de personas". GEPA genera entonces un borrador de skill — un archivo de texto con instrucciones — que cifrará y enviará al backend.</p>
+    </div>
+
+    <div class="story-step">
+      <div class="story-num">Acto 06 — El envío viaja blindado al backend</div>
+      <h3>Lo que sale del ordenador del empleado va por una autopista privada con dos cerraduras.</h3>
+      <p>El borrador de skill viaja por un protocolo llamado <span class="term-link" data-jump="grpc">gRPC</span>, más rápido y compacto que las APIs web tradicionales. Va cifrado con <span class="term-link" data-jump="mtls">mTLS</span>, que es como un cara a cara con DNI por ambas partes: el agente verifica que el backend es real, y el backend verifica que el agente es real. Si alguien intentara colarse en medio, el cifrado se rompería y no podría leer nada.</p>
+    </div>
+
+    <div class="story-step">
+      <div class="story-num">Acto 07 — Sentinel filtra y propone</div>
+      <h3>El backend curador no acepta skills a ciegas: las analiza, las puntúa y las pasa a un humano.</h3>
+      <p>El <strong>Skill Curator</strong> recibe propuestas de cientos de endpoints. Las deduplica, las clasifica con ayuda de un <span class="term-link" data-jump="llm">LLM</span> y elimina las irrelevantes o las peligrosas. Solo las mejores llegan a un administrador corporativo, que las revisa en menos de tres minutos y decide si aprobarlas. Las aprobadas se cifran y se guardan en el <strong>Skill Vault</strong>, listas para desplegar.</p>
+    </div>
+
+    <div class="story-step">
+      <div class="story-num">Acto 08 — El despliegue selectivo cierra el círculo</div>
+      <h3>La skill aprobada vuelve a los empleados que la necesitan, no a todos, no de golpe.</h3>
+      <p>El <strong>Policy Engine</strong> aplica reglas declarativas: esta skill solo para el departamento financiero, esta otra solo para gerentes de zona, esta otra de forma gradual (primero el 10 %, luego el 50 %, luego todos). Si en algún momento la skill da error en más de tres endpoints, se cancela automáticamente sin que nadie tenga que intervenir. <strong>Y el círculo se cierra:</strong> el agente del empleado ya tiene una nueva habilidad que aprendió de sus propios patrones, validada por su propia empresa, sin que ningún dato saliera de su control.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- SALES SCRIPT -->
+<section id="guion">
+  <p class="section-label">04 — Guion de venta</p>
+  <h2>Diez preguntas reales que <em>te van a hacer.</em></h2>
+  <p class="section-lead">Las preguntas que un CISO o un inversor con experiencia te lanzará en los primeros cinco minutos. Cada una con la respuesta lista, escrita en lenguaje de negocio, no técnico. Léelas hasta que las puedas decir sin pensar.</p>
+
+  <div class="script-grid" id="scriptGrid"></div>
+</section>
+
+<div class="closing">
+  <div class="closing-inner">
+    <p class="closing-quote">Saber dónde está el botón no te hace ingeniero. Saber por qué ese botón existe, y qué pasa cuando lo pulsas, sí te convierte en alguien con quien merece la pena hablar.</p>
+    <div class="closing-author">Principio rector de esta guía</div>
+  </div>
+</div>
+
+<footer>
+  <div class="inner">
+    <div class="signature">Hermes Enterprise Shield · Diccionario-guía comercial · v1.0</div>
+    <div class="meta-foot">Junio 2026 · Material de apoyo interno</div>
+  </div>
+</footer>
+
+<script>
+// ============= DICTIONARY DATA =============
+const dict = [
+  // ============ CONCEPTOS BASE ============
+  { id: 'endpoint', cat: 'base', term: 'Endpoint', sigla: '', tagline: 'Cada ordenador o móvil de empresa.',
+    analogy: 'Cada vez que un empleado enciende su portátil o desbloquea su móvil corporativo, está activando un endpoint.',
+    explain: 'Es el último eslabón de la red de la empresa: el punto donde la persona y la tecnología se tocan. Hermes vive en cada endpoint como software silencioso.',
+    why: 'Vender por endpoint en lugar de por usuario o por token nos da un modelo de precios predecible y plano. Es nuestro diferencial frente a Microsoft Copilot u OpenAI Enterprise, que escalan en coste con el uso.',
+    phrase: 'Cobramos una tarifa marginal por endpoint, sin penalizaciones por volumen. Cuanto más usen Hermes, más rentable es el contrato para el cliente.',
+    related: ['agent', 'skill'] },
+
+  { id: 'agent', cat: 'base', term: 'Agente', sigla: 'agent',
+    tagline: 'El programa silencioso que vive en cada endpoint.',
+    analogy: 'Como un asistente personal que trabaja en segundo plano, atento a patrones útiles pero sin interrumpir nunca.',
+    explain: 'Software pequeño y autónomo que observa, aprende, propone y ejecuta tareas dentro del ordenador del empleado.',
+    why: 'A diferencia de los chatbots tradicionales, el agente no espera órdenes: actúa por iniciativa propia dentro de límites definidos por la empresa. Eso es lo que da el salto de productividad real.',
+    phrase: 'No es un chatbot que responde, es un agente que actúa. Trabaja por su cuenta dentro del perímetro que la empresa le marca.',
+    related: ['endpoint', 'skill', 'sensor'] },
+
+  { id: 'skill', cat: 'base', term: 'Skill', sigla: '',
+    tagline: 'Una habilidad procedimental, como una receta para la IA.',
+    analogy: 'Una receta de cocina, pero escrita para que la inteligencia artificial sepa qué hacer paso a paso.',
+    explain: 'Conjunto de instrucciones que el agente sigue para automatizar una tarea concreta del empleado. Cada skill es propiedad intelectual de la empresa que la generó.',
+    why: 'Las skills son el activo central. Microsoft Copilot exige que cada usuario las cree manualmente. Hermes las descubre solo y las protege para que no puedan exportarse fuera de la empresa.',
+    phrase: 'Cada skill es un trozo de know-how operativo de la empresa, cifrado dentro del agente. Si un competidor pone la mano sobre el archivo, le sirve de nada.',
+    related: ['agent', 'gepa', 'curator'] },
+
+  { id: 'sensor', cat: 'base', term: 'Sensor', sigla: '',
+    tagline: 'El "ojo" del agente para una fuente concreta.',
+    analogy: 'Como las cámaras de un edificio: cada una enfoca una zona específica, y todas son configurables.',
+    explain: 'Componente del agente que observa una fuente determinada de actividad: archivos, navegador, email, sistema operativo o aplicaciones.',
+    why: 'Hermes tiene cinco sensores y todos son opt-in. El CISO decide cuál se activa en cada departamento. Esa granularidad es lo que permite cumplir con GDPR y con políticas internas dispares.',
+    phrase: 'Marketing puede tener activos email y navegador, Finanzas solo archivos. Cada departamento configura su propio perímetro.',
+    related: ['etw', 'webext', 'graph'] },
+
+  { id: 'api', cat: 'base', term: 'API', sigla: 'Application Programming Interface',
+    tagline: 'La vía oficial por la que dos programas hablan.',
+    analogy: 'El enchufe estándar entre dos aparatos: te permite conectarlos sin saber cómo está hecho cada uno por dentro.',
+    explain: 'Conjunto de funciones y reglas que un programa expone para que otros programas le pidan cosas de forma controlada.',
+    why: 'Cuando decimos que usamos la API oficial de Microsoft, queremos decir que pedimos la información por la puerta legítima. No estamos hackeando, estamos usando las vías que Microsoft creó precisamente para esto.',
+    phrase: 'No interceptamos nada. Pedimos los datos por la puerta principal, con los permisos que el cliente nos autoriza explícitamente.',
+    related: ['graph', 'oauth'] },
+
+  { id: 'sdk', cat: 'base', term: 'SDK', sigla: 'Software Development Kit',
+    tagline: 'Una caja de herramientas que un fabricante entrega a los desarrolladores.',
+    analogy: 'Si una API es el enchufe, el SDK es la caja con todos los cables, adaptadores y manuales para usarlo bien.',
+    explain: 'Paquete de librerías, herramientas y ejemplos que un proveedor publica para que otros desarrolladores integren sus servicios fácilmente.',
+    why: 'Las "SDK wrappers" mencionadas en el documento son librerías que envuelven las llamadas a otros LLM para que Hermes pueda registrarlas. Es una de las tres vías para capturar consultas a IA externa.',
+    phrase: 'Si un equipo de desarrollo quiere usar OpenAI o Claude, lo hace a través de nuestro SDK, que cumple la política corporativa por defecto.',
+    related: ['api', 'llm'] },
+
+  { id: 'llm', cat: 'base', term: 'LLM', sigla: 'Large Language Model',
+    tagline: 'Modelo de inteligencia artificial generativa, tipo ChatGPT o Claude.',
+    analogy: 'Como un cerebro entrenado con millones de libros que sabe responder, redactar, programar y razonar.',
+    explain: 'Modelo de IA capaz de procesar y generar lenguaje natural. ChatGPT, Claude, Gemini, Llama y Phi son ejemplos de LLM.',
+    why: 'Hermes captura las consultas que los empleados hacen a LLM externos, porque ahí está la pista más valiosa: revela qué no saben hacer solos y qué quieren delegar.',
+    phrase: 'Las preguntas que los empleados hacen a ChatGPT son una mina de oro. Nos dicen exactamente qué tareas convertir en skills propias.',
+    related: ['gepa', 'phi'] },
+
+  { id: 'telemetry', cat: 'base', term: 'Telemetría', sigla: '',
+    tagline: 'Datos técnicos que un sistema emite sobre sí mismo.',
+    analogy: 'Como el cuadro de mandos de un coche: te dice velocidad, gasolina y temperatura sin abrir el motor.',
+    explain: 'Información estructurada que el sistema operativo o las aplicaciones emiten sobre eventos internos: procesos arrancados, archivos abiertos, ventanas activas.',
+    why: 'La telemetría es lo que captura Hermes — datos técnicos legítimos del sistema, no contenido del usuario. Esta distinción es clave para que el CISO firme.',
+    phrase: 'Capturamos telemetría del sistema operativo, no contenido del empleado. Es el mismo tipo de datos que usa cualquier antivirus profesional.',
+    related: ['etw', 'ebpf'] },
+
+  { id: 'pipeline', cat: 'base', term: 'Pipeline', sigla: '',
+    tagline: 'Cadena de pasos por la que pasan los datos.',
+    analogy: 'Como una línea de montaje en una fábrica: el dato entra crudo, pasa por estaciones, sale procesado.',
+    explain: 'Secuencia ordenada de pasos por los que circula la información, transformándose en cada paso.',
+    why: 'El Event Pipeline del agente es donde los eventos crudos se limpian, anonimizan y normalizan antes de tocar disco. Es la pieza que garantiza que no salen datos personales.',
+    phrase: 'Antes de almacenar nada, el dato pasa por filtros de privacidad. Lo crudo no llega ni al disco local cifrado.',
+    related: ['ecs', 'token'] },
+
+  { id: 'mvp', cat: 'base', term: 'MVP', sigla: 'Minimum Viable Product',
+    tagline: 'La versión mínima que demuestra que el producto funciona.',
+    analogy: 'El primer coche con motor que conducía solo, aunque feo y lento, antes del Tesla actual.',
+    explain: 'Versión inicial de un producto con las funcionalidades mínimas necesarias para validar la idea con usuarios reales.',
+    why: 'Nuestro MVP recomendado (Windows + file watcher + extensión Edge) cubre el 70 % del parque corporativo europeo con la mitad del trabajo. Permite validar la hipótesis antes de invertir en multi-plataforma.',
+    phrase: 'En la Fase 1 entregamos el MVP con dos sensores en Windows. Si funciona con 20 empleados reales durante un mes, validamos la inversión completa.',
+    related: ['roadmap'] },
+
+  { id: 'stack', cat: 'base', term: 'Stack tecnológico', sigla: '',
+    tagline: 'El conjunto de tecnologías que componen el producto.',
+    analogy: 'Como las capas de un edificio: cimientos, estructura, fachada, instalaciones. Cada capa con su material.',
+    explain: 'Combinación de lenguajes, frameworks, bases de datos y herramientas que conforman un sistema completo.',
+    why: 'Cada decisión de stack se justifica por restricción operativa, no por gusto. Eso es lo que nos diferencia de productos hechos con tecnología elegida por moda.',
+    phrase: 'No elegimos Rust por moda. Lo elegimos porque es la única opción que cumple las tres restricciones: binario pequeño, difícil de descompilar, sin dependencias.',
+    related: ['rust', 'ts', 'csharp'] },
+
+  // ============ LENGUAJES ============
+  { id: 'rust', cat: 'lang', term: 'Rust', sigla: '',
+    tagline: 'Lenguaje moderno, rápido y seguro para el núcleo del agente.',
+    analogy: 'Un material de construcción ligero, robusto y que no se oxida. Caro de aprender, barato de mantener.',
+    explain: 'Lenguaje de programación creado por Mozilla, conocido por producir binarios pequeños, sin fugas de memoria y muy difíciles de descompilar. Lo usan Microsoft, AWS y la mayoría de proyectos de seguridad modernos.',
+    why: 'Es la única opción que cumple las tres restricciones del agente: tamaño pequeño, dificultad de ingeniería inversa, y ausencia de runtime (no necesita instalar nada más para funcionar).',
+    phrase: 'El núcleo está en Rust, el mismo lenguaje que usa el firmware moderno de Windows y los EDR más avanzados. No es exotismo, es la opción estándar para esta categoría de software.',
+    related: ['stack', 'tokio'] },
+
+  { id: 'ts', cat: 'lang', term: 'TypeScript', sigla: 'TS',
+    tagline: 'JavaScript profesional para la extensión de navegador.',
+    analogy: 'JavaScript con barandillas: el mismo lenguaje de las webs, pero con reglas que evitan errores comunes.',
+    explain: 'Variante de JavaScript con tipos estrictos, mantenida por Microsoft. Es el estándar de facto para frontend y extensiones de navegador profesionales.',
+    why: 'Las extensiones de navegador modernas se escriben en TypeScript. Es lo que esperan los revisores de Chrome Web Store cuando firmamos la extensión corporativa.',
+    phrase: 'La extensión está en TypeScript, el mismo lenguaje en el que Google y Microsoft escriben sus propias extensiones corporativas.',
+    related: ['webext'] },
+
+  { id: 'csharp', cat: 'lang', term: 'C# .NET 8', sigla: 'C-sharp',
+    tagline: 'El lenguaje oficial de Microsoft para integrarse con Office.',
+    analogy: 'El lenguaje de la casa: si quieres integrarte profundamente con Excel, Word u Outlook, tienes que hablar el idioma de Microsoft.',
+    explain: 'Lenguaje creado por Microsoft, base de toda la suite Office y de gran parte del software corporativo. La versión .NET 8 es la última LTS.',
+    why: 'Los plug-ins de Outlook nativo o VSTO (Visual Studio Tools for Office) solo se pueden escribir en .NET. No hay alternativa si queremos esa integración profunda.',
+    phrase: 'Para integrarse con Outlook desktop o Excel a fondo no hay opción: Microsoft solo soporta su propio stack. Por eso usamos C#.',
+    related: ['vsto', 'officejs'] },
+
+  { id: 'go', cat: 'lang', term: 'Go', sigla: 'Golang',
+    tagline: 'Lenguaje de Google para servicios backend rápidos.',
+    analogy: 'Como un sedán fiable: no es deportivo, pero arranca siempre, consume poco y nunca te deja tirado.',
+    explain: 'Lenguaje creado por Google, diseñado para servicios de red. Lo usan Docker, Kubernetes y la mayoría de la infraestructura moderna.',
+    why: 'Una opción válida para el backend Sentinel cuando se prioriza rendimiento y simplicidad operativa. La alternativa es Python.',
+    phrase: 'El backend puede ir en Go o Python según el cliente. Ambos son estándar de la industria.',
+    related: ['fastapi'] },
+
+  { id: 'python', cat: 'lang', term: 'Python · FastAPI', sigla: '',
+    tagline: 'Lenguaje versátil para el backend Sentinel y la inteligencia de curación.',
+    analogy: 'La navaja suiza de los lenguajes: vale para casi todo, especialmente para IA y procesamiento de datos.',
+    explain: 'Python es el lenguaje dominante en IA y análisis. FastAPI es el framework moderno para construir APIs web rápidas con Python.',
+    why: 'Permite iterar muy rápido en el backend de curación de skills, integrar LLM clasificadores y construir prototipos antes de cliente final.',
+    phrase: 'El backend de curación está en Python con FastAPI. Nos permite integrar modelos de IA y modificar reglas sin recompilar nada.',
+    related: ['llm', 'go'] },
+
+  { id: 'nextjs', cat: 'lang', term: 'Next.js · Tailwind', sigla: '',
+    tagline: 'Tecnologías estándar para el panel de gobernanza.',
+    analogy: 'Next.js es la estructura del edificio del panel. Tailwind es el sistema de azulejos para hacer interiores rápido y consistente.',
+    explain: 'Next.js es un framework de React para construir aplicaciones web modernas. Tailwind CSS es un sistema de utilidades para diseñar interfaces de forma ágil.',
+    why: 'Estándar de facto de SaaS corporativo en 2026. Cuando el cliente abre nuestro panel, se siente familiar y profesional desde el primer instante.',
+    phrase: 'El panel de gobernanza tiene la calidad visual de los SaaS líderes del mercado: Linear, Notion, Stripe. Eso comunica seriedad antes de explicar nada.',
+    related: ['stack'] },
+
+  { id: 'tokio', cat: 'lang', term: 'Tokio', sigla: '',
+    tagline: 'El motor de tareas paralelas para Rust.',
+    analogy: 'Como un director de orquesta que coordina cientos de músicos sin que choquen entre ellos.',
+    explain: 'Librería que permite a Rust ejecutar miles de tareas en paralelo de forma eficiente, sin bloquearse.',
+    why: 'Es lo que permite al agente capturar eventos de múltiples sensores simultáneamente sin consumir más del 1 % de CPU.',
+    phrase: 'El agente atiende cinco sensores en paralelo sin que ninguno tape al otro, gracias al motor Tokio.',
+    related: ['rust'] },
+
+  // ============ SISTEMA OPERATIVO Y CAPTURA ============
+  { id: 'kernel', cat: 'os', term: 'Kernel', sigla: '',
+    tagline: 'El corazón del sistema operativo.',
+    analogy: 'El motor del coche: nadie lo ve, todo depende de él. Si falla, no hay coche.',
+    explain: 'Componente más bajo del sistema operativo. Gestiona memoria, archivos, procesos y comunicación con el hardware.',
+    why: 'Las APIs ETW y eBPF nos dan acceso directo a información del kernel, sin pasar por el resto del sistema. Eso es lo que hace que la captura sea fiable y rápida.',
+    phrase: 'Hablamos directamente con el kernel a través de canales oficiales. No interceptamos llamadas, las escuchamos por su puerta principal.',
+    related: ['etw', 'ebpf'] },
+
+  { id: 'etw', cat: 'os', term: 'ETW', sigla: 'Event Tracing for Windows',
+    tagline: 'El sistema oficial de Windows para escuchar lo que pasa dentro.',
+    analogy: 'Como un walkie-talkie oficial de Microsoft: te conectas, te identificas, y te llegan los eventos del sistema sin tener que abrir nada.',
+    explain: 'Infraestructura de Windows diseñada precisamente para que programas autorizados (antivirus, EDR, monitorización) puedan recibir eventos del sistema operativo.',
+    why: 'Es la vía sancionada por Microsoft. No es una técnica de hacker: es el mismo canal que usan Defender for Endpoint o Sysmon. Por eso pasa cualquier auditoría de seguridad.',
+    phrase: 'Captamos por ETW, el mismo canal que usa el propio antivirus de Microsoft. Si ETW es seguro, nuestro agente es seguro.',
+    related: ['kernel', 'ebpf', 'edr'] },
+
+  { id: 'ebpf', cat: 'os', term: 'eBPF', sigla: 'extended Berkeley Packet Filter',
+    tagline: 'El equivalente moderno de ETW para Linux.',
+    analogy: 'Como instalar pequeños sensores dentro del motor sin tener que abrirlo. Funciona en Linux sin modificar el kernel.',
+    explain: 'Tecnología moderna que permite ejecutar pequeños programas dentro del kernel de Linux de forma segura, para observar eventos sin afectar al rendimiento.',
+    why: 'Es el estándar actual para observabilidad y seguridad en Linux. Lo usan grandes empresas (Meta, Netflix, Cloudflare) y todos los EDR modernos en Linux.',
+    phrase: 'En Linux usamos eBPF, la misma tecnología con la que Meta o Netflix monitorizan sus servidores. Es lo mejor que existe.',
+    related: ['etw', 'kernel'] },
+
+  { id: 'endpointsec', cat: 'os', term: 'EndpointSecurity Framework', sigla: 'ESF',
+    tagline: 'La API oficial de Apple para que los EDR observen macOS.',
+    analogy: 'La autorización notarial de Apple para vigilar lo que pasa en un Mac: solo programas firmados por ellos pueden usarla.',
+    explain: 'API oficial de macOS para clientes de seguridad. Requiere que Apple firme el binario como cliente legítimo de ESF.',
+    why: 'Es la única vía para capturar eventos en macOS sin recurrir a técnicas obsoletas. La firma de Apple es difícil de obtener pero da garantía de seriedad.',
+    phrase: 'En macOS usamos EndpointSecurity Framework con la firma oficial de Apple. Es el sello de que somos un cliente legítimo.',
+    related: ['etw', 'ebpf'] },
+
+  { id: 'fanotify', cat: 'os', term: 'fanotify · inotify · FSEvents', sigla: '',
+    tagline: 'APIs específicas para vigilar el sistema de archivos.',
+    analogy: 'Como un timbre que suena cada vez que se abre o cierra una puerta de un edificio. Una por sistema operativo.',
+    explain: 'fanotify e inotify son APIs de Linux. ReadDirectoryChangesW es la de Windows. FSEvents es la de macOS. Todas hacen lo mismo: avisan cuando algo cambia en una carpeta.',
+    why: 'Son las APIs que usan herramientas como Dropbox, OneDrive o cualquier sincronizador. Estándar de la industria, ningún antivirus las marca.',
+    phrase: 'El sensor de archivos usa las mismas APIs que OneDrive o Dropbox para saber cuándo se guarda algo. Es lo más estándar que existe.',
+    related: ['etw'] },
+
+  { id: 'vfs', cat: 'os', term: 'VFS', sigla: 'Virtual File System',
+    tagline: 'La capa abstracta del sistema de archivos en Linux.',
+    analogy: 'El centralita del kernel para todo lo que tenga que ver con archivos. Cualquier operación pasa por ahí.',
+    explain: 'Subsistema del kernel Linux que abstrae los distintos sistemas de archivos (ext4, btrfs, NTFS) bajo una interfaz común.',
+    why: 'Capturar a nivel VFS con eBPF nos da visibilidad total con un único punto de instrumentación, sin importar el tipo de disco.',
+    phrase: 'En Linux observamos a nivel VFS, lo que nos da cobertura completa con un solo punto de captura.',
+    related: ['ebpf', 'kernel'] },
+
+  { id: 'process', cat: 'os', term: 'Proceso · Servicio NT · systemd', sigla: '',
+    tagline: 'La forma de ejecutarse en segundo plano en cada SO.',
+    analogy: 'Como tener un empleado dedicado en cada oficina del banco: siempre presente, no se desconecta cuando el cliente se va.',
+    explain: 'Servicio NT en Windows, systemd unit en Linux, LaunchDaemon en macOS. Son los mecanismos oficiales para arrancar software al iniciar el ordenador y mantenerlo activo.',
+    why: 'El agente no es una app que el usuario abre: es un servicio del sistema. Eso garantiza que funciona desde el primer minuto sin intervención del usuario.',
+    phrase: 'El agente arranca como un servicio del sistema, no como una app. Está activo desde antes de que el usuario haga login.',
+    related: ['msi', 'gpo'] },
+
+  // ============ REDES Y COMUNICACIÓN ============
+  { id: 'webext', cat: 'net', term: 'WebExtension MV3', sigla: 'Manifest V3',
+    tagline: 'Formato oficial moderno de extensiones de navegador.',
+    analogy: 'El estándar que Chrome, Edge y Firefox firmaron en 2024 para que las extensiones sean seguras y predecibles.',
+    explain: 'Especificación que define cómo se construyen las extensiones de navegador. Manifest V3 es la versión actual, vigente desde 2024.',
+    why: 'Es la única vía oficial. Si la extensión no cumple MV3, no se puede instalar en Chrome ni Edge corporativos. Por eso la elegimos.',
+    phrase: 'La extensión cumple Manifest V3, el estándar obligatorio desde 2024 para Chrome y Edge corporativos.',
+    related: ['ts'] },
+
+  { id: 'graph', cat: 'net', term: 'Microsoft Graph', sigla: '',
+    tagline: 'La puerta oficial a todos los datos de Microsoft 365.',
+    analogy: 'Un único mostrador desde el que pedir cosas a cualquier servicio de Microsoft 365: Outlook, OneDrive, Teams, calendario, todo.',
+    explain: 'API unificada que Microsoft expone para que aplicaciones autorizadas puedan acceder a los datos del tenant del cliente con permisos granulares.',
+    why: 'Acceder a emails y archivos a través de Graph es el estándar corporativo. El cliente ya tiene los logs nativos, ya conoce los permisos, ya sabe cómo revocar accesos. El CISO firma sin fricción.',
+    phrase: 'Para acceder a emails usamos Microsoft Graph, la misma API que usan las apps oficiales de Microsoft. Sin instalar nada en Outlook.',
+    related: ['api', 'oauth', 'entra'] },
+
+  { id: 'oauth', cat: 'net', term: 'OAuth', sigla: 'Open Authorization',
+    tagline: 'El "te doy permiso para esto, pero solo para esto".',
+    analogy: 'Como darle a un asistente las llaves del despacho pero no las del archivo confidencial. Permisos quirúrgicos, revocables al instante.',
+    explain: 'Protocolo estándar para que un usuario autorice a una aplicación a acceder a ciertos datos sin compartir su contraseña.',
+    why: 'OAuth permite al cliente decidir exactamente qué puede ver Hermes: solo lectura, solo correos, solo carpetas concretas. Y revocar el acceso con un clic si lo desea.',
+    phrase: 'Pedimos permisos OAuth granulares y revocables. El cliente nos da acceso quirúrgico, no acceso total. Y nos lo puede quitar en cualquier momento.',
+    related: ['graph', 'entra'] },
+
+  { id: 'entra', cat: 'net', term: 'Entra ID', sigla: 'antes Azure AD',
+    tagline: 'El sistema de identidades corporativo de Microsoft.',
+    analogy: 'El registro central de empleados y permisos en Microsoft 365. Quién es quién y qué puede hacer cada uno.',
+    explain: 'Servicio de identidades en la nube de Microsoft. Cada empleado tiene una cuenta Entra ID que controla su acceso a Office, Teams, SharePoint y todas las apps integradas.',
+    why: 'Para que el agente acceda a Graph, debe estar registrado como app multitenant en Entra ID y aceptado por el admin del cliente. Es el mecanismo oficial de Microsoft.',
+    phrase: 'Estamos registrados en Entra ID como app multitenant. El admin del cliente aprueba el acceso y lo revoca cuando quiera.',
+    related: ['graph', 'oauth'] },
+
+  { id: 'grpc', cat: 'net', term: 'gRPC', sigla: '',
+    tagline: 'Protocolo de comunicación moderno, rápido y compacto.',
+    analogy: 'Como un fax cifrado y comprimido entre dos máquinas. Mucho más eficiente que el correo postal de las APIs web tradicionales.',
+    explain: 'Protocolo creado por Google para comunicación entre servicios. Más rápido y más compacto que las APIs REST/JSON tradicionales.',
+    why: 'El agente envía datos al backend por gRPC porque es la comunicación más eficiente cuando se trata de muchos mensajes pequeños. Eso reduce ancho de banda y latencia.',
+    phrase: 'La comunicación agente-backend va por gRPC, el mismo protocolo que usan internamente Google o Netflix. Es rápido y compacto.',
+    related: ['protobuf', 'mtls'] },
+
+  { id: 'mtls', cat: 'net', term: 'mTLS', sigla: 'mutual TLS',
+    tagline: 'Doble identificación con certificado por ambas partes.',
+    analogy: 'Como un cara a cara con DNI por las dos partes. No basta con que tú demuestres quién eres: el otro también debe demostrarlo.',
+    explain: 'TLS estándar (HTTPS) solo verifica al servidor. mTLS verifica también al cliente. Ambos extremos presentan certificado.',
+    why: 'Garantiza que solo agentes legítimos pueden hablar con el backend, y que solo backends legítimos reciben datos. Cierra la puerta a cualquier impostor.',
+    phrase: 'Usamos mTLS, lo que significa que ni un atacante con acceso a la red puede hacerse pasar por un agente ni por el backend.',
+    related: ['tls', 'pinning'] },
+
+  { id: 'pinning', cat: 'net', term: 'Certificate Pinning', sigla: '',
+    tagline: 'El agente solo confía en un certificado preciso del backend.',
+    analogy: 'Como reconocer la voz de tu jefe en lugar de cualquier voz que diga ser tu jefe. No basta con presentar un DNI: tiene que ser EL DNI esperado.',
+    explain: 'Técnica por la que el cliente lleva grabado el certificado exacto del servidor con el que va a hablar. Si recibe otro, aunque sea válido, lo rechaza.',
+    why: 'Protege contra ataques en los que un atacante consigue emitir un certificado válido para suplantar al backend. Con pinning, el agente solo habla con el backend real, nunca con un impostor.',
+    phrase: 'Aunque un atacante consiguiera emitir un certificado válido a nombre nuestro, el agente lo rechazaría porque tiene grabado el certificado real, no uno parecido.',
+    related: ['mtls', 'tls'] },
+
+  { id: 'tls', cat: 'net', term: 'TLS 1.3', sigla: 'Transport Layer Security',
+    tagline: 'El estándar moderno de cifrado de internet (lo que hay detrás del HTTPS).',
+    analogy: 'El sobre lacrado moderno: nadie puede leerlo en el camino, y solo el destinatario tiene la llave.',
+    explain: 'Protocolo que cifra el tráfico entre dos puntos en internet. La versión 1.3 es la actual, sin vulnerabilidades conocidas.',
+    why: 'Es el cifrado mínimo aceptable en cualquier sistema corporativo serio. Cualquier versión anterior es considerada riesgo de seguridad.',
+    phrase: 'Todo el tráfico va por TLS 1.3, el cifrado más moderno y exigido en banca y defensa.',
+    related: ['mtls', 'aes'] },
+
+  { id: 'protobuf', cat: 'net', term: 'Protocol Buffers', sigla: 'Protobuf',
+    tagline: 'Formato binario compacto para enviar datos entre programas.',
+    analogy: 'Como enviar un mensaje en código numérico en lugar de en frases. Ocupa menos espacio y se procesa más rápido.',
+    explain: 'Formato de serialización creado por Google. Mucho más compacto que JSON, más rápido de procesar, con esquema definido.',
+    why: 'gRPC usa Protobuf por defecto. Eso es lo que hace que la comunicación agente-backend sea eficiente: mensajes pequeños y rápidos.',
+    phrase: 'Los datos se serializan en Protobuf, lo que reduce el ancho de banda usado hasta un 80 % comparado con JSON.',
+    related: ['grpc'] },
+
+  { id: 'mitm', cat: 'net', term: 'Proxy MITM', sigla: 'Man-in-the-Middle',
+    tagline: 'Un intermediario corporativo que ve el tráfico cifrado de internet.',
+    analogy: 'Como una aduana en la red de la empresa: cada paquete que sale o entra pasa por aquí y se inspecciona.',
+    explain: 'Servidor proxy corporativo que descifra y vuelve a cifrar el tráfico HTTPS con un certificado raíz instalado en cada ordenador. Es práctica estándar en empresas reguladas.',
+    why: 'En empresas con proxy ya instalado, podemos interceptar las consultas a APIs de IA externa (OpenAI, Anthropic) sin nuevo software. Aprovechamos infraestructura existente.',
+    phrase: 'En clientes con proxy corporativo, ya tenemos visibilidad de las llamadas a ChatGPT o Claude sin instalar nada nuevo en los endpoints.',
+    related: ['pac'] },
+
+  { id: 'pac', cat: 'net', term: 'PAC file', sigla: 'Proxy Auto-Config',
+    tagline: 'Archivo de configuración automática del proxy corporativo.',
+    analogy: 'El listín automático de carreteras: cuando un coche quiere ir a X, este archivo le dice por qué autopista pasar.',
+    explain: 'Archivo JavaScript que indica al navegador qué proxy usar para cada destino. Distribuido automáticamente por GPO en empresas.',
+    why: 'Permite enrutar las llamadas a APIs de LLM externos por el proxy corporativo, lo que nos da visibilidad sin nuevos sensores.',
+    phrase: 'Una línea en el PAC file y el tráfico hacia OpenAI ya pasa por nuestro proxy. Sin instalar nada nuevo.',
+    related: ['mitm'] },
+
+  // ============ DATOS Y ALMACENAMIENTO ============
+  { id: 'sqlcipher', cat: 'data', term: 'SQLCipher', sigla: '',
+    tagline: 'Base de datos local pequeña, totalmente cifrada.',
+    analogy: 'Una agenda pequeña con candado. Cabe en el bolsillo, pero solo tú puedes abrirla.',
+    explain: 'Versión cifrada de SQLite, la base de datos local más popular del mundo. Cada archivo está protegido con AES-256.',
+    why: 'Es donde el agente guarda eventos temporalmente antes de enviarlos. Si alguien robara el disco duro, no podría leer nada.',
+    phrase: 'Lo que guardamos localmente está en SQLCipher con cifrado militar. Aunque robaran el portátil, no obtendrían ningún dato útil.',
+    related: ['aes', 'tpm'] },
+
+  { id: 'aes', cat: 'data', term: 'AES-256-GCM', sigla: 'Advanced Encryption Standard',
+    tagline: 'El estándar de cifrado del gobierno de Estados Unidos.',
+    analogy: 'Una caja fuerte con combinación de 256 cifras y precinto. El número de combinaciones supera el número de átomos del universo conocido.',
+    explain: 'Algoritmo de cifrado simétrico aprobado por el NIST y usado por agencias gubernamentales y militares. GCM añade verificación de integridad.',
+    why: 'Es el cifrado más fuerte y más auditable disponible. Cualquier referencia a "grado militar" significa esto. Cumple cualquier exigencia regulatoria.',
+    phrase: 'Cifrado AES-256-GCM, el estándar del Departamento de Defensa estadounidense. No hay cifrado más serio en uso comercial.',
+    related: ['tls', 'sqlcipher'] },
+
+  { id: 'tpm', cat: 'data', term: 'TPM · Secure Enclave', sigla: 'Trusted Platform Module',
+    tagline: 'Chip dedicado a guardar las claves criptográficas con seguridad.',
+    analogy: 'La caja fuerte dentro de la caja fuerte. Las llaves no salen del chip ni cuando se usan.',
+    explain: 'Componente hardware del ordenador especializado en guardar y operar con claves criptográficas. TPM en Windows/Linux, Secure Enclave en Apple.',
+    why: 'Las claves del cifrado local nunca tocan la memoria principal: viven en el TPM. Aunque el sistema sea comprometido, las claves siguen seguras.',
+    phrase: 'Las claves de cifrado viven en el TPM del propio dispositivo. Nunca tocan la memoria del sistema operativo. Es lo más seguro técnicamente posible.',
+    related: ['aes', 'sqlcipher'] },
+
+  { id: 'embed', cat: 'data', term: 'Embedding', sigla: '',
+    tagline: 'Convertir texto en una serie de números que captura su significado.',
+    analogy: 'Como un código postal del significado. Textos parecidos quedan cerca en un mapa numérico.',
+    explain: 'Vector de números (típicamente 384 o 768) que representa el significado de un texto. Permite comparar similitud semántica sin guardar el texto original.',
+    why: 'Hermes guarda embeddings, no contenido. Si alguien roba la base de datos, obtiene matrices de números — no texto reconstruible. Esa es la garantía de privacidad.',
+    phrase: 'No guardamos el texto del usuario. Guardamos su "código postal semántico", del que el texto original no se puede reconstruir.',
+    related: ['bge', 'pattern'] },
+
+  { id: 'bge', cat: 'data', term: 'BGE-small', sigla: '',
+    tagline: 'Modelo de embeddings ligero, sin GPU.',
+    analogy: 'Una calculadora de significados de bolsillo: hace bien su trabajo sin ocupar mucho espacio.',
+    explain: 'Modelo de embeddings de tamaño pequeño (33 MB cuantizado) que funciona con CPU normal, sin necesidad de tarjeta gráfica especial.',
+    why: 'Permite generar embeddings en el endpoint, sin enviar texto al backend. Es la pieza que hace posible el "todo se procesa localmente".',
+    phrase: 'Calculamos los embeddings dentro del propio ordenador con un modelo de 33 MB. El texto nunca sale del endpoint.',
+    related: ['embed', 'ort'] },
+
+  { id: 'hash', cat: 'data', term: 'Hash · SHA-256 · Blake3', sigla: '',
+    tagline: 'Huella digital irreversible de un dato.',
+    analogy: 'Como la huella dactilar de un texto. Permite identificarlo, pero no permite reconstruirlo.',
+    explain: 'Función matemática que convierte cualquier dato en una cadena de longitud fija. La misma entrada produce siempre la misma huella, pero la huella no permite recuperar la entrada.',
+    why: 'Usamos hash para deduplicar archivos sin guardarlos, para auditar la cadena Merkle, y para tokenizar nombres sensibles. Es el bloque básico de la criptografía.',
+    phrase: 'Calculamos el hash de cada archivo para saber si es nuevo o ya conocido, sin necesidad de guardar el archivo en sí.',
+    related: ['merkle', 'sigstore'] },
+
+  { id: 'ngram', cat: 'data', term: 'N-grama', sigla: '',
+    tagline: 'Secuencia de N acciones que ocurren seguidas.',
+    analogy: 'Como las palabras de tres letras dentro de una frase: te dicen patrones sin necesidad de leer la frase entera.',
+    explain: 'Subsecuencia de N elementos extraída de una secuencia mayor. En Hermes, los elementos son acciones del usuario: "abrir Excel", "guardar archivo", "enviar email".',
+    why: 'Los n-gramas son la unidad mínima de patrón. Es lo que GEPA detecta y agrupa para proponer skills automatizadoras.',
+    phrase: 'Detectamos n-gramas de acciones: secuencias de tres o cuatro pasos que se repiten. Esos son los candidatos a convertirse en skill.',
+    related: ['gepa', 'prefix'] },
+
+  { id: 'token', cat: 'data', term: 'Tokenización', sigla: '',
+    tagline: 'Sustituir un dato sensible por una etiqueta sin valor.',
+    analogy: 'Como cambiar el nombre del cliente "Acme Corp" por "Cliente_457". Sigues pudiendo trabajar, pero el nombre real ya no aparece.',
+    explain: 'Proceso por el que datos sensibles se reemplazan por identificadores anónimos antes de almacenarlos o procesarlos.',
+    why: 'Nombres de archivo personales, paths de Documents, identificadores de proyecto — todo se tokeniza antes de salir del endpoint. Eso es lo que cumple GDPR.',
+    phrase: 'Antes de procesar nada, los nombres personales y los identificadores sensibles se tokenizan. Hermes trabaja con etiquetas, no con datos personales.',
+    related: ['gdpr', 'pipeline'] },
+
+  { id: 'ecs', cat: 'data', term: 'Schema ECS', sigla: 'Elastic Common Schema',
+    tagline: 'Formato estándar para datos de seguridad.',
+    analogy: 'Como el formato A4 del papel: todo el mundo lo usa, todos los archivadores lo aceptan, todos los programas lo leen.',
+    explain: 'Esquema definido por Elastic y adoptado por la industria de seguridad para normalizar eventos. Hace que los datos sean compatibles con SIEM y herramientas de análisis.',
+    why: 'Si el cliente quiere integrar los eventos de Hermes en su SIEM existente (Splunk, Elastic, Sentinel), ya están en el formato correcto. Cero trabajo de integración.',
+    phrase: 'Los eventos llegan al cliente en formato ECS, compatibles con su SIEM. Cero trabajo de integración.',
+    related: ['siem', 'pipeline'] },
+
+  { id: 'prefix', cat: 'data', term: 'PrefixSpan · SPADE', sigla: '',
+    tagline: 'Algoritmos clásicos para descubrir patrones repetitivos.',
+    analogy: 'Como un detective que repasa miles de horas de grabaciones y marca cada escena que se repite con el mismo guion.',
+    explain: 'Algoritmos de minería de secuencias bien estudiados desde hace décadas. Encuentran subsecuencias que aparecen con frecuencia significativa.',
+    why: 'No usamos un LLM para detectar patrones — usamos algoritmos deterministas. Eso significa que cada propuesta de skill se puede auditar matemáticamente.',
+    phrase: 'No usamos una IA opaca para detectar patrones. Usamos algoritmos deterministas auditables, lo que significa que cada skill propuesta tiene una justificación matemática.',
+    related: ['gepa', 'hdbscan'] },
+
+  { id: 'hdbscan', cat: 'data', term: 'HDBSCAN', sigla: '',
+    tagline: 'Algoritmo de agrupamiento que funciona sin saber cuántos grupos hay.',
+    analogy: 'Como un bibliotecario que agrupa libros parecidos sin que nadie le diga cuántas estanterías tiene que crear. Lo decide por sí mismo.',
+    explain: 'Algoritmo de clustering que descubre cuántos grupos hay en los datos automáticamente y permite que algunos puntos no pertenezcan a ninguno.',
+    why: 'Permite agrupar patrones similares (por ejemplo: "informes semanales", "respuestas a clientes nuevos") sin que un humano tenga que decidir las categorías de antemano.',
+    phrase: 'El sistema descubre por sí mismo las familias de tareas que se repiten. No le decimos cuáles esperar.',
+    related: ['gepa', 'embed'] },
+
+  { id: 'gepa', cat: 'data', term: 'GEPA', sigla: 'Generative Pattern Acquisition',
+    tagline: 'Nuestro motor propietario de descubrimiento de skills.',
+    analogy: 'Como un observador en silencio que durante semanas anota qué tareas haces siempre igual y al final te propone: "déjame hacer estas por ti".',
+    explain: 'Motor que combina captura de eventos, minería de secuencias, embeddings y generación de borradores de skill. Es el cerebro creativo del agente.',
+    why: 'Es lo que diferencia a Hermes de un simple agregador de telemetría. Microsoft Copilot espera órdenes; Hermes propone iniciativas. Esa es la diferencia categórica.',
+    phrase: 'GEPA es lo que convierte la observación silenciosa en propuestas concretas de automatización. Es propiedad intelectual nuestra, no existe equivalente.',
+    related: ['skill', 'prefix', 'sentinel'] },
+
+  { id: 'merkle', cat: 'data', term: 'Merkle hash chain', sigla: '',
+    tagline: 'Cadena de huellas digitales que hace imposible falsificar el histórico.',
+    analogy: 'Como una caja registradora en la que cada ticket lleva impresa la huella del anterior. Si alguien cambia un ticket viejo, todos los siguientes dejan de cuadrar.',
+    explain: 'Estructura criptográfica donde cada entrada referencia el hash de la anterior, formando una cadena. Modificar cualquier entrada antigua rompe toda la cadena posterior.',
+    why: 'Es lo que hace que nuestro Audit Log sea inmutable. Un auditor externo puede verificar matemáticamente que no se ha alterado nada.',
+    phrase: 'El registro de auditoría usa Merkle hash chain. Un auditor externo puede demostrar matemáticamente que no hemos manipulado nada del histórico.',
+    related: ['hash', 'audit'] },
+
+  // ============ SEGURIDAD Y COMPLIANCE ============
+  { id: 'edr', cat: 'sec', term: 'EDR', sigla: 'Endpoint Detection and Response',
+    tagline: 'El antivirus de nueva generación.',
+    analogy: 'Como el guardia de seguridad que no solo busca caras conocidas de criminales, sino que vigila comportamientos sospechosos en directo.',
+    explain: 'Categoría de software que va más allá del antivirus tradicional: vigila comportamientos, detecta anomalías y responde a amenazas en tiempo real. CrowdStrike Falcon, SentinelOne Singularity, Microsoft Defender for Endpoint.',
+    why: 'Si nuestro agente activa una alerta de cualquier EDR, perdemos al cliente para siempre. Por eso pre-acordamos allowlisting con los principales fabricantes.',
+    phrase: 'Antes del primer despliegue masivo cerramos acuerdos de allowlisting con CrowdStrike y SentinelOne. Cero riesgo de falso positivo.',
+    related: ['etw', 'ev'] },
+
+  { id: 'ev', cat: 'sec', term: 'Certificado EV', sigla: 'Extended Validation',
+    tagline: 'El certificado de firma de código más serio disponible.',
+    analogy: 'Como el carnet de identidad con verificación notarial. No basta con presentar un DNI: hay un notario que ha verificado que tú eres tú.',
+    explain: 'Certificado digital de firma de código emitido tras verificación exhaustiva de la entidad por una autoridad certificadora. Windows y macOS lo distinguen visualmente.',
+    why: 'Sin certificado EV, SmartScreen en Windows alerta al usuario y bloquea el primer despliegue masivo. Con EV, el binario se reconoce como legítimo desde el primer instante.',
+    phrase: 'El MSI está firmado con certificado EV, el mismo nivel de validación que Microsoft o Adobe usan para sus instaladores oficiales.',
+    related: ['msi', 'authenticode'] },
+
+  { id: 'authenticode', cat: 'sec', term: 'Authenticode', sigla: '',
+    tagline: 'El sistema de firma de código de Microsoft.',
+    analogy: 'El sello oficial de Microsoft sobre nuestro binario. Cuando Windows lo ve, ya sabe quién es el fabricante.',
+    explain: 'Tecnología de Microsoft para firmar ejecutables, scripts y DLL. Forma parte de la cadena de confianza estándar de Windows.',
+    why: 'Es lo que permite a Windows mostrar nuestro nombre como "Editor verificado" en lugar de "Editor desconocido" en cada instalación.',
+    phrase: 'Cada instalación muestra nuestra firma Authenticode. El usuario y el admin ven que somos un fabricante legítimo, no software desconocido.',
+    related: ['ev', 'msi'] },
+
+  { id: 'binskim', cat: 'sec', term: 'BinSkim · CFG', sigla: 'Control Flow Guard',
+    tagline: 'Herramientas para verificar que un binario es seguro.',
+    analogy: 'Como un inspector ITV del coche pero para software: pasa el binario por un escáner que detecta debilidades conocidas.',
+    explain: 'BinSkim es la herramienta de análisis estático de Microsoft. CFG es una protección que impide saltos a direcciones de memoria arbitrarias.',
+    why: 'Que nuestro binario pase BinSkim sin alertas es lo que documentamos al CISO. Es la prueba objetiva de que el código sigue buenas prácticas de seguridad.',
+    phrase: 'Cada release pasa BinSkim sin alertas críticas. Entregamos el reporte al CISO como parte del dossier de seguridad.',
+    related: ['edr', 'ev'] },
+
+  { id: 'gdpr', cat: 'sec', term: 'GDPR · RGPD', sigla: 'General Data Protection Regulation',
+    tagline: 'La ley europea de protección de datos.',
+    analogy: 'El reglamento que define qué puedes y qué no puedes hacer con datos de europeos. Cumplir o pagar multa millonaria.',
+    explain: 'Reglamento UE 2016/679. Aplica a cualquier empresa que trate datos de ciudadanos europeos, independientemente de dónde esté la empresa.',
+    why: 'Todo el diseño de privacidad de Hermes (tokenización, embeddings locales, consentimiento granular, audit log) está pensado para cumplir GDPR sin excepciones.',
+    phrase: 'Hermes cumple GDPR desde el diseño: cada decisión técnica responde a un artículo concreto del reglamento.',
+    related: ['dpia', 'aiact'] },
+
+  { id: 'dpia', cat: 'sec', term: 'DPIA', sigla: 'Data Protection Impact Assessment',
+    tagline: 'Evaluación obligatoria antes de tratar datos sensibles.',
+    analogy: 'El estudio de impacto ambiental antes de construir una fábrica. Obligatorio, documentado, auditable.',
+    explain: 'Documento exigido por el GDPR (Art. 35) cuando un sistema puede generar riesgo alto para los derechos de las personas. Lo entrega el cliente, pero el proveedor da los inputs.',
+    why: 'Entregamos al cliente la DPIA pre-rellenada con todos los detalles técnicos. Eso le ahorra meses de trabajo legal y acelera la firma.',
+    phrase: 'Le entregamos al cliente el DPIA pre-rellenado. Tres meses de trabajo legal que se reducen a una semana de revisión.',
+    related: ['gdpr'] },
+
+  { id: 'aiact', cat: 'sec', term: 'AI Act', sigla: '',
+    tagline: 'La ley europea de inteligencia artificial.',
+    analogy: 'El GDPR de la IA. Define qué se considera IA de alto riesgo y qué controles obligatorios necesita.',
+    explain: 'Reglamento UE 2024/1689. Clasifica los sistemas de IA en cuatro niveles de riesgo y exige controles proporcionales. Vigente progresivamente desde 2025 hasta 2027.',
+    why: 'Hermes encaja en el Artículo 6 y Anexo III por el contexto de uso laboral. Cumplir AI Act desde el diseño es una ventaja competitiva: muchas plataformas IA tendrán que reajustarse a marchas forzadas.',
+    phrase: 'Diseñamos Hermes para cumplir AI Act desde el primer día. Mientras otros se reajustan a marchas forzadas, nosotros ya cumplimos.',
+    related: ['gdpr'] },
+
+  { id: 'iso', cat: 'sec', term: 'ISO 27001 · SOC 2', sigla: '',
+    tagline: 'Las dos certificaciones de seguridad obligatorias en B2B.',
+    analogy: 'Como el sello de calidad de un fabricante de coches o un restaurante con estrellas Michelin. No las tienes, no juegas.',
+    explain: 'ISO 27001 es el estándar internacional de gestión de seguridad de la información. SOC 2 Type II es el estándar americano para SaaS. Ambas requieren auditoría externa anual.',
+    why: 'Sin ISO 27001 no se vende en Europa a empresas grandes. Sin SOC 2 no se vende en EE.UU. Son la puerta de entrada al mercado enterprise.',
+    phrase: 'En Fase 3 obtenemos ISO 27001 y SOC 2 Type II. Sin esas dos certificaciones, no podemos cerrar contratos enterprise.',
+    related: ['gdpr', 'aiact'] },
+
+  { id: 'sigstore', cat: 'sec', term: 'Sigstore · Cosign', sigla: '',
+    tagline: 'Sistema moderno para firmar y verificar artefactos de software.',
+    analogy: 'Como un sello postal con seguimiento criptográfico. Cualquiera puede verificar que el paquete vino de quien dice venir.',
+    explain: 'Iniciativa de la Linux Foundation para firmar artefactos de software. Cosign es la herramienta que firma; el registro público hace que la firma sea verificable globalmente.',
+    why: 'Cada skill aprobada en Sentinel se firma con Cosign. El agente verifica la firma antes de ejecutar. Si alguien manipulara una skill en tránsito, el agente la rechazaría.',
+    phrase: 'Cada skill está firmada criptográficamente. Si alguien la modificara entre el backend y el endpoint, el agente lo detectaría y la rechazaría.',
+    related: ['hash', 'merkle'] },
+
+  { id: 'ed25519', cat: 'sec', term: 'Ed25519', sigla: '',
+    tagline: 'Algoritmo moderno para firmas digitales.',
+    analogy: 'Como un bolígrafo único que solo el firmante tiene, y cuya tinta cualquiera puede verificar pero nadie puede replicar.',
+    explain: 'Algoritmo de firma digital basado en curva elíptica Edwards. Rápido, seguro, sin patentes, recomendado por NIST.',
+    why: 'Lo usamos para firmar cada entrada del Audit Log. Es lo que hace que el histórico sea matemáticamente inmutable.',
+    phrase: 'Cada línea del log de auditoría está firmada con Ed25519. Indemostrable que alguien pueda alterarla sin detectarse.',
+    related: ['merkle', 'sigstore'] },
+
+  // ============ DESPLIEGUE ============
+  { id: 'msi', cat: 'dep', term: 'MSI', sigla: 'Microsoft Installer',
+    tagline: 'El formato oficial de instalador en Windows.',
+    analogy: 'El equivalente Windows de un paquete .deb en Linux o .pkg en Mac. Lo entiende todo el ecosistema corporativo.',
+    explain: 'Formato de paquete de instalación de Microsoft. Soportado nativamente por todas las herramientas corporativas (Intune, SCCM, GPO).',
+    why: 'Es lo que el departamento de IT del cliente espera. Si entregamos un .exe en lugar de un .msi, lo rechazan. El MSI es el único formato aceptable en empresa.',
+    phrase: 'Entregamos un MSI firmado, el único formato que las herramientas corporativas como Intune o SCCM aceptan sin fricción.',
+    related: ['wix', 'intune'] },
+
+  { id: 'wix', cat: 'dep', term: 'WiX Toolset', sigla: '',
+    tagline: 'La herramienta para crear instaladores MSI.',
+    analogy: 'Como el software de diseño con el que construimos las cajas del envío oficial.',
+    explain: 'Conjunto de herramientas open source de Microsoft para crear paquetes MSI. Estándar de la industria.',
+    why: 'Genera MSI compatibles con todo el ecosistema corporativo Windows. Nuestro pipeline de CI/CD usa WiX para producir cada release.',
+    phrase: 'Construimos el MSI con WiX, las herramientas oficiales de Microsoft. Total compatibilidad con cualquier sistema corporativo.',
+    related: ['msi'] },
+
+  { id: 'intune', cat: 'dep', term: 'Microsoft Intune', sigla: '',
+    tagline: 'El sistema MDM de Microsoft para empresas.',
+    analogy: 'El mando a distancia gigante con el que el departamento de IT gobierna miles de dispositivos desde una sola consola.',
+    explain: 'Plataforma de gestión de dispositivos de Microsoft, integrada con Entra ID. Despliega software, aplica políticas y monitoriza salud de los endpoints.',
+    why: 'Es la herramienta predominante en empresas que ya usan Microsoft 365. Nuestro MSI se despliega vía Intune en 24-48 horas a 5.000 endpoints sin clics del usuario.',
+    phrase: 'Con Intune, el cliente despliega Hermes en 5.000 endpoints en menos de 48 horas, sin tocar ningún ordenador físicamente.',
+    related: ['mdm', 'msi'] },
+
+  { id: 'mdm', cat: 'dep', term: 'MDM', sigla: 'Mobile Device Management',
+    tagline: 'Categoría de software para gestionar dispositivos corporativos a escala.',
+    analogy: 'El centro de control desde donde IT decide qué tiene cada dispositivo, qué políticas aplicar y cómo configurarlo todo de golpe.',
+    explain: 'Categoría de soluciones que centralizan gestión de móviles, portátiles y tabletas. Intune (Microsoft), Jamf (Apple), Workspace ONE (VMware) son los líderes.',
+    why: 'Cualquier empresa de cierto tamaño tiene MDM. Eso es nuestra autopista de distribución. Si no usáramos MDM, el despliegue masivo sería imposible.',
+    phrase: 'Aprovechamos la infraestructura MDM que el cliente ya tiene. Cero nueva inversión por su parte.',
+    related: ['intune', 'jamf'] },
+
+  { id: 'jamf', cat: 'dep', term: 'Jamf · SCCM · Ansible', sigla: '',
+    tagline: 'Herramientas MDM equivalentes para cada plataforma.',
+    analogy: 'Distintos mandos a distancia para distintas marcas de televisor. Cada uno funciona para los suyos.',
+    explain: 'Jamf es el MDM líder para macOS. SCCM (System Center Configuration Manager) es la herramienta tradicional de Microsoft. Ansible es la opción dominante en Linux.',
+    why: 'Cubrimos las tres plataformas con la herramienta nativa de cada una. No imponemos al cliente cambiar su forma de trabajar.',
+    phrase: 'Nos integramos con el MDM que el cliente ya usa: Intune, Jamf, SCCM o Ansible. No le pedimos cambiar nada.',
+    related: ['intune', 'mdm'] },
+
+  { id: 'gpo', cat: 'dep', term: 'GPO · ADMX', sigla: 'Group Policy Object',
+    tagline: 'El sistema de directivas de Windows corporativo.',
+    analogy: 'Como las normas de la empresa, pero impuestas técnicamente. "Todos los ordenadores del departamento X tendrán esto activado".',
+    explain: 'Mecanismo de Windows para aplicar configuraciones centralizadas a miles de equipos. Los archivos ADMX definen qué opciones son configurables.',
+    why: 'Nuestro agente se configura por GPO desde el panel del CISO. Cada departamento puede tener sus propios sensores activos, sus propias políticas, sin tocar cada ordenador.',
+    phrase: 'Toda la configuración se controla por GPO desde la consola central. El admin decide qué sensores activa cada departamento sin tocar un solo ordenador.',
+    related: ['msi', 'process'] },
+
+  { id: 'vsto', cat: 'dep', term: 'VSTO · Office.js', sigla: 'Visual Studio Tools for Office',
+    tagline: 'Las dos formas oficiales de extender Microsoft Office.',
+    analogy: 'Dos puertas distintas para meter accesorios dentro de Excel u Outlook. Una vieja y robusta (VSTO), otra nueva y moderna (Office.js).',
+    explain: 'VSTO es la tecnología clásica para plug-ins de escritorio de Office. Office.js es la moderna, basada en web, multiplataforma.',
+    why: 'Usamos VSTO para Outlook desktop nativo (más profundo), Office.js para Office 365 web y móvil. Cubrimos los dos mundos sin limitar al cliente.',
+    phrase: 'Soportamos tanto Office desktop con VSTO como Office 365 web con Office.js. El cliente no tiene que elegir una sola modalidad de Office.',
+    related: ['csharp', 'appsource'] },
+
+  { id: 'officejs', cat: 'dep', term: 'Office.js', sigla: '',
+    tagline: 'Plataforma moderna de extensión de Office desde la web.',
+    analogy: 'Como instalar una app de móvil dentro de Excel. Funciona en escritorio, web y móvil sin cambios.',
+    explain: 'Framework JavaScript que Microsoft creó para que las extensiones de Office funcionen en todas las plataformas con el mismo código.',
+    why: 'Una sola extensión Office.js funciona en Outlook web, escritorio y móvil. Eso reduce nuestro coste de mantenimiento.',
+    phrase: 'Una sola extensión Office.js funciona en Outlook web, Outlook desktop y Outlook móvil. Mantenimiento mínimo.',
+    related: ['vsto'] },
+
+  { id: 'appsource', cat: 'dep', term: 'AppSource', sigla: '',
+    tagline: 'La tienda oficial de Microsoft para apps corporativas.',
+    analogy: 'Como el App Store pero para apps empresariales que se integran con Microsoft 365.',
+    explain: 'Marketplace de Microsoft donde las empresas descubren e instalan apps verificadas y compatibles con Office, Teams y Dynamics.',
+    why: 'Estar en AppSource da prestigio y simplifica la instalación corporativa. Es un canal de descubrimiento orgánico para clientes que buscan complementos serios.',
+    phrase: 'Publicaremos en AppSource en Fase 3. Es el escaparate donde los CISOs descubren las apps que merecen su confianza.',
+    related: ['officejs'] },
+
+  { id: 'smartscreen', cat: 'dep', term: 'SmartScreen · Gatekeeper', sigla: '',
+    tagline: 'Los filtros de Windows y macOS contra software desconocido.',
+    analogy: 'El portero del edificio que pregunta "¿le esperan?" a cada visitante. Si no, lo manda de vuelta a la calle.',
+    explain: 'SmartScreen es el filtro reputacional de Windows. Gatekeeper es el equivalente de macOS. Ambos bloquean software no firmado o sin reputación establecida.',
+    why: 'Sin certificado EV, SmartScreen alerta al usuario en cada instalación. Con EV, pasa silenciosamente. Eso marca la diferencia entre un despliegue exitoso y mil tickets de soporte.',
+    phrase: 'Nuestro certificado EV hace que SmartScreen acepte el instalador sin alertas. Cero fricción para el usuario.',
+    related: ['ev', 'authenticode'] },
+
+  // ============ BACKEND E INFRAESTRUCTURA ============
+  { id: 'sentinel', cat: 'back', term: 'Sentinel', sigla: '',
+    tagline: 'El backend de gobernanza de Hermes.',
+    analogy: 'El centro de control desde donde la empresa decide qué skills se aprueban, quién las usa, y cómo se despliegan.',
+    explain: 'Nuestro backend propietario que recibe propuestas de los agentes, las cura con LLM + reglas + humano, las firma y las despliega selectivamente.',
+    why: 'Sentinel es el componente que materializa la propuesta de valor: gobierno corporativo total sobre lo que la IA hace. Sin Sentinel, Hermes sería otro chatbot más.',
+    phrase: 'Sentinel es el gobierno de la IA dentro de la empresa. Nada se ejecuta sin que el administrador lo apruebe explícitamente.',
+    related: ['curator', 'vault', 'policy'] },
+
+  { id: 'curator', cat: 'back', term: 'Skill Curator', sigla: '',
+    tagline: 'El filtro entre lo que GEPA propone y lo que llega al administrador.',
+    analogy: 'Como el editor de un periódico: recibe cientos de artículos, descarta los flojos, agrupa los repetidos, y solo presenta al director los mejores.',
+    explain: 'Pipeline de cinco fases dentro de Sentinel: deduplicación, clasificación LLM, scoring por reglas, cola de aprobación humana, firma y despliegue.',
+    why: 'Sin Curator, el administrador recibiría cientos de propuestas inútiles. Con Curator, recibe solo las dos o tres que merecen su tiempo cada semana.',
+    phrase: 'El administrador no se ahoga en propuestas. El Curator filtra automáticamente el 95 % de ruido, deja solo lo que merece su decisión.',
+    related: ['sentinel', 'gepa', 'llm'] },
+
+  { id: 'vault', cat: 'back', term: 'Skill Vault', sigla: '',
+    tagline: 'El repositorio cifrado de skills aprobadas.',
+    analogy: 'La cámara acorazada del banco: lo que entra aquí ya está validado, firmado y blindado contra modificación.',
+    explain: 'Almacenamiento cifrado donde residen las skills aprobadas. Cada una versionada, firmada con Cosign, accesible solo por Policy Engine.',
+    why: 'Es el contenedor que materializa la propiedad intelectual del cliente. Las skills no son archivos sueltos: son artefactos firmados y trazables.',
+    phrase: 'Las skills de la empresa viven en el Vault: cifradas, firmadas, versionadas. Propiedad intelectual con cadena de custodia completa.',
+    related: ['sentinel', 'sigstore'] },
+
+  { id: 'policy', cat: 'back', term: 'Policy Engine', sigla: '',
+    tagline: 'El cerebro que decide qué skill llega a qué endpoint.',
+    analogy: 'El director de logística que decide cuándo enviar cada paquete, a quién, y cómo escalar el envío de forma controlada.',
+    explain: 'Componente de Sentinel que aplica reglas declarativas para desplegar skills selectivamente: por departamento, por rol, por porcentaje gradual (canary).',
+    why: 'Permite despliegues canary con rollback automático. Si una skill empieza a dar problemas, se retira sola sin que nadie intervenga.',
+    phrase: 'Los despliegues son progresivos: 10 % al principio, 50 % si va bien, 100 % al final. Si algo falla, se retira sin intervención humana.',
+    related: ['sentinel', 'canary', 'opa'] },
+
+  { id: 'opa', cat: 'back', term: 'OPA', sigla: 'Open Policy Agent',
+    tagline: 'Motor estándar para evaluar reglas declarativas.',
+    analogy: 'El juez automático que verifica si una situación cumple las normas escritas, sin interpretación subjetiva.',
+    explain: 'Proyecto open source de la Cloud Native Computing Foundation para evaluación de políticas. Usado por Netflix, Pinterest, Goldman Sachs.',
+    why: 'Permite al cliente definir sus propias políticas en formato declarativo (un lenguaje llamado Rego), sin necesidad de programadores.',
+    phrase: 'El cliente escribe sus reglas de despliegue en formato declarativo. No necesita programadores: las políticas son texto plano legible.',
+    related: ['policy'] },
+
+  { id: 'temporal', cat: 'back', term: 'Temporal', sigla: '',
+    tagline: 'Motor para orquestar procesos largos y fiables.',
+    analogy: 'Como un gestor de proyectos digital que recuerda cada paso, reintenta lo que falla, y nunca pierde el hilo aunque el sistema reinicie.',
+    explain: 'Plataforma de orquestación de workflows. Cada paso del despliegue de una skill se modela como una actividad Temporal, con reintento automático y resiliencia.',
+    why: 'Garantiza que los despliegues progresivos completan sin fallos silenciosos. Si algo se cae a la mitad, Temporal lo retoma desde donde estaba.',
+    phrase: 'Los despliegues complejos van por Temporal, lo que garantiza que ninguna fase se pierde aunque el backend reinicie.',
+    related: ['policy'] },
+
+  { id: 'prometheus', cat: 'back', term: 'Prometheus', sigla: '',
+    tagline: 'El estándar de monitorización en la nube.',
+    analogy: 'Como un cuadro de mandos que recoge constantes vitales cada segundo y dispara alarmas cuando algo se sale de lo normal.',
+    explain: 'Sistema open source de monitorización. Recoge métricas, las almacena en serie temporal, permite alertas configurables.',
+    why: 'Es lo que vigila los guards del Policy Engine: si una skill tiene tasa de error > 2 %, Prometheus dispara la alerta y Temporal cancela el despliegue.',
+    phrase: 'Si una skill empieza a fallar en producción, Prometheus lo detecta en segundos y se retira automáticamente. Sin intervención humana.',
+    related: ['policy', 'temporal'] },
+
+  { id: 'k8s', cat: 'back', term: 'Kubernetes', sigla: 'K8s',
+    tagline: 'El orquestador estándar de la infraestructura moderna.',
+    analogy: 'Como el director de orquesta de cientos de pequeños programas. Sabe cuándo arrancar cada uno, cuándo reiniciarlo, cómo distribuir la carga.',
+    explain: 'Plataforma open source creada por Google para gestionar aplicaciones distribuidas. Estándar de facto en empresa moderna.',
+    why: 'El backend Sentinel corre en Kubernetes, lo que permite desplegarlo on-premise en el cluster del cliente o en cloud, sin cambios de código.',
+    phrase: 'Sentinel se despliega en el Kubernetes del cliente, en su propia infraestructura. No depende de ninguna nube pública nuestra.',
+    related: ['onprem'] },
+
+  { id: 'postgres', cat: 'back', term: 'PostgreSQL', sigla: 'Postgres',
+    tagline: 'La base de datos relacional más respetada en empresa.',
+    analogy: 'Como un Excel gigante, fiable, auditable, que aguanta miles de operaciones por segundo sin fallar nunca.',
+    explain: 'Base de datos relacional open source, conocida por su robustez, rendimiento y extensibilidad. Usada por Apple, Reddit, Instagram.',
+    why: 'Sentinel usa Postgres para metadatos. Es la opción que más confianza inspira a un CISO porque ya la tiene corriendo en su empresa.',
+    phrase: 'Sentinel usa PostgreSQL, la misma base de datos que el cliente ya tiene en producción. Cero curva de aprendizaje para su DBA.',
+    related: ['k8s'] },
+
+  { id: 'vault-hashi', cat: 'back', term: 'HashiCorp Vault', sigla: '',
+    tagline: 'El gestor de secretos estándar de la industria.',
+    analogy: 'La caja fuerte centralizada donde se guardan todas las llaves, contraseñas y certificados, con acceso controlado y registrado.',
+    explain: 'Producto de HashiCorp para gestionar credenciales y datos sensibles de forma centralizada. Cifrado, rotación automática, auditoría completa.',
+    why: 'Las claves para descifrar las skills viven en Vault, no en el código. Eso permite rotación automática y auditoría completa de cada acceso.',
+    phrase: 'Las claves criptográficas viven en HashiCorp Vault con rotación automática. Cada acceso queda registrado y auditado.',
+    related: ['aes', 'vault'] },
+
+  { id: 'minio', cat: 'back', term: 'MinIO', sigla: '',
+    tagline: 'Almacenamiento de objetos compatible con S3, on-premise.',
+    analogy: 'Como tener Amazon S3 corriendo dentro de la sala de servidores del propio cliente. Sin depender de la nube de Amazon.',
+    explain: 'Producto open source compatible con la API de Amazon S3, pero instalable on-premise. Usado por NASA, ADP, Equifax.',
+    why: 'El Skill Vault corre sobre MinIO en clientes on-premise. Permite la misma arquitectura que en cloud, sin depender de Amazon.',
+    phrase: 'En clientes on-premise usamos MinIO. Es Amazon S3 pero corriendo dentro de su sala de servidores.',
+    related: ['vault', 'onprem'] },
+
+  { id: 'onprem', cat: 'back', term: 'On-premise', sigla: '',
+    tagline: 'Toda la infraestructura corriendo en servidores propios del cliente.',
+    analogy: 'Como tener la fábrica dentro del polígono industrial propio, no alquilada en otro país.',
+    explain: 'Modelo de despliegue donde el software corre en servidores del propio cliente, sin que ningún dato salga de su infraestructura.',
+    why: 'Para banca y defensa, on-premise no es opcional: es la única opción aceptable. Soportarlo desde el inicio nos abre estos mercados.',
+    phrase: 'Hermes funciona 100 % on-premise. Ningún dato sale de la infraestructura del cliente. Eso nos abre banca y defensa.',
+    related: ['k8s', 'minio'] },
+
+  { id: 'siem', cat: 'back', term: 'SIEM', sigla: 'Security Information and Event Management',
+    tagline: 'La herramienta donde el equipo de seguridad ve todo lo que pasa.',
+    analogy: 'Como la sala de control de seguridad del aeropuerto: todas las cámaras, alarmas y registros, unificados en un solo panel.',
+    explain: 'Plataforma centralizada de monitorización de seguridad. Splunk, Elastic Security, Microsoft Sentinel. Centralizan logs de toda la infraestructura.',
+    why: 'Como nuestros eventos están en formato ECS, se integran directamente con el SIEM del cliente. Su equipo de seguridad ve Hermes como una fuente más, no como una caja negra.',
+    phrase: 'Los eventos de Hermes aparecen en el SIEM del cliente desde el día 1. Su SOC los ve igual que ve cualquier otra fuente.',
+    related: ['ecs'] }
+];
+
+// ============= SALES SCRIPT =============
+const script = [
+  { q: '¿Esto es un keylogger? ¿Va a leer todo lo que escribe mi gente?',
+    a: ['No. No capturamos pulsaciones del teclado. Capturamos <strong>intención</strong>, no contenido. Cuando un empleado crea un Excel y lo guarda en SharePoint, registramos esa secuencia de acciones — qué app, qué tipo de archivo, qué destino — pero nunca el contenido del archivo ni lo que escribió.',
+        'Técnicamente usamos las mismas APIs que tu antivirus profesional: ETW en Windows, eBPF en Linux. Si tu EDR es legítimo, nuestro agente también lo es.'] },
+  { q: '¿Por qué no usáis simplemente Microsoft Copilot? Ya tenemos licencias.',
+    a: ['Copilot es excelente para asistencia interactiva: el usuario pregunta, Copilot responde. Hermes resuelve un problema distinto: <strong>descubre automáticamente qué tareas merece la pena automatizar</strong>, sin que el usuario tenga que pedirlo.',
+        'Copilot escala su coste con el uso (por token, por usuario). Hermes tiene tarifa plana por endpoint. Para 5.000 empleados con uso intensivo, eso supone entre el 55 % y el 73 % menos de TCO a tres años. Son números verificables, no marketing.'] },
+  { q: '¿Cómo sé que el agente no va a saturar los ordenadores?',
+    a: ['Footprint medido: menos del 1 % de CPU en idle, menos de 80 MB de RAM, 28 MB en disco. El agente se pausa solo si la batería baja del 15 % o si la CPU del sistema sube. <strong>Diseñado para ser invisible en uso normal</strong>.',
+        'Y si en algún cliente concreto da problemas de rendimiento, el panel de gobernanza permite desactivar sensores específicos o reducir frecuencia de procesamiento sin tocar ningún endpoint.'] },
+  { q: '¿Qué pasa si uno de mis EDR (CrowdStrike, SentinelOne) marca el agente como sospechoso?',
+    a: ['Antes del primer despliegue masivo cerramos acuerdos de <strong>allowlisting documentado</strong> con los principales fabricantes de EDR. Eso forma parte del paquete de seguridad que entregamos al CISO antes de la firma del contrato.',
+        'Cada release del agente pasa análisis estático con BinSkim y queda firmada con certificado EV. Te entregamos el reporte completo de seguridad como anexo del contrato.'] },
+  { q: '¿Cumplís GDPR? ¿Y AI Act?',
+    a: ['Cumplimos GDPR <strong>desde el diseño</strong>: tokenización automática de datos personales, embeddings locales que no permiten reconstruir contenido, consentimiento granular por usuario con opt-out por canal, audit log inmutable.',
+        'AI Act: encajamos en el Artículo 6 con todos los controles del Anexo III implementados desde el inicio. Te entregamos la DPIA pre-rellenada para que tu DPO solo tenga que revisarla.'] },
+  { q: '¿Dónde se guardan los datos? ¿Salen de mi infraestructura?',
+    a: ['Tú eliges. En modalidad on-premise, Hermes corre completamente dentro de tu infraestructura — backend Sentinel en tu Kubernetes, base de datos en tu PostgreSQL, almacenamiento en tu MinIO. <strong>Cero datos salen</strong>.',
+        'En modalidad cloud gestionada, los datos viven en la región que elijas (UE, EE.UU.) con cifrado AES-256-GCM. Pero en banca y defensa siempre recomendamos on-premise.'] },
+  { q: '¿Quién aprueba qué hace la IA dentro de mi empresa?',
+    a: ['Tu administrador, siempre. <strong>Ninguna skill se ejecuta sin aprobación humana explícita</strong>. El agente propone, Sentinel filtra el 95 % de ruido, y tu admin revisa solo las propuestas que valen la pena — típicamente menos de 5 a la semana.',
+        'Cada aprobación queda firmada criptográficamente en el audit log inmutable. Sabes exactamente quién aprobó qué, cuándo, y con qué justificación.'] },
+  { q: '¿Y si en seis meses queremos quitar el agente? ¿Nos quedamos atrapados?',
+    a: ['Cero lock-in. Los datos están en formato estándar ECS, compatible con tu SIEM. Las skills son archivos .md cifrados con tus claves, recuperables al instante con un comando.',
+        'El propio agente se desinstala desde Intune con un solo clic. Borra automáticamente todo lo que tenía local. <strong>No hay sorpresa al salir</strong>.'] },
+  { q: '¿Qué pasa si el agente genera una skill mala y daña algo?',
+    a: ['Despliegue progresivo automático: la skill nueva llega primero al 10 % de endpoints, luego al 50 %, luego a todos. <strong>Si en cualquier fase la tasa de error supera el 2 %, el sistema cancela el despliegue solo</strong>.',
+        'Cada skill está versionada y firmada. Rollback al estado anterior es un solo comando, sin reinicios, sin pérdida de datos.'] },
+  { q: '¿Cuánto tiempo hasta ver el primer valor real?',
+    a: ['El piloto de Fase 1 dura 8 a 12 semanas. Al final, tenemos 3 skills validadas en producción real con 20 usuarios. <strong>Eso es lo que decide si invertir en el despliegue completo</strong>.',
+        'Fase 2 añade extensión de navegador y soporte multi-plataforma en otros 3-4 meses. Fase 3, con certificaciones ISO 27001 y SOC 2, en 3-6 meses adicionales. Total: 12-18 meses hasta producción enterprise plena.'] }
+];
+
+// ============= CATEGORIES =============
+const categories = {
+  base: { title: 'Conceptos base', icon: '01' },
+  lang: { title: 'Lenguajes de programación', icon: '02' },
+  os: { title: 'Sistema operativo y captura', icon: '03' },
+  net: { title: 'Redes y comunicación', icon: '04' },
+  data: { title: 'Datos y almacenamiento', icon: '05' },
+  sec: { title: 'Seguridad y compliance', icon: '06' },
+  dep: { title: 'Despliegue', icon: '07' },
+  back: { title: 'Backend e infraestructura', icon: '08' }
+};
+
+// ============= RENDER =============
+function renderDict(filter, query) {
+  const container = document.getElementById('dictContainer');
+  container.innerHTML = '';
+  let totalShown = 0;
+
+  Object.keys(categories).forEach(catKey => {
+    if (filter !== 'all' && filter !== catKey) return;
+    const cat = categories[catKey];
+    const items = dict.filter(d => d.cat === catKey).filter(d => {
+      if (!query) return true;
+      const q = query.toLowerCase();
+      return d.term.toLowerCase().includes(q) || (d.sigla || '').toLowerCase().includes(q) || d.tagline.toLowerCase().includes(q) || d.analogy.toLowerCase().includes(q);
+    });
+    if (items.length === 0) return;
+
+    const block = document.createElement('div');
+    block.className = 'cat-block';
+    block.innerHTML = `
+      <div class="cat-header">
+        <h3 class="cat-title">${cat.title}</h3>
+        <span class="cat-count">${items.length} término${items.length === 1 ? '' : 's'}</span>
+      </div>
+      <div class="term-grid"></div>
+    `;
+    const grid = block.querySelector('.term-grid');
+    items.forEach(item => {
+      totalShown++;
+      const termEl = document.createElement('div');
+      termEl.className = 'term';
+      termEl.id = 't-' + item.id;
+      termEl.innerHTML = `
+        <div class="term-head">
+          <div class="term-name">${item.term}${item.sigla ? `<span class="sigla">${item.sigla}</span>` : ''}</div>
+          <div class="term-tagline">${item.tagline}</div>
+          <div class="term-toggle">+</div>
+        </div>
+        <div class="term-body">
+          <div class="term-body-inner">
+            <div class="term-block">
+              <div class="term-block-label">Imagínalo así</div>
+              <p class="term-analogy">${item.analogy}</p>
+            </div>
+            <div class="term-block">
+              <div class="term-block-label">Lo que hace</div>
+              <p>${item.explain}</p>
+            </div>
+            <div class="term-block">
+              <div class="term-block-label">Por qué importa al vender</div>
+              <p>${item.why}</p>
+            </div>
+            <div class="term-block">
+              <div class="term-block-label">Frase lista para usar</div>
+              <div class="phrase">${item.phrase}</div>
+            </div>
+            ${item.related && item.related.length ? `
+            <div class="term-block">
+              <div class="term-block-label">Términos relacionados</div>
+              <div class="related">${item.related.map(r => `<a data-jump="${r}">${(dict.find(d => d.id === r) || {}).term || r}</a>`).join('')}</div>
+            </div>` : ''}
+          </div>
+        </div>
+      `;
+      grid.appendChild(termEl);
+    });
+    container.appendChild(block);
+  });
+
+  // Bind toggle
+  document.querySelectorAll('.term-head').forEach(h => {
+    h.addEventListener('click', function() {
+      h.parentElement.classList.toggle('open');
+    });
+  });
+  // Bind related jump
+  document.querySelectorAll('[data-jump]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const target = document.getElementById('t-' + a.getAttribute('data-jump'));
+      if (target) {
+        document.getElementById('searchBox').value = '';
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-filter="all"]').classList.add('active');
+        renderDict('all', '');
+        setTimeout(() => {
+          const t = document.getElementById('t-' + a.getAttribute('data-jump'));
+          if (t) {
+            t.classList.add('open');
+            t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            t.classList.add('flash');
+            setTimeout(() => t.classList.remove('flash'), 1500);
+          }
+        }, 100);
+      }
+    });
+  });
+
+  // Stats
+  const stats = document.getElementById('searchStats');
+  if (query || filter !== 'all') {
+    stats.textContent = `${totalShown} resultado${totalShown === 1 ? '' : 's'}`;
+  } else {
+    stats.textContent = '';
+  }
+}
+
+renderDict('all', '');
+
+// ============= SEARCH & FILTER =============
+let currentFilter = 'all';
+document.getElementById('searchBox').addEventListener('input', e => {
+  renderDict(currentFilter, e.target.value);
+});
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.getAttribute('data-filter');
+    renderDict(currentFilter, document.getElementById('searchBox').value);
+  });
+});
+
+// ============= SCRIPT SECTION =============
+const scriptGrid = document.getElementById('scriptGrid');
+script.forEach((item, idx) => {
+  const el = document.createElement('div');
+  el.className = 'script-item';
+  el.innerHTML = `
+    <div class="script-q">
+      <div><span class="q-label">P.${(idx+1).toString().padStart(2, '0')}</span><span class="q-text">${item.q}</span></div>
+      <div class="q-toggle">+</div>
+    </div>
+    <div class="script-a">
+      <div class="script-a-inner">
+        <div class="script-a-label">Respuesta lista</div>
+        ${item.a.map(p => `<p>${p}</p>`).join('')}
+      </div>
+    </div>
+  `;
+  scriptGrid.appendChild(el);
+});
+document.querySelectorAll('.script-q').forEach(q => {
+  q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+});
+
+// ============= STORY TERM JUMPS =============
+document.querySelectorAll('.story-step [data-jump]').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.getElementById('t-' + link.getAttribute('data-jump'));
+    if (target) {
+      document.getElementById('searchBox').value = '';
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('[data-filter="all"]').classList.add('active');
+      currentFilter = 'all';
+      renderDict('all', '');
+      setTimeout(() => {
+        const t = document.getElementById('t-' + link.getAttribute('data-jump'));
+        if (t) {
+          t.classList.add('open');
+          t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          t.classList.add('flash');
+          setTimeout(() => t.classList.remove('flash'), 1500);
+        }
+      }, 100);
+    }
+  });
+});
+
+</script>
+
+</body>
+</html>
