@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Shield — Red Neuronal de Skills Gobernadas</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#060A12;--bg2:#0C1220;--bg3:#131B2E;--accent:#00C2E0;--green:#2ECC71;--purple:#9B59B6;--red:#E74C3C;--amber:#F39C12;--cyan:#06B6D4;--pink:#E91E90;--text:#E2E8F0;--text2:#8895A7;--text3:#4A5568;--font:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace;--serif:'Instrument Serif',serif}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:var(--font);color:var(--text)}
+#canvas{width:100%;height:100%;position:absolute;top:0;left:0}
+.hud{position:fixed;top:1rem;left:1rem;z-index:10;pointer-events:none}
+.hud h1{font-family:var(--serif);font-size:1.1rem;font-weight:400;color:var(--text);letter-spacing:-.02em}
+.hud p{font-size:.7rem;color:var(--text3);margin-top:.25rem}
+.legend{position:fixed;bottom:1rem;left:1rem;z-index:10;display:flex;gap:.6rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:.3rem;font-size:.65rem;color:var(--text2)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.tooltip{position:fixed;z-index:100;background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:.9rem 1.1rem;max-width:320px;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.tooltip.show{opacity:1}
+.tooltip h3{font-size:.85rem;font-weight:600;margin-bottom:.3rem}
+.tooltip p{font-size:.72rem;color:var(--text2);line-height:1.5}
+.tooltip .tag{display:inline-block;font-size:.6rem;font-family:var(--mono);padding:.15rem .4rem;border-radius:3px;margin-top:.4rem;margin-right:.25rem}
+.controls{position:fixed;top:1rem;right:1rem;z-index:10;display:flex;gap:.4rem}
+.ctrl-btn{background:var(--bg2);border:1px solid rgba(255,255,255,.08);color:var(--text2);padding:.4rem .7rem;border-radius:6px;font-size:.7rem;font-family:var(--font);cursor:pointer;transition:all .15s}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ctrl-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pulse{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hud">
+<h1>⬡ Red Neuronal de Skills Gobernadas</h1>
+<p>Hermes Enterprise Shield · Arrastra nodos · Hover para detalles · Clic para fijar</p>
+</div>
+
+<div class="controls">
+<button class="ctrl-btn" onclick="resetLayout()">⟲ Reset</button>
+<button class="ctrl-btn" onclick="toggleFlow()" id="flowBtn">◉ Flujo datos</button>
+<button class="ctrl-btn" onclick="toggleLabels()" id="labBtn">◉ Etiquetas</button>
+</div>
+
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Skill Operativa</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Gobernanza</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Protección</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Ciberseguridad</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Talento</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Sentinel™</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--pink)"></div>Compliance</div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+<svg id="canvas"></svg>
+
+<script>
+const W=window.innerWidth,H=window.innerHeight,CX=W/2,CY=H/2;
+let showFlow=true,showLabels=true;
+
+// NODE DATA
+const nodes=[
+// Central hub
+{id:'hub',label:'RED NEURONAL\nSKILLS GOBERNADAS',x:CX,y:CY,r:52,color:'#00C2E0',type:'hub',
+desc:'Red de interconexión y mejora incremental entre skills gobernadas. Cada skill aprobada alimenta el aprendizaje colectivo del sistema sin comprometer la seguridad de ningún endpoint individual.',
+tags:['GEPA','Sentinel™','AES-256-GCM']},
+
+// SKILLS
+{id:'sk1',label:'SKILL-1',x:CX-260,y:CY-60,r:36,color:'#00C2E0',type:'skill',
+desc:'Skill generada por endpoint. Proceso: Detección de patrón → Generación GEPA → Embedding semántico → Evaluación Sentinel™ → Encriptación AES-256-GCM → Despliegue gobernado.',
+tags:['Nivel acceso 1','Encriptación','Gobernanza SENTINEL','Aprobación humana'],
+subs:['Generada por endpoint','Nivel de acceso 1','Encriptación AES-256-GCM','Gobernanza (SENTINEL)','Aprobación humana (SENTINEL)']},
+
+{id:'sk2',label:'SKILL-2',x:CX+260,y:CY-60,r:36,color:'#00C2E0',type:'skill',
+desc:'Skill generada por instrucción concreta o por patrones reiterados detectados por GEPA. Evaluada con score semántico: < 3.5 (rechazo auto), 3.5-4.2 (revisión humana), > 4.2 (pre-aprobada).',
+tags:['GEPA','Score semántico','Revisión humana'],
+subs:['Instrucción concreta (GEPA)','Patrones reiterados (GEPA)','Score semántico 3.5-4.2','Revisión humana','Despliegue']},
+
+{id:'skn',label:'SKILL-N',x:CX,y:CY+220,r:30,color:'#00C2E0',type:'skill',
+desc:'Skills adicionales generadas dinámicamente. Cada nueva skill aprobada enriquece el corpus vectorial de Sentinel™, mejorando la precisión de las evaluaciones futuras (mejora incremental).',
+tags:['Dinámicas','Corpus vectorial','Mejora incremental'],
+subs:['Auto-generadas por GEPA','Aplicables a otros endpoints','Mejora incremental del corpus']},
+
+// GOVERNANCE
+{id:'gov',label:'GOBERNANZA\nCORPORATIVA',x:CX-180,y:CY+170,r:34,color:'#2ECC71',type:'governance',
+desc:'Control central de qué empleados tienen skills generados por hábitos y habilidades, aprobados por buenas prácticas de gobierno. Diferentes niveles de acceso a documentos.',
+tags:['Buenas prácticas','Niveles de acceso','DOCs'],
+subs:['Skills por hábitos y habilidades','Buenas prácticas de gobierno','Diferentes niveles acceso a DOCs','Dashboard de gobernanza']},
+
+// CYBERSECURITY
+{id:'cyber',label:'CIBERSEGURIDAD\nPRIVACIDAD',x:CX+220,y:CY+140,r:34,color:'#E74C3C',type:'cyber',
+desc:'Las skills solo se generan si están dentro de los márgenes ISO 9001 (Calidad) o ISO 27001 (Seguridad en la información). Filtro de cumplimiento previo a la evaluación Sentinel™.',
+tags:['ISO 9001','ISO 27001','Zero-Export'],
+subs:['Márgenes ISO 9001 (Calidad)','Márgenes ISO 27001 (Seguridad)','Filtro pre-Sentinel™','Zero-Export by design']},
+
+// TALENT
+{id:'talent',label:'RETENCIÓN Y\nGESTIÓN TALENTO',x:CX-320,y:CY+80,r:32,color:'#F39C12',type:'talent',
+desc:'Sistema de micro-aprendizaje vs sanción. Las skills aprobadas se convierten en módulos de formación automática. Los patrones negativos detectados generan alertas de compliance, no castigos.',
+tags:['Micro-aprendizaje','Formación auto','Alertas compliance'],
+subs:['Micro-aprendizaje vs Sanción','Skills como módulos formativos','Detección patrones negativos','Alertas compliance positivas']},
+
+// PROTECTION
+{id:'prot',label:'PROTECCIÓN',x:CX+330,y:CY-10,r:34,color:'#9B59B6',type:'protection',
+desc:'Protección de la propiedad intelectual corporativa. Anonimato del usuario en las evaluaciones. Evolución gobernada de las skills. Arquitectura completamente ciega al usuario final.',
+tags:['IP','Anonimato','Arq. ciega'],
+subs:['Propiedad intelectual','Anonimato del usuario','Evolución gobernada','Arquitectura ciega al usuario']},
+
+// SENTINEL (new - adds value)
+{id:'sentinel',label:'SENTINEL™',x:CX-100,y:CY-220,r:34,color:'#06B6D4',type:'sentinel',
+desc:'Motor de curación semántica. Pipeline: Embedding (all-MiniLM-L6-v2) → LLM-as-Judge (Qwen 27B, G-Eval) → Gate semántico (auto-rechazo < 3.5, revisión 3.5-4.2, pre-aprobación > 4.2) → Aprobación humana.',
+tags:['G-Eval','LLM-as-Judge','Gate semántico'],
+subs:['Embedding semántico 384D','LLM-as-Judge (G-Eval)','Gate: <3.5 rechazo | 3.5-4.2 humano | >4.2 auto','Reduce 60% revisión humana']},
+
+// COMPLIANCE (new - adds value)
+{id:'compliance',label:'COMPLIANCE\nNORMATIVO',x:CX+120,y:CY-220,r:32,color:'#E91E90',type:'compliance',
+desc:'Marco normativo que rige la generación y despliegue de skills. EU AI Act, GDPR, HIPAA, ISO 27001, FDA 21 CFR Part 11. Las rúbricas de Sentinel™ se configuran por sector.',
+tags:['EU AI Act','GDPR','HIPAA','ISO 27001'],
+subs:['EU AI Act (trazabilidad IA)','GDPR (datos personales)','HIPAA (salud)','ISO 27001 (seguridad info)','FDA 21 CFR Part 11 (pharma)']},
+
+// ENDPOINTS (new - adds value)
+{id:'endpoints',label:'ENDPOINTS\n5.000 USUARIOS',x:CX-340,y:CY-140,r:30,color:'#00C2E0',type:'endpoint',
+desc:'Dispositivos de usuario donde corre el agente Hermes. Cada endpoint genera patrones que alimentan GEPA. Las skills desplegadas se descifran solo en RAM volátil durante la inferencia.',
+tags:['Electron','vLLM','RAM volátil'],
+subs:['Electron Win/Linux + Mobile','Bot MS Teams / Slack','Atajo global de sistema','Skills descifradas en RAM volátil']},
+
+// ENCRYPTION (new - adds value)
+{id:'encrypt',label:'ENCRIPTACIÓN\nAES-256-GCM',x:CX+340,y:CY-160,r:28,color:'#9B59B6',type:'encryption',
+desc:'Capa de encriptación que protege todas las skills en tránsito y reposo. Claves vinculadas al certificado del tenant. Sin certificado, los archivos son ruido binario irreversible.',
+tags:['Zero-Export','Cert. tenant','Ruido binario'],
+subs:['Cifrado en tránsito y reposo','Claves vinculadas a certificado','Sin cert. = ruido binario','Zero-Export by design']},
+];
+
+// CONNECTIONS
+const edges=[
+// Skills to hub
+{from:'sk1',to:'hub',label:'alimenta',strength:1},
+{from:'sk2',to:'hub',label:'alimenta',strength:1},
+{from:'skn',to:'hub',label:'alimenta',strength:1},
+// Hub back to skills (bidirectional improvement)
+{from:'hub',to:'sk1',label:'mejora',strength:.5},
+{from:'hub',to:'sk2',label:'mejora',strength:.5},
+{from:'hub',to:'skn',label:'mejora',strength:.5},
+// Skills interconnection
+{from:'sk1',to:'sk2',label:'interconexión',strength:.6},
+{from:'sk2',to:'skn',label:'interconexión',strength:.6},
+{from:'sk1',to:'skn',label:'interconexión',strength:.6},
+// Sentinel validates skills
+{from:'sentinel',to:'sk1',label:'valida',strength:.8},
+{from:'sentinel',to:'sk2',label:'valida',strength:.8},
+{from:'sentinel',to:'skn',label:'valida',strength:.7},
+// Compliance feeds Sentinel
+{from:'compliance',to:'sentinel',label:'rúbricas',strength:.8},
+// Cybersecurity constrains skills
+{from:'cyber',to:'sk1',label:'ISO 9001/27001',strength:.7},
+{from:'cyber',to:'sk2',label:'ISO 9001/27001',strength:.7},
+{from:'cyber',to:'hub',label:'filtra',strength:.6},
+// Governance oversees
+{from:'gov',to:'hub',label:'gobierna',strength:.8},
+{from:'gov',to:'sentinel',label:'configura',strength:.6},
+// Protection wraps
+{from:'prot',to:'encrypt',label:'implementa',strength:.7},
+{from:'prot',to:'hub',label:'protege',strength:.6},
+{from:'encrypt',to:'sk1',label:'cifra',strength:.7},
+{from:'encrypt',to:'sk2',label:'cifra',strength:.7},
+// Talent connects
+{from:'talent',to:'hub',label:'forma',strength:.5},
+{from:'talent',to:'gov',label:'reporta',strength:.5},
+// Endpoints generate
+{from:'endpoints',to:'sk1',label:'genera patrones',strength:.8},
+{from:'endpoints',to:'sk2',label:'genera patrones',strength:.6},
+{from:'hub',to:'endpoints',label:'despliega',strength:.7},
+// Compliance constrains governance
+{from:'compliance',to:'gov',label:'marco legal',strength:.5},
+{from:'compliance',to:'cyber',label:'normativas',strength:.5},
+];
+
+// PHYSICS
+const DAMPING=.92,REPULSION=8000,SPRING=.003,CENTER_PULL=.0003;
+let dragging=null,mx=0,my=0,animId;
+nodes.forEach(n=>{n.vx=0;n.vy=0;n.fx=n.x;n.fy=n.y;n.pinned=false});
+
+function simulate(){
+  nodes.forEach(a=>{
+    if(a.pinned||a===dragging)return;
+    let fx=0,fy=0;
+    // Repulsion
+    nodes.forEach(b=>{
+      if(a===b)return;
+      const dx=a.x-b.x,dy=a.y-b.y,d=Math.max(Math.sqrt(dx*dx+dy*dy),1);
+      const f=REPULSION/(d*d);
+      fx+=dx/d*f;fy+=dy/d*f;
+    });
+    // Spring (edges)
+    edges.forEach(e=>{
+      let other=null;
+      if(e.from===a.id)other=nodes.find(n=>n.id===e.to);
+      else if(e.to===a.id)other=nodes.find(n=>n.id===e.from);
+      if(!other)return;
+      const dx=other.x-a.x,dy=other.y-a.y,d=Math.sqrt(dx*dx+dy*dy);
+      const idealDist=180;
+      const f=(d-idealDist)*SPRING*e.strength;
+      fx+=dx/d*f;fy+=dy/d*f;
+    });
+    // Center pull
+    fx+=(CX-a.x)*CENTER_PULL;
+    fy+=(CY-a.y)*CENTER_PULL;
+    a.vx=(a.vx+fx)*DAMPING;
+    a.vy=(a.vy+fy)*DAMPING;
+    a.x+=a.vx;a.y+=a.vy;
+    // Bounds
+    a.x=Math.max(a.r+10,Math.min(W-a.r-10,a.x));
+    a.y=Math.max(a.r+10,Math.min(H-a.r-10,a.y));
+  });
+}
+
+function render(){
+  simulate();
+  const svg=document.getElementById('canvas');
+  let html='<defs>';
+  // Glow filter
+  html+='<filter id="glow"><feGaussianBlur stdDeviation="6" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+  // Arrow markers
+  const colors=new Set(nodes.map(n=>n.color));
+  colors.forEach(c=>{
+    html+=`<marker id="arr${c.slice(1)}" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto"><path d="M0,0 L10,3 L0,6Z" fill="${c}" opacity=".4"/></marker>`;
+  });
+  html+='</defs>';
+
+  // Background grid
+  html+='<pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40,0 L0,0 0,40" fill="none" stroke="rgba(255,255,255,.02)" stroke-width=".5"/></pattern><rect width="100%" height="100%" fill="url(#grid)"/>';
+
+  // Edges
+  edges.forEach(e=>{
+    const a=nodes.find(n=>n.id===e.from),b=nodes.find(n=>n.id===e.to);
+    if(!a||!b)return;
+    const dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy);
+    const sx=a.x+dx/d*a.r,sy=a.y+dy/d*a.r;
+    const ex=b.x-dx/d*b.r,ey=b.y-dy/d*b.r;
+    const op=.12+e.strength*.15;
+    const col=a.color;
+    html+=`<line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="${col}" stroke-width="${.5+e.strength*1.5}" opacity="${op}" marker-end="url(#arr${col.slice(1)})"/>`;
+    // Flow particles
+    if(showFlow){
+      const t=(Date.now()%3000)/3000;
+      const px=sx+(ex-sx)*t,py=sy+(ey-sy)*t;
+      html+=`<circle cx="${px}" cy="${py}" r="2" fill="${col}" opacity="${.3+Math.sin(t*Math.PI)*.4}"/>`;
+    }
+    // Edge label
+    if(showLabels&&e.label){
+      const lx=(sx+ex)/2,ly=(sy+ey)/2;
+      html+=`<text x="${lx}" y="${ly-4}" text-anchor="middle" font-size="8" font-family="var(--mono)" fill="${col}" opacity=".35">${e.label}</text>`;
+    }
+  });
+
+  // Nodes
+  nodes.forEach(n=>{
+    const isHub=n.type==='hub';
+    const glow=isHub?'filter="url(#glow)"':'';
+    // Outer ring
+    html+=`<circle cx="${n.x}" cy="${n.y}" r="${n.r+4}" fill="none" stroke="${n.color}" stroke-width=".5" opacity=".2" ${glow}/>`;
+    // Fill
+    html+=`<circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${n.color}" opacity=".08" stroke="${n.color}" stroke-width="1.5" opacity=".6" data-id="${n.id}" class="node-circle" style="cursor:grab"/>`;
+    // Inner pulse for hub
+    if(isHub){
+      const pr=n.r*.6+Math.sin(Date.now()/600)*4;
+      html+=`<circle cx="${n.x}" cy="${n.y}" r="${pr}" fill="none" stroke="${n.color}" stroke-width=".5" opacity=".3"/>`;
+    }
+    // Label
+    const lines=n.label.split('\n');
+    const ly=n.y-((lines.length-1)*7);
+    lines.forEach((line,i)=>{
+      const fs=isHub?10:9;
+      const fw=i===0?'600':'400';
+      html+=`<text x="${n.x}" y="${ly+i*14}" text-anchor="middle" font-size="${fs}" font-weight="${fw}" font-family="var(--font)" fill="${n.color}" style="pointer-events:none">${line}</text>`;
+    });
+    // Sub-items (small dots around node)
+    if(n.subs&&showLabels){
+      n.subs.forEach((s,i)=>{
+        const angle=(i/(n.subs.length))*Math.PI*2-Math.PI/2;
+        const dist=n.r+18;
+        const sx=n.x+Math.cos(angle)*dist,sy=n.y+Math.sin(angle)*dist;
+        html+=`<circle cx="${sx}" cy="${sy}" r="2.5" fill="${n.color}" opacity=".3"/>`;
+      });
+    }
+  });
+
+  svg.innerHTML=html;
+  animId=requestAnimationFrame(render);
+}
+
+// INTERACTION
+const svg=document.getElementById('canvas');
+svg.setAttribute('width',W);
+svg.setAttribute('height',H);
+
+function getNode(e){
+  const r=svg.getBoundingClientRect();
+  const x=e.clientX-r.left,y=e.clientY-r.top;
+  return nodes.find(n=>{const dx=x-n.x,dy=y-n.y;return Math.sqrt(dx*dx+dy*dy)<n.r+10});
+}
+
+svg.addEventListener('mousedown',e=>{
+  const n=getNode(e);
+  if(n){dragging=n;dragging.pinned=true;svg.style.cursor='grabbing'}
+});
+window.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  if(dragging){
+    const r=svg.getBoundingClientRect();
+    dragging.x=e.clientX-r.left;
+    dragging.y=e.clientY-r.top;
+  }
+  // Tooltip
+  const tt=document.getElementById('tooltip');
+  const n=getNode(e);
+  if(n&&!dragging){
+    let h=`<h3 style="color:${n.color}">${n.label.replace(/\n/g,' ')}</h3>`;
+    h+=`<p>${n.desc}</p>`;
+    if(n.subs){
+      h+='<p style="margin-top:.4rem;color:var(--text)">';
+      n.subs.forEach(s=>{h+=`• ${s}<br>`});
+      h+='</p>';
+    }
+    if(n.tags){
+      n.tags.forEach(t=>{h+=`<span class="tag" style="background:${n.color}22;color:${n.color}">${t}</span>`});
+    }
+    tt.innerHTML=h;
+    tt.classList.add('show');
+    const tx=Math.min(mx+16,W-340);
+    const ty=Math.min(my+16,H-200);
+    tt.style.left=tx+'px';tt.style.top=ty+'px';
+  } else {
+    tt.classList.remove('show');
+  }
+});
+window.addEventListener('mouseup',()=>{
+  if(dragging){dragging.pinned=false;dragging=null;svg.style.cursor='default'}
+});
+
+// Touch support
+svg.addEventListener('touchstart',e=>{
+  const t=e.touches[0];
+  const r=svg.getBoundingClientRect();
+  const x=t.clientX-r.left,y=t.clientY-r.top;
+  const n=nodes.find(n=>{const dx=x-n.x,dy=y-n.y;return Math.sqrt(dx*dx+dy*dy)<n.r+20});
+  if(n){dragging=n;dragging.pinned=true}
+},{passive:true});
+svg.addEventListener('touchmove',e=>{
+  if(dragging){
+    const t=e.touches[0];
+    const r=svg.getBoundingClientRect();
+    dragging.x=t.clientX-r.left;
+    dragging.y=t.clientY-r.top;
+  }
+},{passive:true});
+svg.addEventListener('touchend',()=>{
+  if(dragging){dragging.pinned=false;dragging=null}
+});
+
+function resetLayout(){
+  nodes.forEach(n=>{n.x=n.fx;n.y=n.fy;n.vx=0;n.vy=0;n.pinned=false});
+}
+function toggleFlow(){showFlow=!showFlow;document.getElementById('flowBtn').classList.toggle('active',showFlow)}
+function toggleLabels(){showLabels=!showLabels;document.getElementById('labBtn').classList.toggle('active',showLabels)}
+document.getElementById('flowBtn').classList.add('active');
+document.getElementById('labBtn').classList.add('active');
+
+// Window resize
+window.addEventListener('resize',()=>{
+  svg.setAttribute('width',window.innerWidth);
+  svg.setAttribute('height',window.innerHeight);
+});
+
+render();
+</script>
+</body>
+</html>
