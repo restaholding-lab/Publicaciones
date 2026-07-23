@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Curso MIT para Dirección Comercial · Índice de publicaciones</title>
-<meta name="description" content="Índice de volúmenes publicados — Curso MIT para Dirección Comercial. Repositorio restaholding-lab/Publicaciones.">
+<title>Publicaciones · Índice de documentos</title>
+<meta name="description" content="Índice de documentos publicados en restaholding-lab/Publicaciones — Curso MIT para Dirección Comercial y documentación de Hermes Enterprise Shield.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,7 @@
   .cover{
     max-width:920px;
     margin:0 auto;
-    padding:88px 32px 56px;
+    padding:88px 32px 48px;
     position:relative;
   }
 
@@ -78,13 +78,13 @@
     line-height:1.05;
     margin:0 0 18px;
     color:var(--cream);
-    max-width:14ch;
+    max-width:16ch;
   }
 
   .lede{
     font-size:16.5px;
     color:var(--cream-soft);
-    max-width:52ch;
+    max-width:56ch;
     margin:0 0 40px;
   }
 
@@ -111,7 +111,7 @@
   }
   .meta-row a:hover{ color:var(--cream); border-color:var(--cream); }
 
-  /* ---------- Lomo / spine con los volúmenes ---------- */
+  /* ---------- Secciones ---------- */
 
   .shelf{
     max-width:920px;
@@ -121,7 +121,7 @@
   }
 
   .shelf::before{
-    /* lomo del cuaderno */
+    /* lomo del cuaderno, recorre todas las secciones */
     content:"";
     position:absolute;
     left:32px;
@@ -135,6 +135,49 @@
     .shelf::before{ display:none; }
   }
 
+  .section{
+    margin:0 0 12px;
+  }
+
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin:44px 0 18px;
+  }
+
+  .section:first-of-type .section-head{ margin-top:6px; }
+
+  .section-head .n{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.1em;
+    color:var(--gold-dim);
+  }
+
+  .section-head h2{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:19px;
+    color:var(--cream);
+    margin:0;
+  }
+
+  .section-head .rule{
+    flex:1;
+    height:1px;
+    background:var(--cover-line);
+  }
+
+  .section-lede{
+    font-size:13.5px;
+    color:var(--cream-soft);
+    max-width:60ch;
+    margin:-8px 0 20px;
+  }
+
+  /* ---------- Tarjetas de documento ---------- */
+
   .volume{
     position:relative;
     display:grid;
@@ -143,8 +186,8 @@
     background:var(--paper);
     border:1px solid var(--paper-edge);
     border-radius:3px;
-    margin:0 0 22px;
-    padding:30px 32px;
+    margin:0 0 18px;
+    padding:28px 32px;
     text-decoration:none;
     color:var(--ink);
     box-shadow:0 1px 0 rgba(0,0,0,.25);
@@ -176,6 +219,16 @@
     align-self:start;
   }
 
+  /* variante para tarjetas fuera de la numeración romana del curso */
+  .numeral.small{
+    font-size:30px;
+    font-family:var(--mono);
+    font-weight:500;
+    color:var(--gold-dim);
+    align-self:start;
+    padding-top:6px;
+  }
+
   .vol-body .tag{
     display:inline-block;
     font-family:var(--mono);
@@ -189,19 +242,19 @@
     margin-bottom:10px;
   }
 
-  .vol-body h2{
+  .vol-body h3{
     font-family:var(--serif);
     font-weight:600;
-    font-size:22px;
+    font-size:21px;
     margin:0 0 8px;
     color:var(--ink);
   }
 
   .vol-body p{
     margin:0 0 14px;
-    font-size:14.5px;
+    font-size:14px;
     color:var(--ink-soft);
-    max-width:56ch;
+    max-width:58ch;
   }
 
   .vol-foot{
@@ -221,17 +274,19 @@
   .volume:hover .read::after{ content:" →"; }
 
   @media (max-width:640px){
-    .volume{ grid-template-columns:1fr; padding:24px 22px; }
+    .volume{ grid-template-columns:1fr; padding:22px 20px; }
     .numeral{ font-size:34px; margin-bottom:6px; }
+    .numeral.small{ font-size:22px; }
   }
 
-  /* ---------- Fila vacía / próximo volumen ---------- */
+  /* ---------- Fila vacía / próximo documento ---------- */
 
   .next{
     display:flex;
     align-items:center;
     gap:14px;
-    padding:22px 32px;
+    padding:20px 32px;
+    margin-top:8px;
     font-family:var(--mono);
     font-size:12.5px;
     color:var(--cream-soft);
@@ -241,7 +296,7 @@
 
   .next .numeral-ghost{
     font-family:var(--serif);
-    font-size:32px;
+    font-size:28px;
     color:var(--cover-line);
   }
 
@@ -264,10 +319,10 @@
 
 <div class="cover">
   <div class="eyebrow">restaholding-lab / Publicaciones</div>
-  <h1>Curso MIT para Dirección Comercial</h1>
-  <p class="lede">Índice de volúmenes publicados: guías por capas para perfiles de ventas y marketing que quieren entender y construir con IA, sin salir del navegador.</p>
+  <h1>Índice de Publicaciones</h1>
+  <p class="lede">Biblioteca de documentos HTML publicados desde este repositorio: el curso para dirección comercial y la documentación de producto de Hermes Enterprise Shield.</p>
   <div class="meta-row">
-    <span><b>2</b> volúmenes publicados</span>
+    <span><b>5</b> documentos · <b>2</b> series</span>
     <span>Última actualización: <b>23 jul 2026</b></span>
     <span><a href="https://github.com/restaholding-lab/Publicaciones" target="_blank" rel="noopener">github.com/restaholding-lab/Publicaciones</a></span>
   </div>
@@ -275,37 +330,99 @@
 
 <div class="shelf">
 
-  <a class="volume" href="ecosistema-digital.html">
-    <div class="numeral">I</div>
-    <div class="vol-body">
-      <span class="tag">Fundamentos</span>
-      <h2>Mapa del Ecosistema Digital</h2>
-      <p>Cartografía interactiva por capas del stack tecnológico moderno, pensada para perfiles de dirección de ventas y marketing.</p>
-      <div class="vol-foot">
-        <span class="read">Leer volumen</span>
-        <span>·</span>
-        <span>ecosistema-digital.html</span>
-      </div>
+  <!-- ═══ SECCIÓN 1 — Curso MIT ═══ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="n">01</span>
+      <h2>Curso MIT para Dirección Comercial</h2>
+      <span class="rule"></span>
     </div>
-  </a>
+    <p class="section-lede">Guías por capas para perfiles de ventas y marketing que quieren entender y construir con IA, sin salir del navegador.</p>
 
-  <a class="volume" href="programar1.html">
-    <div class="numeral">II</div>
-    <div class="vol-body">
-      <span class="tag">Práctica</span>
-      <h2>Construir tu primera herramienta digital</h2>
-      <p>Guía por capas para construir tu primera herramienta profesional con ayuda de IA, desde el portátil hasta una URL pública.</p>
-      <div class="vol-foot">
-        <span class="read">Leer volumen</span>
-        <span>·</span>
-        <span>programar1.html</span>
+    <a class="volume" href="ecosistema-digital.html">
+      <div class="numeral">I</div>
+      <div class="vol-body">
+        <span class="tag">Fundamentos</span>
+        <h3>Mapa del Ecosistema Digital</h3>
+        <p>Cartografía interactiva por capas del stack tecnológico moderno, pensada para perfiles de dirección de ventas y marketing.</p>
+        <div class="vol-foot">
+          <span class="read">Leer volumen</span>
+          <span>·</span>
+          <span>ecosistema-digital.html</span>
+        </div>
       </div>
+    </a>
+
+    <a class="volume" href="programar1.html">
+      <div class="numeral">II</div>
+      <div class="vol-body">
+        <span class="tag">Práctica</span>
+        <h3>Construir tu primera herramienta digital</h3>
+        <p>Guía por capas para construir tu primera herramienta profesional con ayuda de IA, desde el portátil hasta una URL pública.</p>
+        <div class="vol-foot">
+          <span class="read">Leer volumen</span>
+          <span>·</span>
+          <span>programar1.html</span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- ═══ SECCIÓN 2 — Hermes Enterprise Shield ═══ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="n">02</span>
+      <h2>Hermes Enterprise Shield</h2>
+      <span class="rule"></span>
     </div>
-  </a>
+    <p class="section-lede">Documentación de producto: especificación técnica, guía de traducción comercial y visualización interactiva de las skills gobernadas.</p>
+
+    <a class="volume" href="hermes_endpoint_agent.html">
+      <div class="numeral small">01</div>
+      <div class="vol-body">
+        <span class="tag">Documento técnico</span>
+        <h3>Endpoint Agent — Documento Técnico</h3>
+        <p>Especificación del agente endpoint: arquitectura, fuentes de señal, modelo de despliegue empresarial y hoja de ruta a producción en entornos regulados.</p>
+        <div class="vol-foot">
+          <span class="read">Leer documento</span>
+          <span>·</span>
+          <span>hermes_endpoint_agent.html</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="volume" href="hermes_diccionario_guia.html">
+      <div class="numeral small">02</div>
+      <div class="vol-body">
+        <span class="tag">Guía comercial</span>
+        <h3>Diccionario — Guía Comercial</h3>
+        <p>Traduce cada término técnico del Endpoint Agent a lenguaje de cliente: analogías, por qué le importa y frases listas para defenderlo ante un CISO o un inversor.</p>
+        <div class="vol-foot">
+          <span class="read">Leer documento</span>
+          <span>·</span>
+          <span>hermes_diccionario_guia.html</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="volume" href="Hermes_Shield_Neural_Skills.html">
+      <div class="numeral small">03</div>
+      <div class="vol-body">
+        <span class="tag">Visualización interactiva</span>
+        <h3>Red Neuronal de Skills Gobernadas</h3>
+        <p>Mapa interactivo de las skills de Hermes Enterprise Shield: arrastra nodos, filtra por etiqueta y explora las relaciones de gobernanza y compliance.</p>
+        <div class="vol-foot">
+          <span class="read">Abrir visualización</span>
+          <span>·</span>
+          <span>Hermes_Shield_Neural_Skills.html</span>
+        </div>
+      </div>
+    </a>
+  </div>
 
   <div class="next">
-    <span class="numeral-ghost">III</span>
-    <span>Próximo volumen — añade aquí tu siguiente publicación</span>
+    <span class="numeral-ghost">＋</span>
+    <span>Próximo documento — añade aquí tu siguiente publicación</span>
   </div>
 
 </div>
@@ -319,33 +436,58 @@
 
 <!--
   ═══════════════════════════════════════════════════════════════════
-  CÓMO AÑADIR UN NUEVO VOLUMEN
+  CÓMO AÑADIR UN NUEVO DOCUMENTO
   ═══════════════════════════════════════════════════════════════════
 
   1. Sube tu nuevo archivo .html al repo (sin espacios en el nombre,
      ej: "mi-documento.html").
 
-  2. Copia este bloque y pégalo justo antes de la línea
-     `<div class="next">...</div>` (así el "próximo volumen" fantasma
-     queda siempre al final):
+  2. Decide dónde encaja:
 
-  <a class="volume" href="NOMBRE-DEL-ARCHIVO.html">
-    <div class="numeral">III</div>
-    <div class="vol-body">
-      <span class="tag">ETIQUETA</span>
-      <h2>Título del documento</h2>
-      <p>Descripción breve de una o dos frases.</p>
-      <div class="vol-foot">
-        <span class="read">Leer volumen</span>
-        <span>·</span>
-        <span>NOMBRE-DEL-ARCHIVO.html</span>
-      </div>
-    </div>
-  </a>
+     a) ¿Es un nuevo volumen del Curso MIT (una guía numerada en la
+        misma serie que I y II)? Pégalo dentro de la SECCIÓN 1, usando
+        este bloque, y cambia el numeral a "III", "IV", "V"...
 
-  3. Cambia el numeral (III, IV, V, VI, VII, VIII, IX, X...) y actualiza
-     el contador "N volúmenes publicados" y la fecha en el meta-row
-     de arriba.
+        <a class="volume" href="NOMBRE-DEL-ARCHIVO.html">
+          <div class="numeral">III</div>
+          <div class="vol-body">
+            <span class="tag">ETIQUETA</span>
+            <h3>Título del documento</h3>
+            <p>Descripción breve de una o dos frases.</p>
+            <div class="vol-foot">
+              <span class="read">Leer volumen</span>
+              <span>·</span>
+              <span>NOMBRE-DEL-ARCHIVO.html</span>
+            </div>
+          </div>
+        </a>
+
+     b) ¿Es documentación de producto (Hermes u otro), no del curso?
+        Pégalo dentro de la sección correspondiente usando el numeral
+        pequeño ("small"), o crea una SECCIÓN 3 nueva copiando el
+        bloque <div class="section">...</div> completo y cambiando
+        su número de eyebrow ("03"), título y lede.
+
+        <a class="volume" href="NOMBRE-DEL-ARCHIVO.html">
+          <div class="numeral small">04</div>
+          <div class="vol-body">
+            <span class="tag">ETIQUETA</span>
+            <h3>Título del documento</h3>
+            <p>Descripción breve de una o dos frases.</p>
+            <div class="vol-foot">
+              <span class="read">Leer documento</span>
+              <span>·</span>
+              <span>NOMBRE-DEL-ARCHIVO.html</span>
+            </div>
+          </div>
+        </a>
+
+  3. Pega el bloque justo antes de `<div class="next">...</div>` de
+     su sección (así el "próximo documento" fantasma queda al final
+     de todo).
+
+  4. Actualiza el contador "N documentos · N series" y la fecha en
+     el meta-row de arriba.
 
   ═══════════════════════════════════════════════════════════════════
 -->
