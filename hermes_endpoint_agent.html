@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Enterprise Shield — Endpoint Agent · Documento Técnico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0d10;
+    --bg-elevated: #16181c;
+    --bg-deeper: #08090b;
+    --text: #e8e6e0;
+    --text-muted: #95928a;
+    --text-faint: #5e5c56;
+    --accent: #c8a06b;
+    --accent-dim: #8a6f4a;
+    --accent-secondary: #5f7a8c;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.16);
+    --success: #6b8e6f;
+    --warning: #c88e6b;
+    --danger: #b56b6b;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-serif: 'Crimson Pro', Georgia, serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 16px; line-height: 1.65; font-weight: 400; letter-spacing: -0.005em; -webkit-font-smoothing: antialiased; }
+
+  /* HEADER */
+  header.top { position: sticky; top: 0; z-index: 50; background: rgba(12,13,16,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+  header.top .inner { max-width: 1240px; margin: 0 auto; padding: 1.1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-family: var(--font-serif); font-weight: 500; font-size: 1.05rem; letter-spacing: 0.04em; }
+  .brand span { color: var(--accent); margin-left: 0.3rem; font-style: italic; }
+  nav ul { display: flex; gap: 2rem; margin: 0; padding: 0; list-style: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.18em; }
+  nav a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  nav a:hover { color: var(--accent); }
+  @media (max-width: 880px) { nav ul { display: none; } }
+
+  /* HERO */
+  .hero { max-width: 1240px; margin: 0 auto; padding: 7rem 2rem 6rem; }
+  .hero .pre { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.5rem; }
+  .hero h1 { font-family: var(--font-serif); font-weight: 300; font-size: clamp(2.5rem, 6vw, 4.6rem); line-height: 1.02; margin: 0 0 1.8rem; letter-spacing: -0.025em; max-width: 950px; }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .hero .subtitle { font-size: 1.2rem; color: var(--text-muted); max-width: 720px; margin: 0 0 3.5rem; line-height: 1.55; }
+  .hero .meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+  .hero .meta div .k { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .hero .meta div .v { font-family: var(--font-sans); font-size: 0.92rem; color: var(--text); font-weight: 500; }
+  @media (max-width: 720px) { .hero .meta { grid-template-columns: repeat(2, 1fr); } }
+
+  /* SECTIONS */
+  section { max-width: 1240px; margin: 0 auto; padding: 6rem 2rem; }
+  section.alt { background: var(--bg-deeper); max-width: none; margin: 0; padding: 6rem 2rem; }
+  section.alt > .inner { max-width: 1240px; margin: 0 auto; }
+  .section-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.5rem; }
+  h2 { font-family: var(--font-serif); font-weight: 300; font-size: clamp(2rem, 4.2vw, 3rem); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 1.5rem; max-width: 900px; }
+  h2 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .section-lead { font-size: 1.1rem; color: var(--text-muted); max-width: 780px; line-height: 1.6; margin: 0 0 2rem; }
+  p { color: var(--text-muted); max-width: 800px; }
+  p strong { color: var(--text); font-weight: 500; }
+
+  /* CISO GRID */
+  .ciso-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 3rem; }
+  .ciso-item { background: var(--bg); padding: 2.2rem 1.8rem; }
+  .ciso-item .num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 1.2rem; }
+  .ciso-item h4 { font-family: var(--font-serif); font-weight: 500; font-size: 1.2rem; margin: 0 0 0.7rem; color: var(--text); line-height: 1.3; }
+  .ciso-item p { font-size: 0.9rem; margin: 0; line-height: 1.6; }
+
+  /* ARCHITECTURE */
+  .arch-intro { display: grid; grid-template-columns: 2fr 1fr; gap: 4rem; margin-bottom: 3rem; align-items: end; }
+  @media (max-width: 880px) { .arch-intro { grid-template-columns: 1fr; gap: 1.5rem; } }
+  .arch-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .arch-stats div { background: var(--bg); padding: 1.2rem 1.3rem; }
+  .arch-stats .k { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-faint); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .arch-stats .v { color: var(--accent); font-family: var(--font-mono); font-weight: 500; font-size: 0.95rem; }
+
+  .arch-container { display: grid; gap: 0; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 6px; overflow: hidden; }
+  .arch-layer { border-bottom: 1px solid var(--border); padding: 2rem 2rem 2.3rem; position: relative; }
+  .arch-layer:last-child { border-bottom: none; }
+  .arch-layer.backend { background: linear-gradient(180deg, rgba(95,122,140,0.04), transparent); }
+  .layer-header { display: flex; align-items: baseline; gap: 1.2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .layer-num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; }
+  .layer-title { font-family: var(--font-serif); font-weight: 500; font-size: 1.5rem; color: var(--text); margin: 0; }
+  .layer-desc { font-size: 0.82rem; color: var(--text-faint); margin-left: auto; font-family: var(--font-mono); letter-spacing: 0.05em; }
+  .components-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.7rem; }
+  .arch-layer.single .components-grid { grid-template-columns: 1fr; }
+  .component { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1.2rem 1.3rem 1.4rem; cursor: pointer; transition: all 0.2s; position: relative; }
+  .component:hover { border-color: var(--accent-dim); background: rgba(200,160,107,0.04); transform: translateY(-1px); }
+  .component .c-tag { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .component .c-name { font-weight: 500; font-size: 0.98rem; margin-bottom: 0.3rem; color: var(--text); letter-spacing: -0.005em; }
+  .component .c-sub { font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; }
+  .component .c-icon { position: absolute; top: 1rem; right: 1rem; width: 22px; height: 22px; border: 1px solid var(--border-strong); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--text-faint); transition: all 0.2s; }
+  .component:hover .c-icon { border-color: var(--accent); color: var(--accent); }
+  .layer-connector { display: flex; justify-content: center; padding: 0.6rem 0; opacity: 0.4; }
+  .layer-connector svg { width: 14px; }
+
+  /* MODAL */
+  .panel-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(10px); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .panel-backdrop.open { opacity: 1; pointer-events: auto; }
+  .detail-panel { position: fixed; top: 0; right: 0; width: min(600px, 100%); height: 100vh; background: var(--bg-elevated); border-left: 1px solid var(--border-strong); z-index: 101; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1); overflow-y: auto; }
+  .detail-panel.open { transform: translateX(0); }
+  .panel-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: 1px solid var(--border-strong); color: var(--text-muted); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; transition: all 0.2s; font-family: var(--font-sans); line-height: 1; }
+  .panel-close:hover { color: var(--accent); border-color: var(--accent); }
+  .panel-content { padding: 3.5rem 2.8rem 3rem; }
+  .panel-tag { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.2rem; }
+  .panel-title { font-family: var(--font-serif); font-weight: 500; font-size: 2rem; margin: 0 0 0.4rem; color: var(--text); line-height: 1.15; }
+  .panel-subtitle { font-size: 0.95rem; color: var(--text-muted); margin: 0 0 2.5rem; line-height: 1.55; }
+  .panel-block { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .panel-block:last-child { border-bottom: none; margin-bottom: 0; }
+  .panel-block-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 0.9rem; }
+  .panel-block p { font-size: 0.92rem; line-height: 1.7; color: var(--text-muted); margin: 0; }
+  .panel-block ul { margin: 0; padding-left: 0; list-style: none; }
+  .panel-block li { font-size: 0.9rem; color: var(--text-muted); padding: 0.4rem 0; line-height: 1.5; padding-left: 1rem; position: relative; }
+  .panel-block li::before { content: '·'; position: absolute; left: 0; color: var(--accent); font-weight: bold; font-size: 1.2rem; line-height: 1.1; }
+  .panel-block li strong { color: var(--text); font-weight: 500; }
+  .kv-list { list-style: none !important; padding: 0 !important; margin: 0; }
+  .kv-list li { display: grid; grid-template-columns: 1fr 1.5fr; gap: 1rem; padding: 0.6rem 0 !important; border-bottom: 1px solid var(--border); padding-left: 0 !important; }
+  .kv-list li::before { display: none; }
+  .kv-list li:last-child { border-bottom: none; }
+  .kv-list .k { color: var(--text-faint); font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.05em; }
+  .kv-list .v { color: var(--text); font-size: 0.88rem; }
+  .code-block { background: var(--bg-deeper); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); margin-top: 0.5rem; line-height: 1.6; overflow-x: auto; }
+
+  /* STACK */
+  .stack-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-bottom: 0; }
+  @media (max-width: 880px) { .stack-intro { grid-template-columns: 1fr; gap: 2rem; } }
+  .stack-rust-card { background: var(--bg-elevated); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: 4px; padding: 1.8rem 2rem; }
+  .stack-rust-card .label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.8rem; }
+  .stack-rust-card h4 { font-family: var(--font-serif); font-weight: 500; font-size: 1.4rem; margin: 0 0 0.8rem; }
+  .stack-rust-card p { font-size: 0.92rem; margin: 0; line-height: 1.6; }
+
+  .stack-table { margin-top: 3rem; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; background: var(--bg); }
+  .stack-row { display: grid; grid-template-columns: 2fr 1.5fr 3fr; border-bottom: 1px solid var(--border); }
+  .stack-row:last-child { border-bottom: none; }
+  .stack-row:hover:not(.head) { background: rgba(255,255,255,0.02); }
+  .stack-row.head { background: var(--bg-deeper); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-faint); }
+  .stack-cell { padding: 1.3rem 1.6rem; font-size: 0.92rem; }
+  .stack-cell.comp { color: var(--text); font-weight: 500; }
+  .stack-cell.lang { color: var(--accent); font-family: var(--font-mono); font-weight: 500; font-size: 0.85rem; }
+  .stack-cell.why { color: var(--text-muted); }
+  @media (max-width: 720px) { .stack-row { grid-template-columns: 1fr; } .stack-cell { padding: 0.8rem 1.3rem; } .stack-row.head { display: none; } }
+
+  /* SIGNAL SOURCES */
+  .signals-list { margin-top: 3rem; }
+  .signal { border-top: 1px solid var(--border); transition: background 0.2s; }
+  .signal:last-child { border-bottom: 1px solid var(--border); }
+  .signal-header { padding: 2.2rem 0; display: grid; grid-template-columns: auto 1fr auto auto; gap: 2rem; align-items: baseline; cursor: pointer; }
+  .signal:hover .signal-header .signal-name { color: var(--accent); }
+  .signal-num { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); letter-spacing: 0.1em; min-width: 30px; }
+  .signal-name { font-family: var(--font-serif); font-size: 1.45rem; font-weight: 500; color: var(--text); transition: color 0.2s; }
+  .signal-tag { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+  .signal-chevron { color: var(--text-muted); transition: transform 0.3s; font-size: 1rem; }
+  .signal.open .signal-chevron { transform: rotate(45deg); color: var(--accent); }
+  .signal-body { max-height: 0; overflow: hidden; transition: max-height 0.45s ease; }
+  .signal.open .signal-body { max-height: 1200px; }
+  .signal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; padding: 0 0 2.5rem 4rem; }
+  @media (max-width: 720px) { .signal-grid { grid-template-columns: 1fr; padding-left: 0; gap: 1.5rem; } .signal-header { grid-template-columns: auto 1fr auto; } .signal-tag { display: none; } }
+  .signal-grid > div h5 { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-faint); margin: 0 0 0.9rem; }
+  .signal-grid > div p { font-size: 0.93rem; margin: 0 0 0.8rem; }
+  .signal-grid ul { margin: 0; padding-left: 0; list-style: none; }
+  .signal-grid li { font-size: 0.88rem; color: var(--text-muted); padding: 0.32rem 0 0.32rem 1rem; position: relative; line-height: 1.5; }
+  .signal-grid li::before { content: '—'; position: absolute; left: 0; color: var(--accent-dim); }
+
+  /* DEPLOYMENT */
+  .deploy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem; margin-top: 3rem; }
+  .deploy-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 4px; padding: 2rem 1.9rem; transition: all 0.2s; }
+  .deploy-card:hover { border-color: var(--accent-dim); }
+  .deploy-card .step { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.18em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+  .deploy-card h4 { font-family: var(--font-serif); font-weight: 500; font-size: 1.25rem; margin: 0 0 0.9rem; line-height: 1.3; }
+  .deploy-card p { font-size: 0.9rem; margin: 0; line-height: 1.6; }
+  .deploy-card .pills { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .deploy-card .pill { padding: 0.3rem 0.7rem; border: 1px solid var(--border-strong); border-radius: 20px; font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-muted); letter-spacing: 0.04em; }
+
+  /* ROADMAP */
+  .roadmap { margin-top: 3rem; }
+  .phase { display: grid; grid-template-columns: 1fr 3fr; gap: 3rem; padding: 3.5rem 0; border-top: 1px solid var(--border); position: relative; }
+  .phase:last-of-type { border-bottom: 1px solid var(--border); }
+  @media (max-width: 880px) { .phase { grid-template-columns: 1fr; gap: 1.5rem; padding: 2.5rem 0; } }
+  .phase-meta .phase-num { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 0.8rem; text-transform: uppercase; }
+  .phase-meta h3 { font-family: var(--font-serif); font-size: 1.7rem; font-weight: 500; margin: 0 0 0.5rem; line-height: 1.2; }
+  .phase-meta .timing { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; }
+  .phase-meta .pilot { display: inline-block; padding: 0.4rem 0.85rem; background: rgba(200,160,107,0.08); border: 1px solid rgba(200,160,107,0.3); border-radius: 3px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.05em; }
+  .phase-body h4 { font-size: 1.05rem; font-weight: 500; margin: 0 0 0.8rem; color: var(--text); }
+  .phase-body p { font-size: 0.94rem; margin: 0 0 1.5rem; line-height: 1.65; }
+  .phase-body .deliverables { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem; }
+  .phase-body .deliverables li { background: var(--bg); border: 1px solid var(--border); border-radius: 3px; padding: 0.65rem 0.95rem; font-size: 0.82rem; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.02em; }
+
+  /* MVP BLOCK */
+  .mvp-highlight { margin-top: 4rem; background: linear-gradient(180deg, rgba(200,160,107,0.04), transparent 60%), var(--bg-elevated); border: 1px solid var(--accent-dim); border-radius: 6px; padding: 3rem 3rem; display: grid; grid-template-columns: 1fr 1.3fr; gap: 3.5rem; align-items: start; }
+  @media (max-width: 880px) { .mvp-highlight { grid-template-columns: 1fr; padding: 2.2rem; gap: 2rem; } }
+  .mvp-highlight .label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 1.2rem; }
+  .mvp-highlight h3 { font-family: var(--font-serif); font-size: 1.85rem; font-weight: 500; margin: 0 0 1.2rem; line-height: 1.15; }
+  .mvp-highlight h3 em { font-style: italic; color: var(--accent); }
+  .mvp-highlight .scope { font-size: 0.95rem; color: var(--text-muted); margin: 0 0 1.5rem; line-height: 1.6; }
+  .mvp-highlight .scope strong { color: var(--text); }
+  .mvp-stack { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .mvp-stack-row { display: grid; grid-template-columns: 1fr 1.7fr; align-items: center; padding: 1rem 1.3rem; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .mvp-stack-row:last-child { border-bottom: none; }
+  .mvp-stack-row .k { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.12em; text-transform: uppercase; }
+  .mvp-stack-row .v { color: var(--text); font-weight: 500; font-size: 0.92rem; }
+
+  /* RISKS */
+  .risks { margin-top: 3rem; display: grid; gap: 1rem; }
+  .risk { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; transition: border-color 0.2s; }
+  .risk:hover { border-color: var(--border-strong); }
+  .risk-header { padding: 1.8rem 2rem; display: grid; grid-template-columns: auto 1fr auto; gap: 2rem; align-items: center; cursor: pointer; transition: background 0.2s; }
+  .risk-header:hover { background: rgba(255,255,255,0.02); }
+  .risk-num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--danger); letter-spacing: 0.15em; }
+  .risk-name { font-family: var(--font-serif); font-weight: 500; font-size: 1.2rem; color: var(--text); line-height: 1.3; }
+  .risk-toggle { color: var(--text-muted); transition: transform 0.3s; font-size: 1.2rem; line-height: 1; }
+  .risk.open .risk-toggle { transform: rotate(45deg); color: var(--accent); }
+  .risk-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .risk.open .risk-body { max-height: 600px; }
+  .risk-body-inner { padding: 0.5rem 2rem 2.2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  @media (max-width: 720px) { .risk-body-inner { grid-template-columns: 1fr; gap: 1.5rem; } }
+  .risk-body-inner h6 { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-faint); margin: 0 0 0.7rem; }
+  .risk-body-inner p { font-size: 0.92rem; margin: 0; line-height: 1.6; }
+
+  /* CLOSING */
+  .closing { background: var(--bg-deeper); padding: 6rem 2rem; }
+  .closing .inner { max-width: 900px; margin: 0 auto; text-align: center; }
+  .closing .quote { font-family: var(--font-serif); font-style: italic; font-weight: 300; font-size: clamp(1.4rem, 2.5vw, 1.9rem); line-height: 1.4; color: var(--text); margin: 0 0 2rem; }
+  .closing .quote::before { content: '"'; color: var(--accent); font-size: 2rem; margin-right: 0.3rem; }
+  .closing .quote::after { content: '"'; color: var(--accent); font-size: 2rem; margin-left: 0.3rem; }
+  .closing .author { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 3rem 2rem; }
+  footer .inner { max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; }
+  footer .signature { font-family: var(--font-serif); font-style: italic; color: var(--text-muted); font-size: 0.95rem; }
+  footer .meta-foot { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.12em; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="brand">Hermes<span>Enterprise Shield</span></div>
+    <nav>
+      <ul>
+        <li><a href="#ciso">CISO</a></li>
+        <li><a href="#arch">Arquitectura</a></li>
+        <li><a href="#stack">Stack</a></li>
+        <li><a href="#senal">Señal</a></li>
+        <li><a href="#despliegue">Despliegue</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a href="#riesgos">Riesgos</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="pre">Documento técnico · Endpoint Agent · v1.0</div>
+  <h1>El componente <em>core</em> que separa el producto del powerpoint.</h1>
+  <p class="subtitle">Especificación técnica del agente endpoint de Hermes Enterprise Shield: arquitectura, fuentes de señal, modelo de despliegue empresarial y hoja de ruta hasta producción en entornos regulados.</p>
+  <div class="meta">
+    <div><div class="k">Footprint</div><div class="v">~28 MB instalado</div></div>
+    <div><div class="k">Núcleo</div><div class="v">Rust + ETW/eBPF</div></div>
+    <div><div class="k">Despliegue</div><div class="v">MDM · GPO · MSI EV</div></div>
+    <div><div class="k">Tiempo a producción</div><div class="v">12–18 meses</div></div>
+  </div>
+</div>
+
+<!-- CISO SECTION -->
+<section id="ciso">
+  <p class="section-label">01 — Punto de partida</p>
+  <h2>Lo que un CISO necesita ver <em>antes</em> de aprobar la instalación.</h2>
+  <p class="section-lead">No vale la pena diseñar el agente más sofisticado del mundo si no supera el comité de seguridad. Las siguientes condiciones no son opcionales: son las que separan un piloto firmado de una negativa en la primera reunión. Cada decisión técnica del documento se justifica contra esta lista.</p>
+
+  <div class="ciso-grid">
+    <div class="ciso-item">
+      <div class="num">N.º 01</div>
+      <h4>Cero hooks globales de teclado</h4>
+      <p>SetWindowsHookEx, libinput y accessibility tap están vetados por EDR corporativos. La captura se construye sobre APIs sancionadas (ETW, eBPF, Graph API, WebExtensions MV3), no sobre técnicas que un antivirus marca como keylogger.</p>
+    </div>
+    <div class="ciso-item">
+      <div class="num">N.º 02</div>
+      <h4>Binario firmado con certificado EV</h4>
+      <p>MSI con Authenticode EV en Windows, PKG notarizado por Apple en macOS, DEB/RPM firmados en Linux. Sin esto, SmartScreen y Gatekeeper bloquean el primer despliegue masivo.</p>
+    </div>
+    <div class="ciso-item">
+      <div class="num">N.º 03</div>
+      <h4>Allowlisting previo en EDR</h4>
+      <p>Acuerdos de allowlisting documentados con CrowdStrike, SentinelOne y Defender for Endpoint. Análisis estático con BinSkim y CFG documentado en el dossier de seguridad entregable al cliente.</p>
+    </div>
+    <div class="ciso-item">
+      <div class="num">N.º 04</div>
+      <h4>Consentimiento granular GDPR</h4>
+      <p>Modal de onboarding por usuario con opt-out por sensor. DPIA documentada (Art. 35 RGPD). Información clara al comité de empresa antes del despliegue. Auditoría inmutable de aceptaciones.</p>
+    </div>
+    <div class="ciso-item">
+      <div class="num">N.º 05</div>
+      <h4>Captura de metadatos, no de contenido</h4>
+      <p>Por defecto, el agente registra estructura de acción ("guardó Excel en SharePoint X") no contenido literal. Hashes y embeddings on-device. Tokenización antes de salir del endpoint.</p>
+    </div>
+    <div class="ciso-item">
+      <div class="num">N.º 06</div>
+      <h4>Soberanía del dato</h4>
+      <p>Despliegue 100 % on-premise opcional. mTLS con certificate pinning al backend del cliente. Cero llamadas a APIs externas sin autorización explícita. Logs locales cifrados con AES-256-GCM.</p>
+    </div>
+    <div class="ciso-item">
+      <div class="num">N.º 07</div>
+      <h4>Compliance demostrable</h4>
+      <p>ISO 27001, SOC 2 Type II, alineación AI Act (Art. 6 y Anexo III). Pruebas de penetración anuales por tercero independiente. Bug bounty público en producción.</p>
+    </div>
+    <div class="ciso-item">
+      <div class="num">N.º 08</div>
+      <h4>Trazabilidad inmutable</h4>
+      <p>Cada skill propuesta, aprobada, modificada o ejecutada queda en un audit log append-only con Merkle hash chain. Auditable por inspección externa sin intervención del proveedor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE SECTION -->
+<section class="alt" id="arch">
+  <div class="inner">
+    <p class="section-label">02 — Arquitectura por capas</p>
+    <h2>Cinco capas, una sola responsabilidad <em>por capa.</em></h2>
+    <div class="arch-intro">
+      <p class="section-lead" style="margin: 0;">La arquitectura está pensada para que cada capa sea reemplazable sin tocar las demás. Captura, normalización, almacenamiento, inteligencia y transporte viven en módulos independientes con contratos claros. Pulsa cualquier componente para ver función, conexiones, eventos producidos, reglas de operación y modo de despliegue.</p>
+      <div class="arch-stats">
+        <div><div class="k">RAM idle</div><div class="v">&lt; 80 MB</div></div>
+        <div><div class="k">CPU idle</div><div class="v">&lt; 1 %</div></div>
+        <div><div class="k">Arranque</div><div class="v">&lt; 250 ms</div></div>
+        <div><div class="k">Disco</div><div class="v">~28 MB</div></div>
+      </div>
+    </div>
+
+    <div class="arch-container">
+
+      <!-- LAYER 1 -->
+      <div class="arch-layer">
+        <div class="layer-header">
+          <span class="layer-num">Capa 01</span>
+          <h3 class="layer-title">Sensores</h3>
+          <span class="layer-desc">5 sensores · todos opt-in · granularidad por usuario</span>
+        </div>
+        <div class="components-grid">
+          <div class="component" data-key="etw">
+            <div class="c-tag">Sensor SO</div>
+            <div class="c-name">ETW / eBPF</div>
+            <div class="c-sub">Procesos, archivos, ventanas activas</div>
+            <div class="c-icon">+</div>
+          </div>
+          <div class="component" data-key="fs">
+            <div class="c-tag">Sensor archivos</div>
+            <div class="c-name">FS Watcher</div>
+            <div class="c-sub">Crear, editar, guardar, abrir</div>
+            <div class="c-icon">+</div>
+          </div>
+          <div class="component" data-key="browser">
+            <div class="c-tag">Sensor navegador</div>
+            <div class="c-name">Browser ext.</div>
+            <div class="c-sub">Web + LLMs vía WebExtension MV3</div>
+            <div class="c-icon">+</div>
+          </div>
+          <div class="component" data-key="graph">
+            <div class="c-tag">Sensor M365 / Google</div>
+            <div class="c-name">Graph / Gmail</div>
+            <div class="c-sub">Email, calendar vía OAuth</div>
+            <div class="c-icon">+</div>
+          </div>
+          <div class="component" data-key="plugins">
+            <div class="c-tag">Sensor apps</div>
+            <div class="c-name">App plug-ins</div>
+            <div class="c-sub">Office, IDE, Outlook nativo</div>
+            <div class="c-icon">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 2 -->
+      <div class="arch-layer single">
+        <div class="layer-header">
+          <span class="layer-num">Capa 02</span>
+          <h3 class="layer-title">Normalización</h3>
+          <span class="layer-desc">Motor Rust · &lt; 15 MB en disco</span>
+        </div>
+        <div class="components-grid">
+          <div class="component" data-key="pipeline">
+            <div class="c-tag">Núcleo de procesamiento</div>
+            <div class="c-name">Event Pipeline (Rust core)</div>
+            <div class="c-sub">Schema ECS unificado · filtros de privacidad por evento · hashing y tokenización on-device</div>
+            <div class="c-icon">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 3 -->
+      <div class="arch-layer">
+        <div class="layer-header">
+          <span class="layer-num">Capa 03</span>
+          <h3 class="layer-title">Almacenamiento local cifrado</h3>
+          <span class="layer-desc">3 stores · AES-256-GCM · TTL configurable</span>
+        </div>
+        <div class="components-grid">
+          <div class="component" data-key="sqlcipher">
+            <div class="c-tag">Eventos crudos</div>
+            <div class="c-name">SQLCipher</div>
+            <div class="c-sub">TTL 7 días por defecto · cifrado AES-256</div>
+            <div class="c-icon">+</div>
+          </div>
+          <div class="component" data-key="patternstore">
+            <div class="c-tag">Patrones derivados</div>
+            <div class="c-name">Pattern Store</div>
+            <div class="c-sub">N-gramas + embeddings BGE-small locales</div>
+            <div class="c-icon">+</div>
+          </div>
+          <div class="component" data-key="audit">
+            <div class="c-tag">Auditoría</div>
+            <div class="c-name">Audit Log</div>
+            <div class="c-sub">Append-only · Merkle hash chain firmado</div>
+            <div class="c-icon">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 4 -->
+      <div class="arch-layer single">
+        <div class="layer-header">
+          <span class="layer-num">Capa 04</span>
+          <h3 class="layer-title">GEPA local</h3>
+          <span class="layer-desc">Detección de patrones + generación de skill drafts</span>
+        </div>
+        <div class="components-grid">
+          <div class="component" data-key="gepa">
+            <div class="c-tag">Inteligencia on-device</div>
+            <div class="c-name">Pattern Mining Engine</div>
+            <div class="c-sub">Sequence mining (PrefixSpan, SPADE) · clustering HDBSCAN · generación de skill draft .md cifrado en RAM</div>
+            <div class="c-icon">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 5 -->
+      <div class="arch-layer single">
+        <div class="layer-header">
+          <span class="layer-num">Capa 05</span>
+          <h3 class="layer-title">Transporte seguro</h3>
+          <span class="layer-desc">gRPC · mTLS · certificate pinning</span>
+        </div>
+        <div class="components-grid">
+          <div class="component" data-key="transport">
+            <div class="c-tag">Comunicación con backend</div>
+            <div class="c-name">gRPC + mTLS + cert pinning</div>
+            <div class="c-sub">Diff incremental · compresión zstd · batch cada 60 s · retry con backoff exponencial</div>
+            <div class="c-icon">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACKEND -->
+      <div class="arch-layer backend">
+        <div class="layer-header">
+          <span class="layer-num">Backend</span>
+          <h3 class="layer-title">Sentinel · gobernanza corporativa</h3>
+          <span class="layer-desc">On-premise opcional · multi-tenant SaaS opcional</span>
+        </div>
+        <div class="components-grid">
+          <div class="component" data-key="curator">
+            <div class="c-tag">Curación semántica</div>
+            <div class="c-name">Skill Curator</div>
+            <div class="c-sub">Valida drafts GEPA: LLM + reglas + humano</div>
+            <div class="c-icon">+</div>
+          </div>
+          <div class="component" data-key="vault">
+            <div class="c-tag">Repositorio</div>
+            <div class="c-name">Skill Vault</div>
+            <div class="c-sub">Skills aprobadas, cifradas, versionadas</div>
+            <div class="c-icon">+</div>
+          </div>
+          <div class="component" data-key="policy">
+            <div class="c-tag">Despliegue</div>
+            <div class="c-name">Policy Engine</div>
+            <div class="c-sub">Despliegue selectivo por rol y departamento</div>
+            <div class="c-icon">+</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STACK SECTION -->
+<section id="stack">
+  <p class="section-label">03 — Stack técnico</p>
+  <h2>Cada lenguaje en el sitio donde no <em>desperdicia</em> su naturaleza.</h2>
+  <div class="stack-intro">
+    <p class="section-lead" style="margin: 0;">El stack no se elige por gusto sino por restricciones operativas. Tres restricciones simultáneas dictan el núcleo: binario pequeño, difícil de ingeniería inversa, sin dependencias de runtime. Solo Rust cumple las tres. El resto del sistema se construye alrededor de esa decisión.</p>
+    <div class="stack-rust-card">
+      <div class="label">Núcleo del agente</div>
+      <h4>Rust no es opinión, es la única opción</h4>
+      <p>Precedente directo en producción: Rustinel (mayo 2026), agente endpoint en Rust que captura ETW en Windows y eBPF en Linux con código abierto auditable. Esa base da legitimidad técnica frente a CISOs — no estamos inventando paradigmas, estamos aplicando uno ya validado en el mercado de EDR.</p>
+    </div>
+  </div>
+
+  <div class="stack-table">
+    <div class="stack-row head">
+      <div class="stack-cell">Componente</div>
+      <div class="stack-cell">Lenguaje</div>
+      <div class="stack-cell">Razón técnica</div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cell comp">Core del agente · sensores SO</div>
+      <div class="stack-cell lang">Rust</div>
+      <div class="stack-cell why">Footprint mínimo, seguridad de memoria, FFI estable con APIs nativas de los tres SO.</div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cell comp">Extensión de navegador</div>
+      <div class="stack-cell lang">TypeScript + WebExtension MV3</div>
+      <div class="stack-cell why">Único camino oficial post-2024 para Chrome, Edge y Firefox. Distribución por GPO empresarial.</div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cell comp">Plug-in Outlook / Office</div>
+      <div class="stack-cell lang">C# .NET 8 + Office.js</div>
+      <div class="stack-cell why">Único stack soportado por Microsoft para add-ins firmados con AppSource o sideload corporativo.</div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cell comp">Pattern Mining engine</div>
+      <div class="stack-cell lang">Rust + candle / ort</div>
+      <div class="stack-cell why">Inferencia local de embeddings sin GPU. Crates maduras, integración nativa con el core.</div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cell comp">Backend Sentinel</div>
+      <div class="stack-cell lang">Go o Python (FastAPI)</div>
+      <div class="stack-cell why">Velocidad de iteración. No es el cuello de botella de rendimiento — vive en servidor.</div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cell comp">Panel de gobernanza</div>
+      <div class="stack-cell lang">Next.js + Tailwind</div>
+      <div class="stack-cell why">Estándar de facto para paneles B2B SaaS. SSR para auditorías y exports.</div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cell comp">Empaquetado y firma</div>
+      <div class="stack-cell lang">WiX Toolset · pkgbuild · fpm</div>
+      <div class="stack-cell why">MSI Windows, PKG macOS notarizado, DEB/RPM Linux. Firma EV en pipeline CI/CD.</div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cell comp">Infraestructura backend</div>
+      <div class="stack-cell lang">Kubernetes + PostgreSQL + Vault</div>
+      <div class="stack-cell why">Despliegue on-premise o cloud cliente. HashiCorp Vault para keys de skills cifradas.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNAL SOURCES -->
+<section class="alt" id="senal">
+  <div class="inner">
+    <p class="section-label">04 — Las cinco fuentes de señal</p>
+    <h2>De dónde sale la inteligencia, <em>realmente.</em></h2>
+    <p class="section-lead">Cada fuente exige una vía de captura diferente. Las que el documento ejecutivo agrupaba bajo "captura del teclado" son en realidad cinco arquitecturas distintas, con APIs distintas, niveles de invasividad distintos y aprobaciones legales distintas. Pulsa cada una para abrir su especificación.</p>
+
+    <div class="signals-list">
+
+      <div class="signal" data-signal>
+        <div class="signal-header" data-toggle>
+          <div class="signal-num">01</div>
+          <div class="signal-name">Archivos generados y consultados</div>
+          <div class="signal-tag">Sensor SO · Plug-and-play</div>
+          <div class="signal-chevron">+</div>
+        </div>
+        <div class="signal-body">
+          <div class="signal-grid">
+            <div>
+              <h5>Captura</h5>
+              <p><strong>Windows:</strong> ETW expone <code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">FileIo</code> y <code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">FileIoInit</code> events vía el provider del kernel.</p>
+              <p><strong>Linux:</strong> fanotify o eBPF con tracing sobre <code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">vfs_*</code>.</p>
+              <p><strong>macOS:</strong> EndpointSecurity Framework con cliente firmado por Apple.</p>
+            </div>
+            <div>
+              <h5>Qué se extrae</h5>
+              <ul>
+                <li>Ruta del archivo y app que lo crea</li>
+                <li>Tipo de operación (create, write, save, open)</li>
+                <li>Tiempo de edición y frecuencia</li>
+                <li>Patrones de carpeta destino (SharePoint, OneDrive, local)</li>
+              </ul>
+              <h5 style="margin-top:1.2rem;">Coste de operación</h5>
+              <ul>
+                <li>~3 % CPU pico, ~30 MB RAM</li>
+                <li>Latencia de evento: &lt; 5 ms</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="signal" data-signal>
+        <div class="signal-header" data-toggle>
+          <div class="signal-num">02</div>
+          <div class="signal-name">Emails contestados</div>
+          <div class="signal-tag">API oficial · No toca cliente</div>
+          <div class="signal-chevron">+</div>
+        </div>
+        <div class="signal-body">
+          <div class="signal-grid">
+            <div>
+              <h5>Captura</h5>
+              <p><strong>Microsoft 365:</strong> Graph Activity Logs expone toda la actividad en Outlook, OneDrive, SharePoint y Teams a nivel de tenant, transmitible vía Diagnostic Setting al backend.</p>
+              <p><strong>Google Workspace:</strong> Gmail API + Audit Logs Admin SDK.</p>
+              <p>App multitenant en Entra ID con permisos delegados (<code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">Mail.Read</code>, <code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">Mail.Send</code>).</p>
+            </div>
+            <div>
+              <h5>Qué se extrae</h5>
+              <ul>
+                <li>Estilo comunicativo (tono, longitud, formalidad)</li>
+                <li>Interlocutores recurrentes y patrones de relación</li>
+                <li>Temas dominantes por dominio y por persona</li>
+                <li>Frecuencia de respuesta y tiempos de reacción</li>
+              </ul>
+              <h5 style="margin-top:1.2rem;">Por qué el CISO lo firma</h5>
+              <ul>
+                <li>Flujo de auditoría ya existente en M365</li>
+                <li>Permisos OAuth granulares y revocables</li>
+                <li>Sin cliente local · sin parche en Outlook</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="signal" data-signal>
+        <div class="signal-header" data-toggle>
+          <div class="signal-num">03</div>
+          <div class="signal-name">Web visitada y temas elegidos</div>
+          <div class="signal-tag">WebExtension MV3 · Firmada</div>
+          <div class="signal-chevron">+</div>
+        </div>
+        <div class="signal-body">
+          <div class="signal-grid">
+            <div>
+              <h5>Captura</h5>
+              <p>Extensión de navegador firmada con certificado corporativo, desplegada por GPO (Edge/Chrome) o policy.json (Firefox).</p>
+              <p>Manifest V3 limita las APIs disponibles pero las que necesitamos (<code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">webNavigation</code>, <code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">tabs</code>, <code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">scripting</code>) son estables y soportadas a largo plazo.</p>
+            </div>
+            <div>
+              <h5>Qué se extrae</h5>
+              <ul>
+                <li>URLs, títulos, tiempo en página</li>
+                <li>Texto seleccionado por el usuario</li>
+                <li>Prompts introducidos en formularios (clave para LLMs)</li>
+                <li>Dominios de referencia y rutas de búsqueda</li>
+              </ul>
+              <h5 style="margin-top:1.2rem;">Restricciones</h5>
+              <ul>
+                <li>Solo se activa con consentimiento explícito al instalar</li>
+                <li>Filtros configurables por dominio (allow/deny)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="signal" data-signal>
+        <div class="signal-header" data-toggle>
+          <div class="signal-num">04</div>
+          <div class="signal-name">Consultas a otros LLMs</div>
+          <div class="signal-tag">Triple vector · Cobertura completa</div>
+          <div class="signal-chevron">+</div>
+        </div>
+        <div class="signal-body">
+          <div class="signal-grid">
+            <div>
+              <h5>Captura — tres vectores complementarios</h5>
+              <p><strong>(a)</strong> La extensión de navegador captura prompts en interfaces web (ChatGPT, Claude.ai, Gemini, Perplexity).</p>
+              <p><strong>(b)</strong> Proxy MITM corporativo configurado vía PAC file o transparent proxy. Intercepta tráfico HTTPS a <code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">api.openai.com</code>, <code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">api.anthropic.com</code>, <code style="color:var(--accent);font-family:var(--font-mono);font-size:0.85em">generativelanguage.googleapis.com</code> con certificado raíz ya instalado por GPO.</p>
+              <p><strong>(c)</strong> SDK wrappers obligatorios como dependencia en entornos de desarrollo Python/Node.</p>
+            </div>
+            <div>
+              <h5>Por qué este canal es el de mayor valor</h5>
+              <ul>
+                <li>Revela los gaps reales del usuario, no los declarados</li>
+                <li>Muestra cómo formula problemas en su lenguaje</li>
+                <li>Identifica nivel de abstracción y vocabulario técnico</li>
+                <li>Permite construir skills que cierren huecos específicos</li>
+              </ul>
+              <h5 style="margin-top:1.2rem;">Riesgo regulatorio</h5>
+              <ul>
+                <li>El proxy MITM requiere informe legal por país</li>
+                <li>Excluye explícitamente intercambios personales</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="signal" data-signal>
+        <div class="signal-header" data-toggle>
+          <div class="signal-num">05</div>
+          <div class="signal-name">Teclado (la respuesta honesta)</div>
+          <div class="signal-tag">No se captura · Se infiere</div>
+          <div class="signal-chevron">+</div>
+        </div>
+        <div class="signal-body">
+          <div class="signal-grid">
+            <div>
+              <h5>Por qué no se captura el teclado literalmente</h5>
+              <p>No se captura el teclado: se captura la <strong>intención</strong>. Lo que tiene valor para generar skills no son las pulsaciones sino las secuencias de acciones del usuario.</p>
+              <p>Ejemplo de patrón útil: "abre Excel → pega tabla → ejecuta macro X → guarda en SharePoint Y". Eso se obtiene de ETW + plug-ins, no de un keylogger.</p>
+            </div>
+            <div>
+              <h5>Excepciones documentadas</h5>
+              <p>En clientes concretos con consentimiento explícito (bufete, despacho de auditoría) puede usarse el Accessibility API del SO con UI Automation framework.</p>
+              <ul>
+                <li>Es auditable</li>
+                <li>No levanta alertas EDR</li>
+                <li>Requiere autorización legal por contrato</li>
+                <li>No es el caso general — opt-in extraordinario</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DEPLOYMENT -->
+<section id="despliegue">
+  <p class="section-label">05 — Despliegue empresarial</p>
+  <h2>Sin distribución a escala, lo demás es <em>demo.</em></h2>
+  <p class="section-lead">El cuello de botella real no está en el código del agente sino en cómo se instala en 5.000 endpoints sin que el helpdesk colapse. Esta sección desglosa las cuatro fases del despliegue, todas ejecutables con herramientas que el cliente ya tiene contratadas (Intune, Jamf, SCCM, Ansible).</p>
+
+  <div class="deploy-grid">
+    <div class="deploy-card">
+      <div class="step">Fase 01</div>
+      <h4>Empaquetado y firma</h4>
+      <p>MSI firmado con certificado EV en Windows. PKG notarizado en macOS. DEB/RPM firmados en Linux. Cada paquete contiene agente, configuración base y clave pública del backend pinned.</p>
+      <div class="pills"><span class="pill">WiX</span><span class="pill">EV cert</span><span class="pill">notarize</span></div>
+    </div>
+    <div class="deploy-card">
+      <div class="step">Fase 02</div>
+      <h4>Despliegue masivo</h4>
+      <p>Intune o SCCM para Windows. Jamf para macOS. Ansible o equivalente para Linux. Cero clicks del usuario final. Tiempo estimado: 24-48h en empresa de 5.000 endpoints con MDM ya configurado.</p>
+      <div class="pills"><span class="pill">Intune</span><span class="pill">Jamf</span><span class="pill">SCCM</span><span class="pill">Ansible</span></div>
+    </div>
+    <div class="deploy-card">
+      <div class="step">Fase 03</div>
+      <h4>Configuración por política</h4>
+      <p>Group Policy ADMX templates para Windows. Configuration Profile para macOS. El admin decide qué sensores se activan por departamento — Marketing puede tener email + browser, Finanzas al revés.</p>
+      <div class="pills"><span class="pill">ADMX</span><span class="pill">Config Profile</span><span class="pill">role-based</span></div>
+    </div>
+    <div class="deploy-card">
+      <div class="step">Fase 04</div>
+      <h4>Onboarding del usuario</h4>
+      <p>Un único modal el primer arranque que explica qué se captura. Opt-out granular obligatorio por GDPR. No es un coste — es lo que hace que el comité de empresa firme el despliegue sin fricción.</p>
+      <div class="pills"><span class="pill">GDPR</span><span class="pill">opt-out</span><span class="pill">DPIA ready</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="alt" id="roadmap">
+  <div class="inner">
+    <p class="section-label">06 — Roadmap y MVP</p>
+    <h2>De prueba de concepto a producción <em>regulada.</em></h2>
+    <p class="section-lead">Doce a dieciocho meses de trabajo real con un equipo competente. Cualquier promesa más corta es marketing. El MVP propuesto se entrega como pieza independiente al final de la Fase 1 — funciona, demuestra el flujo end-to-end, y permite captar a las primeras empresas piloto antes de invertir en multi-plataforma.</p>
+
+    <div class="roadmap">
+
+      <div class="phase">
+        <div class="phase-meta">
+          <div class="phase-num">Fase 01</div>
+          <h3>Prueba de concepto endpoint</h3>
+          <div class="timing">8–12 semanas · 2–3 ingenieros senior</div>
+          <span class="pilot">Piloto · 20 usuarios reales</span>
+        </div>
+        <div class="phase-body">
+          <h4>Validación end-to-end con el mínimo viable</h4>
+          <p>Un solo sensor (file watcher) + transporte + un único algoritmo de pattern mining. Funciona solo en Windows. Aquí se valida que el flujo end-to-end captura señal real y genera al menos una skill útil. <strong>Si no funciona aquí, no funciona en ningún sitio.</strong></p>
+          <ul class="deliverables">
+            <li>Agente Rust core</li>
+            <li>FS Watcher Windows</li>
+            <li>SQLCipher local</li>
+            <li>gRPC backend</li>
+            <li>Sentinel manual</li>
+            <li>3 skills validadas</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-meta">
+          <div class="phase-num">Fase 02</div>
+          <h3>Agente multi-sensor</h3>
+          <div class="timing">3–4 meses adicionales · equipo de 5</div>
+          <span class="pilot">Piloto · 100–300 usuarios · 1 dpto</span>
+        </div>
+        <div class="phase-body">
+          <h4>Cobertura completa de sensores y plataformas</h4>
+          <p>Añadir extensión de navegador, integración Graph API, soporte macOS y Linux. MSI firmado y empaquetado para despliegue por Intune. Sentinel funcional con curación humana asistida por LLM. Auditoría completa de eventos.</p>
+          <ul class="deliverables">
+            <li>Extensión Edge/Chrome</li>
+            <li>Microsoft Graph API</li>
+            <li>macOS + Linux</li>
+            <li>MSI EV firmado</li>
+            <li>Sentinel asistido LLM</li>
+            <li>Panel de gobernanza</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-meta">
+          <div class="phase-num">Fase 03</div>
+          <h3>Producción regulada</h3>
+          <div class="timing">3–6 meses adicionales · equipo de 7</div>
+          <span class="pilot">Cliente enterprise · SLA firmado</span>
+        </div>
+        <div class="phase-body">
+          <h4>Certificaciones, plug-ins y marketplace sectorial</h4>
+          <p>Certificaciones (ISO 27001, SOC 2 Type II). DPIA documentada. Plug-ins Office firmados. Panel de admin completo. Marketplace de skills sectoriales. Aquí se vende a banca, defensa y salud — los mercados donde el TCO diferencial justifica el precio.</p>
+          <ul class="deliverables">
+            <li>ISO 27001</li>
+            <li>SOC 2 Type II</li>
+            <li>Plug-in Outlook .NET</li>
+            <li>Marketplace skills</li>
+            <li>Allowlisting EDR</li>
+            <li>Bug bounty público</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MVP -->
+    <div class="mvp-highlight">
+      <div>
+        <div class="label">MVP recomendado</div>
+        <h3>Windows + file watcher + extensión Edge.</h3>
+        <p class="scope">Esta combinación cubre el <strong>70 % del parque corporativo europeo</strong> con las dos APIs más estables del ecosistema Microsoft. Es el punto donde el coste de desarrollo es más bajo y la probabilidad de captar señal útil más alta. Si se confirma con el piloto de 20 usuarios, se desbloquea la Fase 2 con riesgo técnico despejado.</p>
+      </div>
+      <div class="mvp-stack">
+        <div class="mvp-stack-row"><span class="k">Sistema operativo</span><span class="v">Windows 10/11 únicamente</span></div>
+        <div class="mvp-stack-row"><span class="k">Sensor primario</span><span class="v">FS Watcher vía ETW</span></div>
+        <div class="mvp-stack-row"><span class="k">Sensor navegador</span><span class="v">Extensión Edge (Chromium)</span></div>
+        <div class="mvp-stack-row"><span class="k">Núcleo</span><span class="v">Rust + Tokio async runtime</span></div>
+        <div class="mvp-stack-row"><span class="k">Empaquetado</span><span class="v">MSI con WiX, firma EV</span></div>
+        <div class="mvp-stack-row"><span class="k">Backend mínimo</span><span class="v">FastAPI + PostgreSQL + Vault</span></div>
+        <div class="mvp-stack-row"><span class="k">Sentinel</span><span class="v">Manual asistido por curador humano</span></div>
+        <div class="mvp-stack-row"><span class="k">Skills objetivo</span><span class="v">3 validadas en producción real</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RISKS -->
+<section id="riesgos">
+  <p class="section-label">07 — Tres riesgos que pueden matar el producto</p>
+  <h2>Identificarlos antes <em>cuesta menos.</em></h2>
+  <p class="section-lead">No son riesgos teóricos: son los tres puntos donde proyectos comparables han fracasado. Lo que sigue describe cada uno con su mitigación concreta y su coste real. Pulsa cada bloque para ver el detalle.</p>
+
+  <div class="risks">
+
+    <div class="risk" data-risk>
+      <div class="risk-header" data-toggle>
+        <div class="risk-num">Riesgo 01</div>
+        <div class="risk-name">Falso positivo en EDR</div>
+        <div class="risk-toggle">+</div>
+      </div>
+      <div class="risk-body">
+        <div class="risk-body-inner">
+          <div>
+            <h6>Naturaleza del riesgo</h6>
+            <p>Si CrowdStrike, SentinelOne o Defender for Endpoint marca el agente como sospechoso una sola vez en un cliente productivo, se acaba el contrato. La reputación tarda años en recuperarse y los CISOs hablan entre sí.</p>
+          </div>
+          <div>
+            <h6>Mitigación documentada</h6>
+            <p>Certificado EV firmado en cadena. Código sometido a análisis estático con BinSkim y CFG. Acuerdo de allowlisting previo con los principales EDR vendors antes del primer despliegue. Coste: 80–150 K€, presupuestado desde Fase 2.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="risk" data-risk>
+      <div class="risk-header" data-toggle>
+        <div class="risk-num">Riesgo 02</div>
+        <div class="risk-name">Captura insuficiente sin ser invasivo</div>
+        <div class="risk-toggle">+</div>
+      </div>
+      <div class="risk-body">
+        <div class="risk-body-inner">
+          <div>
+            <h6>Naturaleza del riesgo</h6>
+            <p>Existe la posibilidad real de que con los sensores "limpios" (sin keylogger) no se obtenga suficiente señal para generar skills útiles. Es un riesgo de hipótesis de producto, no técnico.</p>
+          </div>
+          <div>
+            <h6>Mitigación documentada</h6>
+            <p>Solo el piloto de Fase 1 lo despeja. Si en 20 usuarios durante 4 semanas no aflora ni una skill útil, hay que repensar el modelo de captura — no añadir más capas. Coste de pivot: el de la Fase 1 (no se pierde Fase 2 ni 3).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="risk" data-risk>
+      <div class="risk-header" data-toggle>
+        <div class="risk-num">Riesgo 03</div>
+        <div class="risk-name">La curación humana no escala</div>
+        <div class="risk-toggle">+</div>
+      </div>
+      <div class="risk-body">
+        <div class="risk-body-inner">
+          <div>
+            <h6>Naturaleza del riesgo</h6>
+            <p>Sentinel necesita un humano que apruebe cada skill. Si una empresa genera 200 propuestas/semana, hace falta un equipo de governance interno. Cambia el modelo de negocio: o cobras por curador-gestionado, o entrenas un clasificador LLM que pre-filtre.</p>
+          </div>
+          <div>
+            <h6>Mitigación documentada</h6>
+            <p>Ambas opciones son viables pero hay que elegir antes del piloto. Recomendación: clasificador LLM con precisión &gt; 95 % en true positives + curador humano como capa de excepciones. Coste: incluido en Fase 2 sin sobrecoste si se diseña desde el inicio.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CLOSING -->
+<div class="closing">
+  <div class="inner">
+    <p class="quote">Lo importante es construir sobre una realidad para ser únicos en el mercado, y además vestirlo como verdaderos artistas.</p>
+    <div class="author">Principio rector del proyecto</div>
+  </div>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="inner">
+    <div class="signature">Hermes Enterprise Shield · Endpoint Agent · documento técnico v1.0</div>
+    <div class="meta-foot">Junio 2026 · Confidencial</div>
+  </div>
+</footer>
+
+<!-- PANEL -->
+<div class="panel-backdrop" id="backdrop"></div>
+<aside class="detail-panel" id="panel">
+  <button class="panel-close" id="closeBtn" aria-label="Cerrar panel">×</button>
+  <div class="panel-content" id="panelContent"></div>
+</aside>
+
+<script>
+// ============= COMPONENT DATA =============
+const data = {
+  etw: {
+    tag: 'Capa 01 · Sensor del sistema operativo',
+    title: 'ETW · eBPF · EndpointSecurity',
+    sub: 'Telemetría kernel-level del sistema operativo. Patrón estándar de EDR. Mismo enfoque que Rustinel, CrowdStrike Falcon o SentinelOne.',
+    blocks: [
+      { label: 'Función', html: '<p>Captura eventos a bajo nivel desde las APIs nativas de cada SO. Es la fuente más completa de señal sobre lo que ocurre en el endpoint sin tocar el código del usuario.</p>' },
+      { label: 'Tecnología', html: '<ul><li><strong>Windows:</strong> Event Tracing for Windows (ETW), providers del kernel</li><li><strong>Linux:</strong> eBPF con bcc/libbpf, atadura a tracepoints</li><li><strong>macOS:</strong> EndpointSecurity Framework (cliente firmado por Apple)</li></ul>' },
+      { label: 'Eventos capturados', html: '<ul><li>Creación de procesos y árboles padre/hijo</li><li>Carga de imágenes y módulos en memoria</li><li>Eventos de archivo (open, read, write, delete)</li><li>Cambios en el registro (solo Windows)</li><li>Cambios de ventana activa y foco</li><li>Conexiones de red salientes (metadatos)</li></ul>' },
+      { label: 'Reglas de operación', html: '<ul><li>Filtros allowlist/denylist por proceso</li><li>Tasa máxima de eventos: 5.000/s antes de muestrear</li><li>Backpressure automático si CPU &gt; 5%</li><li>Pausa total si batería &lt; 15% en portátiles</li></ul>' },
+      { label: 'Despliegue', html: '<ul><li>Windows: servicio NT en modo automático</li><li>Linux: systemd unit con CAP_BPF + CAP_PERFMON</li><li>macOS: System Extension con perfil MDM</li></ul>' },
+      { label: 'Coste de operación', html: '<ul class="kv-list"><li><span class="k">CPU pico</span><span class="v">~3%</span></li><li><span class="k">RAM</span><span class="v">~30 MB</span></li><li><span class="k">Latencia evento</span><span class="v">&lt; 5 ms</span></li></ul>' }
+    ]
+  },
+  fs: {
+    tag: 'Capa 01 · Sensor de archivos',
+    title: 'FS Watcher',
+    sub: 'Observación dedicada del sistema de archivos del usuario. Es la fuente más rica para generar skills sobre flujos documentales.',
+    blocks: [
+      { label: 'Función', html: '<p>Capa especializada por encima de ETW/eBPF, optimizada para entender flujos documentales: qué edita el usuario, dónde guarda, qué formatos genera, qué consume.</p>' },
+      { label: 'Tecnología', html: '<ul><li><strong>Windows:</strong> ReadDirectoryChangesW + ETW FileIo</li><li><strong>Linux:</strong> fanotify (kernel ≥ 5.1) o inotify</li><li><strong>macOS:</strong> FSEvents API</li></ul>' },
+      { label: 'Eventos capturados', html: '<ul><li>Creación, modificación, renombrado y eliminación</li><li>Aplicación que origina el evento</li><li>Carpeta destino (local, SharePoint, OneDrive, Drive)</li><li>Tipo MIME y extensión</li><li>Duración de la sesión de edición</li></ul>' },
+      { label: 'Reglas de operación', html: '<ul><li>Captura solo metadatos por defecto · NUNCA contenido</li><li>Allowlist de extensiones configurables</li><li>Denylist obligatoria: carpetas personales, descargas de navegador, claves SSH</li><li>Hash SHA-256 opcional para deduplicación</li></ul>' },
+      { label: 'Conexiones', html: '<ul><li><strong>Entrada:</strong> APIs nativas del SO</li><li><strong>Salida:</strong> Event Pipeline (Capa 02) vía canal mpsc Rust</li></ul>' },
+      { label: 'Despliegue', html: '<p>Se activa por política GPO/MDM. Configuración por departamento: Marketing puede tener carpeta Outlook activa, Finanzas no.</p>' }
+    ]
+  },
+  browser: {
+    tag: 'Capa 01 · Sensor de navegador',
+    title: 'Browser Extension (WebExtension MV3)',
+    sub: 'Única vía oficial y técnicamente viable para capturar actividad web post-2024, incluyendo prompts a LLMs web.',
+    blocks: [
+      { label: 'Función', html: '<p>Captura actividad de navegación y, lo más importante, los prompts que el usuario envía a ChatGPT, Claude.ai, Gemini, Perplexity y cualquier interfaz web de LLM. Esto es lo que revela los gaps reales del usuario.</p>' },
+      { label: 'Tecnología', html: '<ul><li>WebExtension Manifest V3 (estándar Chrome, Edge, Firefox)</li><li>APIs: webNavigation, tabs, scripting, storage</li><li>Content scripts inyectados solo en dominios permitidos</li><li>Service worker como background</li></ul>' },
+      { label: 'Eventos capturados', html: '<ul><li>URL, título, tiempo en página</li><li>Texto seleccionado por el usuario</li><li>Prompts enviados en formularios LLM (whitelist específica)</li><li>Dominios de referencia y rutas de búsqueda</li><li>Patrones de pestañas múltiples</li></ul>' },
+      { label: 'Despliegue', html: '<ul><li><strong>Edge/Chrome:</strong> GPO Force-Install con extension ID</li><li><strong>Firefox:</strong> policies.json en %PROGRAMFILES%</li><li>Firmada con certificado corporativo o publicada en stores</li></ul>' },
+      { label: 'Reglas de operación', html: '<ul><li>Lista de dominios LLM mantenida en backend</li><li>Excluye dominios personales (banca, salud, redes sociales)</li><li>Opt-out granular por dominio en panel de usuario</li></ul>' },
+      { label: 'Limitaciones honestas', html: '<p>Manifest V3 limita persistent background pages — todo va por service worker efímero. Las APIs que necesitamos están soportadas, pero conviene monitorizar cambios de Google a futuro.</p>' }
+    ]
+  },
+  graph: {
+    tag: 'Capa 01 · Sensor M365 / Google',
+    title: 'Microsoft Graph · Gmail API',
+    sub: 'APIs oficiales corporativas. El CISO firma porque el flujo de auditoría ya existe en su tenant.',
+    blocks: [
+      { label: 'Función', html: '<p>Captura actividad de email, calendario, archivos compartidos y comunicación en Teams/Workspace sin tocar el cliente del usuario. Es el camino menos invasivo y más auditable.</p>' },
+      { label: 'Tecnología', html: '<ul><li><strong>Microsoft 365:</strong> Graph Activity Logs vía Diagnostic Setting</li><li><strong>Google:</strong> Gmail API + Admin SDK Audit Logs</li><li>App multitenant registrada en Entra ID</li><li>OAuth 2.0 con permisos delegados granulares</li></ul>' },
+      { label: 'Permisos solicitados', html: '<ul><li>Mail.Read · Mail.Send (delegados)</li><li>Calendars.Read</li><li>Files.Read.Selected (carpetas configuradas)</li><li>Sin User.ReadWrite.All ni permisos administrativos</li></ul>' },
+      { label: 'Eventos capturados', html: '<ul><li>Estilo comunicativo: tono, longitud, formalidad</li><li>Interlocutores recurrentes y patrones de relación</li><li>Temas dominantes por dominio</li><li>Frecuencia de respuesta y tiempos de reacción</li><li>Patrones de calendario (reuniones recurrentes, focus blocks)</li></ul>' },
+      { label: 'Por qué el CISO lo firma', html: '<ul><li>Flujo de auditoría ya existente en M365</li><li>Permisos OAuth granulares y revocables en cualquier momento</li><li>Sin cliente local · sin parche en Outlook · sin riesgo de breakage</li><li>Logs nativos del tenant son trazables por el propio cliente</li></ul>' }
+    ]
+  },
+  plugins: {
+    tag: 'Capa 01 · Sensor de apps',
+    title: 'App Plug-ins (Office, IDE, Outlook)',
+    sub: 'Add-ins firmados que se integran nativamente con las herramientas del usuario.',
+    blocks: [
+      { label: 'Función', html: '<p>Complementa lo que ETW y FS Watcher no pueden ver: el contexto interno de aplicaciones específicas. Qué celdas se editan en Excel, qué cláusulas se cambian en Word, qué archivos se abren en VS Code, qué reglas se crean en Outlook.</p>' },
+      { label: 'Tecnología', html: '<ul><li><strong>Office:</strong> Office.js add-ins (Excel, Word, PowerPoint, Outlook)</li><li><strong>Outlook desktop:</strong> VSTO o COM add-in firmado .NET 8</li><li><strong>VS Code:</strong> Extension API estándar</li><li><strong>JetBrains:</strong> Plugin SDK</li></ul>' },
+      { label: 'Eventos capturados', html: '<ul><li>Office: rango de celdas, fórmulas insertadas, tablas dinámicas</li><li>Outlook: reglas creadas, carpetas movidas, snippets reutilizados</li><li>IDE: archivos abiertos, comandos ejecutados, terminales activas</li></ul>' },
+      { label: 'Despliegue', html: '<ul><li>Office: AppSource corporativo o sideload con manifest XML</li><li>VSTO: MSI firmado, distribución por SCCM</li><li>VS Code: Marketplace privado o ruta de instalación corporativa</li></ul>' },
+      { label: 'Restricciones', html: '<ul><li>Solo se activan los plug-ins explícitamente autorizados por el cliente</li><li>Sin acceso a contenido literal de documentos</li><li>Hash on-device antes de enviar metadatos</li></ul>' }
+    ]
+  },
+  pipeline: {
+    tag: 'Capa 02 · Núcleo del agente',
+    title: 'Event Pipeline (Rust)',
+    sub: 'Motor central de procesamiento. Lo que recibe eventos crudos de la Capa 01 y los convierte en eventos normalizados con privacidad aplicada.',
+    blocks: [
+      { label: 'Función', html: '<p>Es el cerebro del endpoint. Recibe eventos heterogéneos de cinco sensores, los normaliza al schema ECS unificado, aplica filtros de privacidad por evento y produce hashes/tokens en lugar de literales antes de cualquier persistencia.</p>' },
+      { label: 'Tecnología', html: '<ul><li>Rust 1.78+ con tokio async runtime</li><li>Canales mpsc para entrada multi-sensor</li><li>Serde + protobuf para serialización</li><li>blake3 para hashing rápido</li><li>candle u ort para embeddings ligeros</li></ul>' },
+      { label: 'Schema unificado (ECS)', html: '<div class="code-block">event.kind = "user_action"<br>event.source = "fs_watcher"<br>event.action = "file.save"<br>event.outcome = "success"<br>user.id = &lt;hash&gt;<br>process.name = &lt;canonical&gt;<br>file.path = &lt;tokenized&gt;<br>file.hash.sha256 = &lt;opt&gt;</div>' },
+      { label: 'Filtros de privacidad', html: '<ul><li>Allowlist/denylist por sensor configurable en backend</li><li>Tokenización de paths personales (Documents, Desktop)</li><li>Eliminación de fragmentos &gt; 50 chars antes de cualquier persistencia</li><li>Redacción automática de PII detectada por patrón</li></ul>' },
+      { label: 'Coste de operación', html: '<ul class="kv-list"><li><span class="k">Throughput</span><span class="v">~50.000 eventos/s</span></li><li><span class="k">Latencia P50</span><span class="v">~2 ms</span></li><li><span class="k">Latencia P99</span><span class="v">~8 ms</span></li><li><span class="k">RAM en uso pico</span><span class="v">~60 MB</span></li></ul>' }
+    ]
+  },
+  sqlcipher: {
+    tag: 'Capa 03 · Eventos crudos',
+    title: 'SQLCipher',
+    sub: 'Almacenamiento local de eventos normalizados antes de ser procesados por GEPA o enviados al backend.',
+    blocks: [
+      { label: 'Función', html: '<p>Buffer local cifrado donde residen los eventos procesados durante un máximo de 7 días (configurable). Permite operación offline, deduplicación, y recuperación tras caída de red.</p>' },
+      { label: 'Tecnología', html: '<ul><li>SQLCipher 4.x con AES-256-GCM</li><li>Clave derivada de TPM/Secure Enclave del dispositivo</li><li>Esquema relacional ECS-compatible</li><li>WAL mode para concurrencia</li></ul>' },
+      { label: 'Política de retención', html: '<ul><li>TTL por defecto: 7 días</li><li>Configurable por política corporativa: 1–30 días</li><li>Borrado automático al desinstalar</li><li>Wipe forzado por comando remoto firmado</li></ul>' },
+      { label: 'Conexiones', html: '<ul><li><strong>Entrada:</strong> Event Pipeline (Capa 02)</li><li><strong>Salida:</strong> Pattern Mining Engine (Capa 04) y Transporte (Capa 05)</li></ul>' }
+    ]
+  },
+  patternstore: {
+    tag: 'Capa 03 · Patrones derivados',
+    title: 'Pattern Store',
+    sub: 'Almacenamiento de patrones extraídos y embeddings semánticos calculados localmente.',
+    blocks: [
+      { label: 'Función', html: '<p>No guarda eventos: guarda lo que GEPA ha aprendido de ellos. N-gramas de secuencias de acción, frecuencias, y embeddings semánticos de fragmentos cortos. Esto es lo que se envía al backend, no los eventos crudos.</p>' },
+      { label: 'Tecnología', html: '<ul><li>SQLite con extensiones sqlite-vec para vectores</li><li>Modelo de embeddings: BGE-small-en (33 MB, cuantizado)</li><li>Inferencia local vía ort / candle</li><li>Sin GPU · CPU-only</li></ul>' },
+      { label: 'Qué almacena', html: '<ul><li>Secuencias n-grama de acciones del usuario</li><li>Embeddings de fragmentos &lt; 50 chars (no contenido completo)</li><li>Frecuencias y co-ocurrencias por aplicación</li><li>Patrones temporales (hora del día, día de la semana)</li></ul>' },
+      { label: 'Limitaciones de diseño', html: '<p>Por construcción, los embeddings no permiten reconstruir el texto original. Esto es deliberado: si un atacante exfiltra el Pattern Store, no obtiene contenido del usuario, solo estructura estadística.</p>' }
+    ]
+  },
+  audit: {
+    tag: 'Capa 03 · Auditoría',
+    title: 'Audit Log',
+    sub: 'Registro inmutable de cada acción del agente. Auditable por inspección externa.',
+    blocks: [
+      { label: 'Función', html: '<p>Cada decisión del agente — qué capturó, qué filtró, qué envió, qué recibió — queda en un log append-only firmado. Es lo que permite a un auditor demostrar cumplimiento sin depender de la palabra del proveedor.</p>' },
+      { label: 'Tecnología', html: '<ul><li>SQLite append-only en disco</li><li>Cada entrada firmada con Ed25519</li><li>Merkle hash chain — cada entrada referencia el hash de la anterior</li><li>Imposible alterar histórico sin invalidar la cadena</li></ul>' },
+      { label: 'Qué se registra', html: '<ul><li>Activación/desactivación de cada sensor</li><li>Eventos enviados al backend (metadatos, no payload)</li><li>Skills recibidas y activadas</li><li>Decisiones del usuario (opt-out, consentimientos)</li><li>Errores y reintentos</li></ul>' },
+      { label: 'Acceso', html: '<ul><li>Lectura: usuario final, admin corporativo, auditor externo</li><li>Escritura: solo el agente</li><li>Borrado: imposible — solo se sobrescribe al desinstalar</li></ul>' }
+    ]
+  },
+  gepa: {
+    tag: 'Capa 04 · Inteligencia on-device',
+    title: 'Pattern Mining Engine (GEPA)',
+    sub: 'El motor que convierte patrones repetitivos en propuestas de skills. Lo que diferencia Hermes de un simple agregador de telemetría.',
+    blocks: [
+      { label: 'Función', html: '<p>Detecta secuencias de acciones que se repiten suficientes veces como para tener valor automatizable. Genera un borrador de skill (formato .md) que describe la acción, sus condiciones, sus parámetros y su valor estimado.</p>' },
+      { label: 'Algoritmos', html: '<ul><li><strong>Sequence mining:</strong> PrefixSpan y SPADE para secuencias frecuentes</li><li><strong>Clustering:</strong> HDBSCAN sobre embeddings para agrupar patrones similares</li><li><strong>Filtrado por confianza:</strong> umbral configurable de frecuencia mínima</li><li><strong>Generación:</strong> template-based + LLM local opcional (Phi-3.5-mini)</li></ul>' },
+      { label: 'Salida — formato de skill draft', html: '<div class="code-block">---<br>name: weekly_excel_report<br>trigger: file.save in /Reports<br>confidence: 0.87<br>frequency: 4x/week<br>---<br># Skill draft<br>Detecta...<br></div>' },
+      { label: 'Reglas de operación', html: '<ul><li>Procesamiento por lotes cada 6 horas en idle</li><li>Generación solo con &gt; 5 ocurrencias del patrón</li><li>Embeddings nunca salen del endpoint sin tokenizar</li><li>Skill draft cifrada en RAM, nunca persistida en disco antes de envío</li></ul>' }
+    ]
+  },
+  transport: {
+    tag: 'Capa 05 · Comunicación con backend',
+    title: 'gRPC + mTLS + Certificate Pinning',
+    sub: 'La única vía por la que salen datos del endpoint. Protocolo cerrado, autenticación mutua, payload comprimido.',
+    blocks: [
+      { label: 'Función', html: '<p>Envía patrones y skill drafts al backend Sentinel; recibe skills aprobadas y configuración. Es el único canal autorizado de comunicación — el agente no puede hablar con ningún otro destino.</p>' },
+      { label: 'Tecnología', html: '<ul><li>gRPC con Protocol Buffers</li><li>TLS 1.3 con mTLS (autenticación mutua)</li><li>Certificate pinning del backend en el binario</li><li>Compresión zstd nivel 6</li><li>Tonic crate (Rust gRPC)</li></ul>' },
+      { label: 'Patrón de envío', html: '<ul><li>Batch cada 60 segundos en condiciones normales</li><li>Diff incremental — solo cambios respecto al último envío</li><li>Retry con backoff exponencial (1s, 2s, 4s, 8s...)</li><li>Cola persistente si red caída — máximo 24h</li></ul>' },
+      { label: 'Mecanismos de seguridad', html: '<ul><li>Certificate pinning impide MITM corporativo accidental</li><li>Validación de timestamps para evitar replay attacks</li><li>Rotación automática de certificados cliente cada 90 días</li><li>Rate limiting bidireccional</li></ul>' }
+    ]
+  },
+  curator: {
+    tag: 'Backend · Curación semántica',
+    title: 'Skill Curator',
+    sub: 'El componente que decide qué skill draft generada por GEPA pasa a producción. Cuello de botella honesto del sistema.',
+    blocks: [
+      { label: 'Función', html: '<p>Recibe drafts de todos los endpoints, los puntúa con reglas + LLM, agrupa similares, descarta los de bajo valor y presenta al admin corporativo solo aquellos que merece la pena revisar manualmente.</p>' },
+      { label: 'Pipeline de curación', html: '<ul><li><strong>Fase 1:</strong> Deduplicación cross-endpoint</li><li><strong>Fase 2:</strong> Clasificación LLM (relevancia, seguridad, originalidad)</li><li><strong>Fase 3:</strong> Scoring por reglas (frecuencia × usuarios × valor)</li><li><strong>Fase 4:</strong> Cola de aprobación humana</li><li><strong>Fase 5:</strong> Skill firmada y enviada a Vault</li></ul>' },
+      { label: 'Tecnología', html: '<ul><li>Python FastAPI + PostgreSQL</li><li>LLM clasificador: GPT-4o-mini o equivalente local (Llama-3.1-8B)</li><li>Reglas declarativas en YAML editables por admin</li><li>Cola de aprobación con Slack/Teams integration</li></ul>' },
+      { label: 'Métricas objetivo', html: '<ul class="kv-list"><li><span class="k">Precision TP</span><span class="v">&gt; 95%</span></li><li><span class="k">Drafts/día/usuario</span><span class="v">&lt; 2</span></li><li><span class="k">Tiempo curación humana</span><span class="v">&lt; 3 min/skill</span></li></ul>' }
+    ]
+  },
+  vault: {
+    tag: 'Backend · Repositorio',
+    title: 'Skill Vault',
+    sub: 'Repositorio cifrado de skills aprobadas. Versionado, firmado, distribuible.',
+    blocks: [
+      { label: 'Función', html: '<p>Almacena cada skill aprobada como artefacto inmutable, firmado, versionado. Cuando Policy Engine decide desplegar una skill, la sirve desde aquí — nunca desde un repositorio mutable.</p>' },
+      { label: 'Tecnología', html: '<ul><li>Object storage (S3-compatible, MinIO on-prem)</li><li>HashiCorp Vault para keys de cifrado</li><li>Cifrado por skill con AES-256-GCM</li><li>Firma con Cosign + Sigstore</li><li>Metadata en PostgreSQL</li></ul>' },
+      { label: 'Estructura', html: '<ul><li>Cada skill = artefacto .md cifrado + manifest firmado</li><li>Versionado semántico (mayor.menor.parche)</li><li>Tags por departamento, rol, dominio</li><li>Audit trail completo de modificaciones</li></ul>' },
+      { label: 'Acceso', html: '<ul><li>Solo Policy Engine puede leer payloads cifrados</li><li>Lectura de metadata abierta a admins corporativos</li><li>Sin endpoint público — solo gRPC interno</li></ul>' }
+    ]
+  },
+  policy: {
+    tag: 'Backend · Despliegue',
+    title: 'Policy Engine',
+    sub: 'El componente que decide qué skill llega a qué endpoint, cuándo, y con qué condiciones.',
+    blocks: [
+      { label: 'Función', html: '<p>Aplica políticas declarativas para enviar skills selectivamente a grupos de endpoints. Permite despliegues progresivos (canary, rolling), segmentación por rol/departamento, y rollback inmediato si una skill genera problemas.</p>' },
+      { label: 'Modelo de política', html: '<div class="code-block">skill: weekly_excel_report v1.2<br>target:<br>&nbsp;&nbsp;departments: [finance, ops]<br>&nbsp;&nbsp;roles: [analyst, manager]<br>rollout: canary 10% → 50% → 100%<br>guards:<br>&nbsp;&nbsp;error_rate: &lt; 2%<br>&nbsp;&nbsp;abort_on: 3 endpoints fail</div>' },
+      { label: 'Tecnología', html: '<ul><li>Open Policy Agent (OPA) para evaluación de reglas</li><li>Workflow engine (Temporal) para rollouts progresivos</li><li>Métricas Prometheus para guards</li><li>Alertas a panel admin si guard activado</li></ul>' },
+      { label: 'Capacidades operativas', html: '<ul><li>Despliegue canary con rollback automático</li><li>Segmentación por dimensiones arbitrarias</li><li>Programación temporal (solo horario laboral)</li><li>Modo emergencia: stop global firmado por dos admins</li></ul>' }
+    ]
+  }
+};
+
+// ============= PANEL CONTROL =============
+const panel = document.getElementById('panel');
+const backdrop = document.getElementById('backdrop');
+const closeBtn = document.getElementById('closeBtn');
+const panelContent = document.getElementById('panelContent');
+
+function openPanel(key) {
+  const item = data[key];
+  if (!item) return;
+  let html = '<div class="panel-tag">' + item.tag + '</div>';
+  html += '<h2 class="panel-title">' + item.title + '</h2>';
+  html += '<p class="panel-subtitle">' + item.sub + '</p>';
+  item.blocks.forEach(function(b) {
+    html += '<div class="panel-block">';
+    html += '<div class="panel-block-label">' + b.label + '</div>';
+    html += b.html;
+    html += '</div>';
+  });
+  panelContent.innerHTML = html;
+  panel.classList.add('open');
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  panel.scrollTop = 0;
+}
+
+function closePanel() {
+  panel.classList.remove('open');
+  backdrop.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+closeBtn.addEventListener('click', closePanel);
+backdrop.addEventListener('click', closePanel);
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePanel();
+});
+
+document.querySelectorAll('.component[data-key]').forEach(function(el) {
+  el.addEventListener('click', function() {
+    openPanel(el.getAttribute('data-key'));
+  });
+});
+
+// ============= TOGGLE: SIGNALS =============
+document.querySelectorAll('[data-signal]').forEach(function(el) {
+  const header = el.querySelector('[data-toggle]');
+  header.addEventListener('click', function() {
+    el.classList.toggle('open');
+  });
+});
+
+// ============= TOGGLE: RISKS =============
+document.querySelectorAll('[data-risk]').forEach(function(el) {
+  const header = el.querySelector('[data-toggle]');
+  header.addEventListener('click', function() {
+    el.classList.toggle('open');
+  });
+});
+
+// First signal open by default for visual hint
+const firstSignal = document.querySelector('[data-signal]');
+if (firstSignal) firstSignal.classList.add('open');
+
+</script>
+
+</body>
+</html>
