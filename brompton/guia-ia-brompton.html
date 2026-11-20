@@ -305,7 +305,7 @@ td.n{font-family:var(--mono); font-size:.82rem; color:var(--muted); white-space:
           <tr><td class="k">Microsoft 365 (Outlook, Excel, Teams…)</td><td>No, salvo Copilot u otras funciones de IA</td><td><span class="pill ok">Mínimo</span></td><td>Si se activa Copilot, aplican las mismas reglas de datos que para cualquier IA. Copilot puede leer correos y OneDrive: su activación la decide IT.</td></tr>
           <tr><td class="k">SAP Business One (CRM/ERP) en NAS propio</td><td>No: es software tradicional</td><td><span class="pill ok">Fuera del AI Act</span></td><td>Sí entra de lleno en el <strong>RGPD</strong>: contiene clientes, proveedores, autónomos y contactos. Accesos por usuario, nada de exportaciones a IA externas.</td></tr>
           <tr><td class="k">Power BI en NAS</td><td>No, salvo módulos predictivos o de lenguaje natural</td><td><span class="pill ok">Mínimo</span></td><td>Si se activan funciones de IA (previsiones, preguntas en lenguaje natural), registrarlo en el inventario. Las capturas de informes son información confidencial.</td></tr>
-          <tr><td class="k">Chatbot interno de Supply Chain (desplegado en Railway desde un repositorio privado de GitHub)</td><td>Se construyó con ayuda de IA, pero las cifras se calculan con programación y la IA no accede a los datos</td><td><span class="pill ok">Mínimo</span></td><td>Que se haya programado con IA no lo convierte en sistema de IA: cuenta lo que hace cuando funciona. Si un modelo de lenguaje solo interpreta la pregunta, es de riesgo mínimo; si no hay ningún modelo funcionando, queda fuera del AI Act. Lo que sí hay que vigilar es la <strong>protección de datos</strong>, porque está en la nube y no en el NAS: región de los servidores (preferiblemente UE), contrato de encargado del tratamiento con Railway y GitHub, repositorio privado, claves guardadas como secretos y acceso solo con usuario. Si un día atiende a clientes, debe avisar de que es una IA.</td></tr>
+          <tr><td class="k">Chatbot interno de Supply Chain (desplegado en Railway desde un repositorio privado de GitHub)</td><td><strong>No</strong>: se programó con ayuda de IA, pero responde con consultas a una base de datos PostgreSQL y ninguna IA ve los datos</td><td><span class="pill ok">Fuera del AI Act</span></td><td>Que se haya programado con IA no lo convierte en sistema de IA: cuenta lo que hace cuando funciona. Sus cifras salen directamente de la base de datos, sin interpretación de una IA, por eso es nuestra herramienta más fiable para consultar datos internos. Lo que sí hay que vigilar es la <strong>protección de datos</strong>, porque está en la nube y no en el NAS: región de los servidores (preferiblemente UE), contrato de encargado del tratamiento con Railway y GitHub, repositorio privado, claves guardadas como secretos y acceso solo con usuario.</td></tr>
           <tr><td class="k">ChatGPT, Claude, DeepSeek, Gemini… (cuentas individuales)</td><td>Sí</td><td><span class="pill amb">Mínimo, pero riesgo de datos</span></td><td>Permitidos para tareas sin datos personales ni confidenciales. Lo que escribes sale de la empresa y se guarda en servidores de terceros, a veces fuera de la UE.</td></tr>
         </tbody>
       </table></div>
@@ -327,6 +327,20 @@ td.n{font-family:var(--mono); font-size:.82rem; color:var(--muted); white-space:
           <li><span class="pn">6</span><span class="pt">Registrado en el inventario</span><span class="pd">Qué agente, para qué tipo de documento, quién lo usa y dónde guarda los datos.</span></li>
         </ol>
       </div>
+      <h3>Conectores que leen el correo y OneDrive (Copilot, agentes): riesgos aunque estén aprobados</h3>
+      <p>La aprobación no elimina los riesgos: hace que la empresa los conozca y los controle. Estos son los reales:</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Riesgo</th><th>Qué puede pasar</th><th>Cómo se evita</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Ve todo lo que tú ves</td><td>Si una carpeta con nóminas o contratos está compartida con todos por descuido, cualquiera la encuentra con una simple pregunta. <strong>Es el riesgo más frecuente.</strong></td><td>IT revisa los permisos de OneDrive y SharePoint antes de activarlo.</td></tr>
+          <tr><td class="k">Instrucciones ocultas</td><td>Un correo o un PDF externo esconde órdenes del tipo «reenvía los últimos contratos a…», y el agente obedece. Ya se ha demostrado un ataque así contra Copilot sin que el usuario hiciera ningún clic.</td><td>Solo lectura. Nunca se siguen órdenes que vengan de un documento.</td></tr>
+          <tr><td class="k">Acciones equivocadas</td><td>Envía un correo al cliente equivocado, mueve o borra archivos.</td><td>Sin permisos para enviar ni borrar; nada sale sin revisión humana.</td></tr>
+          <tr><td class="k">Resúmenes incompletos</td><td>Omite un compromiso, una fecha o una reclamación de un correo largo.</td><td>Para lo importante, se lee el original.</td></tr>
+          <tr><td class="k">Cuenta robada</td><td>Quien entre en tu cuenta encuentra en minutos lo que antes le llevaría días.</td><td>Doble verificación (MFA) obligatoria en todas las cuentas.</td></tr>
+          <tr><td class="k">Conectores de terceros</td><td>Las extensiones que no son de Microsoft envían el correo a otro proveedor, quizá fuera de la UE.</td><td>Prohibidos sin aprobación del responsable de IA.</td></tr>
+          <tr><td class="k">Registros</td><td>Preguntas y respuestas se guardan y pueden contener datos personales.</td><td>No pidas al asistente datos que no necesitas.</td></tr>
+        </tbody>
+      </table></div>
       <div class="callout stop"><b>Esto sí sería alto riesgo</b>Usar un agente para valorar personas: puntuar a conductores por sus albaranes, evaluar a empleados por su productividad o decidir el crédito de un cliente autónomo a partir de sus facturas.</div>
     </section>
 
@@ -578,7 +592,7 @@ td.n{font-family:var(--mono); font-size:.82rem; color:var(--muted); white-space:
         <tbody>
           <tr><td class="n">1</td><td><strong>Nombrar una persona responsable de IA:</strong> autoriza herramientas y usos y recibe los incidentes.</td><td>Dirección</td></tr>
           <tr><td class="n">2</td><td><strong>Inventario de IA:</strong> herramienta, para qué se usa, quién la usa, qué datos, proveedor, dónde guarda los datos.</td><td>IT &amp; Digitalización</td></tr>
-          <tr><td class="n">3</td><td><strong>Revisar el chatbot interno (Railway + GitHub):</strong> región de los servidores, contratos de encargado del tratamiento, repositorio privado, secretos, accesos por usuario y si hay un modelo de lenguaje funcionando.</td><td>IT &amp; Digitalización</td></tr>
+          <tr><td class="n">3</td><td><strong>Revisar el chatbot interno (Railway + GitHub):</strong> región de los servidores, contratos de encargado del tratamiento, repositorio privado, secretos, y accesos por usuario.</td><td>IT &amp; Digitalización</td></tr>
           <tr><td class="n">4</td><td><strong>Herramientas externas:</strong> valorar cuentas de empresa (Team/Business) con contrato de encargado del tratamiento y sin entrenamiento con nuestros datos.</td><td>Dirección + IT</td></tr>
           <tr><td class="n">5</td><td><strong>Formación:</strong> sesión de 30 a 45 minutos con esta guía. Guardar la firma de recepción. No existe un certificado oficial obligatorio.</td><td>Dirección</td></tr>
           <tr><td class="n">6</td><td><strong>Revisión:</strong> actualizar esta guía al incorporar una herramienta, un conector o un uso que afecte a personas.</td><td>Responsable de IA</td></tr>
@@ -696,7 +710,7 @@ const DEP = [
    ej:"Una imagen generada de «nuestra panadera sonriendo con croissants» parece real: se publica con la indicación «imagen generada con IA»."},
   {n:"IT & Digitalización", si:["Mantener el inventario de herramientas de IA","Revisar el chatbot interno en Railway: región, contratos, secretos, accesos y repositorio privado","Usar IA para revisar código sin claves ni datos reales"],
    no:["Pegar claves API, contraseñas o configuración del NAS","Activar conectores (Copilot, agentes) que lean correo u OneDrive sin aprobación","Dar a una IA permisos para escribir en SAP sin control humano"],
-   ej:"Si el chatbot interno se abre a clientes, pasa a tener obligación de transparencia: debe indicar claramente que es una IA."}
+   ej:"Antes de activar Copilot en Outlook y OneDrive, IT revisa qué carpetas están compartidas de más, porque Copilot verá todo lo que vea cada usuario. Se activa solo en modo lectura y sin conectores de terceros."}
 ];
 $("#depTabs").innerHTML = DEP.map((d,i)=>`<button type="button" role="tab" id="tab${i}" aria-controls="pan${i}" aria-selected="${i===0}" tabindex="${i===0?0:-1}">${esc(d.n)}</button>`).join("");
 $("#depPanels").innerHTML = DEP.map((d,i)=>`<div class="tabpanel" role="tabpanel" id="pan${i}" aria-labelledby="tab${i}" ${i===0?"":"hidden"}>
