@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Guía de IA y Protección de Datos · Brompton House</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#F6F2F0; --surface:#FFFFFF; --sunk:#EFE8E5; --ink:#221816; --muted:#675955; --line:#E0D5D1;
+  --gen:#B42318; --gen-soft:#FBE3DF; --mut:#A4561B; --mut-soft:#F7E6D6; --fut:#4F4D9C; --fut-soft:#E4E3F4;
+  --ok:#2F7A4E; --ok-soft:#DDEFE3; --amb:#9A6A00; --amb-soft:#F6ECCD;
+  --hl:#F1DE7E; --hl-ink:#221816;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme:dark;
+    --paper:#161110; --surface:#1F1816; --sunk:#271E1C; --ink:#EDE4E1; --muted:#A8968F; --line:#3A2E2B;
+    --gen:#F2877B; --gen-soft:#3D1C18; --mut:#E8A16B; --mut-soft:#3A2617; --fut:#ABA6F0; --fut-soft:#2A2847;
+    --ok:#7CC79A; --ok-soft:#1C3326; --amb:#E3B54B; --amb-soft:#3A2F12;
+    --hl:#7A6717; --hl-ink:#FFF8DA;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth; scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
+body{background:var(--paper); color:var(--ink); font-family:var(--body); font-size:15.5px; line-height:1.6; margin:0}
+a{color:var(--gen)}
+:focus-visible{outline:2px solid var(--fut); outline-offset:2px}
+code,.mono{font-family:var(--mono); font-size:.86em}
+h1,h2,h3{font-family:var(--display); text-wrap:balance; line-height:1.15; margin:0}
+h2{font-size:1.55rem; font-weight:700}
+h3{font-size:1.08rem; font-weight:600; margin-top:1.4rem}
+p{margin:.6rem 0; max-width:70ch}
+ul,ol{padding-left:1.25rem; max-width:72ch} li{margin:.3rem 0}
+mark.hl{background:var(--hl); color:var(--hl-ink); border-radius:2px; padding:0 1px}
+
+/* barra superior */
+.bar{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+.bar-in{max-width:1240px; margin:0 auto; padding:12px 16px; display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center}
+.brand{display:flex; align-items:baseline; gap:10px; margin-right:auto}
+.brand b{font-family:var(--display); font-size:1.35rem; letter-spacing:.01em; color:var(--gen)}
+.brand span{color:var(--muted); font-size:.85rem}
+.search{position:relative; flex:1 1 260px; max-width:420px}
+.search input{width:100%; font:inherit; font-size:.95rem; padding:9px 12px 9px 34px; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink)}
+.search svg{position:absolute; left:10px; top:50%; transform:translateY(-50%); width:16px; height:16px; stroke:var(--muted); fill:none; stroke-width:2}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--surface)}
+.seg button{font:inherit; font-size:.85rem; font-weight:500; border:0; background:transparent; color:var(--muted); padding:7px 12px; cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--gen); color:#fff}
+.count{font-size:.82rem; color:var(--muted); min-width:9ch; font-variant-numeric:tabular-nums}
+
+/* estructura */
+.wrap{max-width:1240px; margin:0 auto; padding-inline:16px; display:grid; grid-template-columns:240px minmax(0,1fr); gap:40px}
+nav.toc{position:sticky; top:84px; align-self:start; max-height:calc(100vh - 100px); overflow:auto; padding-block:24px; font-size:.88rem}
+.toc h4{font-family:var(--body); font-size:.7rem; text-transform:uppercase; letter-spacing:.09em; color:var(--muted); margin:18px 0 6px; font-weight:600}
+.toc h4:first-child{margin-top:0}
+.toc a{display:flex; gap:8px; align-items:center; padding:4px 8px; margin-left:-8px; border-radius:6px; text-decoration:none; color:var(--ink)}
+.toc a:hover{background:var(--sunk)}
+.toc a .dot{width:7px; height:7px; border-radius:50%; flex:none; background:var(--gen)}
+.toc a[data-area="datos"] .dot{background:var(--fut)}
+.toc a[data-area="personal"] .dot{background:var(--mut)}
+.toc a[data-area="ref"] .dot{background:var(--muted)}
+.toc details{display:none}
+main{padding-block:28px 80px; min-width:0}
+.hero{padding-bottom:22px; border-bottom:1px solid var(--line); margin-bottom:8px}
+.hero .kicker{font-family:var(--mono); font-size:.78rem; color:var(--gen); letter-spacing:.06em; text-transform:uppercase}
+.hero h1{font-size:clamp(1.7rem,3.4vw,2.5rem); font-weight:700; max-width:24ch; margin-top:6px}
+.hero p{font-size:1.05rem; color:var(--muted); max-width:64ch}
+.motto{font-family:var(--display); font-size:1.15rem; font-weight:600; color:var(--ink); margin:14px 0 4px}
+.motto span{color:var(--gen)}
+.legend{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+
+.pill{display:inline-flex; align-items:center; gap:6px; font-size:.74rem; font-weight:600; letter-spacing:.03em; padding:2px 9px; border-radius:99px; white-space:nowrap}
+.pill.ia{background:var(--gen-soft); color:var(--gen)}
+.pill.datos{background:var(--fut-soft); color:var(--fut)}
+.pill.personal{background:var(--mut-soft); color:var(--mut)}
+.pill.ref{background:var(--sunk); color:var(--muted)}
+.pill.ok{background:var(--ok-soft); color:var(--ok)}
+.pill.amb{background:var(--amb-soft); color:var(--amb)}
+.pill.no{background:var(--gen-soft); color:var(--gen)}
+
+section.doc{padding-block:30px; border-bottom:1px solid var(--line)}
+section.doc > header{display:flex; flex-wrap:wrap; align-items:baseline; gap:10px 14px; margin-bottom:6px}
+section.doc > header .num{font-family:var(--mono); font-size:.8rem; color:var(--muted)}
+section.doc[data-area="datos"] > header h2{color:var(--fut)}
+section.doc[data-area="personal"] > header h2{color:var(--mut)}
+.lead{font-size:1.04rem}
+
+.tbl{overflow-x:auto; margin:14px 0; border:1px solid var(--line); border-radius:8px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.9rem}
+th,td{text-align:left; vertical-align:top; padding:9px 12px; border-bottom:1px solid var(--line)}
+th{font-size:.74rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); font-weight:600; background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+td.k{font-weight:600}
+td.n{font-family:var(--mono); font-size:.82rem; color:var(--muted); white-space:nowrap}
+
+.cols{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:14px 0}
+.box{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:14px 16px}
+.box h3{margin-top:0; font-size:1rem}
+.box p{font-size:.9rem; margin:.4rem 0}
+.box ul{font-size:.9rem; margin:.3rem 0}
+.box.r{border-left:4px solid var(--gen)}
+.box.g{border-left:4px solid var(--ok)}
+.box.a{border-left:4px solid var(--amb)}
+.box.f{border-left:4px solid var(--fut)}
+.box.m{border-left:4px solid var(--mut)}
+
+.callout{border-radius:8px; padding:12px 16px; margin:14px 0; font-size:.94rem; max-width:78ch}
+.callout b:first-child{display:block; font-family:var(--display); font-size:1rem; margin-bottom:2px}
+.callout.warn{background:var(--amb-soft); border:1px solid color-mix(in srgb,var(--amb) 30%,transparent)}
+.callout.stop{background:var(--gen-soft); border:1px solid color-mix(in srgb,var(--gen) 30%,transparent)}
+.callout.info{background:var(--fut-soft); border:1px solid color-mix(in srgb,var(--fut) 30%,transparent)}
+.callout.okc{background:var(--ok-soft); border:1px solid color-mix(in srgb,var(--ok) 30%,transparent)}
+
+/* pirámide de riesgo */
+.pyr{display:grid; gap:6px; margin:16px 0; max-width:720px}
+.pyr div{margin-inline:auto; border-radius:6px; padding:9px 14px; font-size:.9rem; text-align:center}
+.pyr b{font-family:var(--display)}
+.pyr .p1{width:46%; background:var(--gen); color:#fff}
+.pyr .p2{width:64%; background:var(--mut-soft); color:var(--mut); border:1px solid color-mix(in srgb,var(--mut) 30%,transparent)}
+.pyr .p3{width:82%; background:var(--amb-soft); color:var(--amb); border:1px solid color-mix(in srgb,var(--amb) 30%,transparent)}
+.pyr .p4{width:100%; background:var(--ok-soft); color:var(--ok); border:1px solid color-mix(in srgb,var(--ok) 30%,transparent)}
+.pyr small{display:block; color:inherit; opacity:.85}
+.pyr .here{display:inline-block; margin-left:6px; font-family:var(--mono); font-size:.72rem; background:var(--ink); color:var(--paper); padding:1px 6px; border-radius:4px}
+
+/* cronología */
+.timeline{display:grid; gap:8px; margin:14px 0}
+.tl{display:grid; grid-template-columns:130px 1fr; gap:14px; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:10px 14px}
+.tl .when{font-family:var(--mono); font-size:.8rem; color:var(--muted)}
+.tl .when b{display:block; font-family:var(--display); font-size:1rem; color:var(--ink)}
+.tl.now{border-color:var(--gen); box-shadow:inset 3px 0 0 var(--gen)}
+.tl p{margin:.1rem 0; font-size:.92rem}
+
+/* cadena */
+.chain{display:flex; flex-wrap:wrap; align-items:stretch; gap:6px; margin:16px 0}
+.chain .node{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--gen); border-radius:8px; padding:8px 12px; font-size:.86rem; max-width:220px}
+.chain .node b{display:block; font-family:var(--display); font-size:.95rem}
+.chain .node small{color:var(--muted)}
+.chain .arr{align-self:center; color:var(--muted); font-family:var(--mono)}
+
+.pillars{list-style:none; padding:0; margin:14px 0; display:grid; gap:10px; max-width:none}
+.pillars li{display:grid; grid-template-columns:2.2rem 1fr; gap:4px 12px; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin:0}
+.pillars .pn{font-family:var(--display); font-size:1.35rem; font-weight:700; color:var(--gen); line-height:1.1}
+.pillars .pt{font-weight:600}
+.pillars .pd{grid-column:2; font-size:.88rem; color:var(--muted)}
+
+/* bloques interactivos */
+.tool{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; margin:16px 0}
+.tool > .tt{font-family:var(--mono); font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--gen); margin-bottom:8px}
+.chips{display:flex; flex-wrap:wrap; gap:7px}
+.chip{font:inherit; font-size:.84rem; padding:6px 12px; border-radius:99px; border:1px solid var(--line); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left}
+.chip:hover{border-color:var(--gen)}
+.chip[aria-pressed="true"]{background:var(--gen); border-color:var(--gen); color:#fff}
+.verdict{margin-top:14px; border-radius:8px; padding:14px 16px; display:none}
+.verdict.show{display:block}
+.verdict.v-verde{background:var(--ok-soft)} .verdict.v-ambar{background:var(--amb-soft)} .verdict.v-rojo{background:var(--gen-soft)}
+.verdict .vh{font-family:var(--display); font-weight:700; font-size:1.1rem}
+.verdict.v-verde .vh{color:var(--ok)} .verdict.v-ambar .vh{color:var(--amb)} .verdict.v-rojo .vh{color:var(--gen)}
+.verdict p{margin:.35rem 0; font-size:.92rem}
+
+.tabs{display:flex; flex-wrap:wrap; gap:6px; border-bottom:1px solid var(--line); padding-bottom:10px}
+.tabs button{font:inherit; font-size:.86rem; font-weight:500; padding:7px 12px; border-radius:7px; border:1px solid var(--line); background:var(--paper); color:var(--ink); cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--gen); color:#fff; border-color:var(--gen)}
+.tabpanel{padding-top:12px}
+.tabpanel .cols{margin-top:4px}
+.yes li::marker{content:"✔  "; color:var(--ok)}
+.nope li::marker{content:"✖  "; color:var(--gen)}
+
+.check{list-style:none; padding:0; margin:10px 0; max-width:none}
+.check li{margin:0 0 6px}
+.check label{display:flex; gap:10px; align-items:flex-start; background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:9px 12px; cursor:pointer}
+.check input{margin-top:4px; accent-color:var(--gen); width:16px; height:16px; flex:none}
+.check small{display:block; color:var(--muted)}
+.meter{height:8px; background:var(--sunk); border-radius:99px; overflow:hidden; margin:10px 0 6px}
+.meter i{display:block; height:100%; width:0; background:var(--gen); transition:width .25s}
+.mstate{font-size:.9rem; font-weight:600}
+
+.q{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin:10px 0}
+.q .qt{font-weight:600; margin-bottom:8px}
+.q .opts{display:flex; flex-direction:column; gap:6px}
+.q .opts button{font:inherit; font-size:.9rem; text-align:left; padding:8px 12px; border-radius:7px; border:1px solid var(--line); background:var(--surface); color:var(--ink); cursor:pointer}
+.q .opts button.right{background:var(--ok-soft); border-color:var(--ok)}
+.q .opts button.wrong{background:var(--gen-soft); border-color:var(--gen)}
+.q .opts button:disabled{cursor:default}
+.q .exp{font-size:.88rem; margin-top:8px; color:var(--muted)}
+.score{font-family:var(--display); font-weight:700; font-size:1.05rem}
+
+.ba{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; margin:12px 0}
+.ba .bx{border-radius:8px; padding:12px 14px; font-size:.9rem}
+.ba .bx.bad{background:var(--gen-soft)} .ba .bx.good{background:var(--ok-soft)}
+.ba .lbl{font-family:var(--mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; font-weight:500}
+.ba .bad .lbl{color:var(--gen)} .ba .good .lbl{color:var(--ok)}
+.ba q{display:block; font-style:italic; margin-top:4px; quotes:"«" "»"}
+
+.btn{font:inherit; font-size:.88rem; font-weight:600; padding:8px 14px; border-radius:8px; border:1px solid var(--gen); background:var(--gen); color:#fff; cursor:pointer}
+.btn.sec{background:transparent; color:var(--gen)}
+.sign{background:var(--paper); border:1px dashed var(--muted); border-radius:8px; padding:12px 14px; font-size:.92rem; margin-top:12px}
+
+.dict{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:0 28px; margin-top:10px}
+.dict div{padding:10px 0; border-bottom:1px solid var(--line)}
+.dict dt{font-weight:600}
+.dict dd{margin:2px 0 0; font-size:.9rem; color:var(--muted)}
+.links{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; margin-top:12px}
+.links a{display:block; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:10px 14px; text-decoration:none; color:var(--ink)}
+.links a:hover{border-color:var(--gen)}
+.links a b{display:block; color:var(--gen); font-size:.95rem}
+.links a small{color:var(--muted)}
+.foot{color:var(--muted); font-size:.82rem; padding-top:24px}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr; gap:0}
+  nav.toc{position:static; max-height:none; padding-block:12px 0}
+  nav.toc .toc-full{display:none}
+  .toc details{display:block; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:8px 12px}
+  .toc details summary{cursor:pointer; font-weight:600}
+  .tl{grid-template-columns:1fr; gap:4px}
+  .pyr .p1,.pyr .p2,.pyr .p3{width:100%}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} .meter i{transition:none}}
+@media print{.bar,nav.toc,.tool .chips,.tabs{display:none} .wrap{display:block} .tabpanel[hidden]{display:block!important}}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="brand"><b>Brompton House</b><span>Guía de IA y Protección de Datos · 2026</span></div>
+    <label class="search" for="q">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="q" type="search" placeholder="Buscar: nómina, SAP, alérgenos, foto…" autocomplete="off" aria-label="Buscar en la guía">
+    </label>
+    <div class="seg" role="group" aria-label="Filtrar por bloque">
+      <button type="button" data-seg="todo" aria-pressed="true">Todo</button>
+      <button type="button" data-seg="ia" aria-pressed="false">IA</button>
+      <button type="button" data-seg="datos" aria-pressed="false">Datos</button>
+      <button type="button" data-seg="personal" aria-pressed="false">Personal</button>
+    </div>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Índice">
+    <details><summary>Índice</summary><div id="tocSmall"></div></details>
+    <div class="toc-full" id="tocFull"></div>
+  </nav>
+
+  <main id="main">
+    <div class="hero">
+      <div class="kicker">Formación interna · Edición 20/11/2026 · 10 empleados · Coslada (Madrid)</div>
+      <h1>Guía práctica de Inteligencia Artificial y Protección de Datos</h1>
+      <p>Qué dice la ley, qué significa para nuestro día a día y qué está prohibido. Lectura de 20 minutos, con ejemplos de cada departamento y pequeños ejercicios.</p>
+      <p class="motto">La IA <span>ayuda</span>. Las personas <span>deciden</span>. Los datos se <span>protegen</span>.</p>
+      <div class="legend">
+        <span class="pill ia">IA · Reglamento europeo de IA (AI Act)</span>
+        <span class="pill datos">Datos · RGPD + LOPDGDD</span>
+        <span class="pill personal">Personal · tu vida privada</span>
+        <span class="pill ref">Referencia · glosario y enlaces</span>
+      </div>
+    </div>
+
+    <!-- ===================== LO ESENCIAL ===================== -->
+    <section class="doc" id="resumen" data-area="ia" data-group="Lo esencial">
+      <header><span class="num">01</span><h2>El AI Act en 60 segundos</h2><span class="pill ia">IA</span></header>
+      <p class="lead">El <strong>Reglamento (UE) 2024/1689</strong> («AI Act» o «Reglamento de IA») es una ley europea que se aplica directamente en España. No prohíbe usar ChatGPT, Claude o Copilot. Lo que hace es <strong>clasificar los usos de la IA según el daño que pueden causar a las personas</strong>: cuanto más riesgo, más obligaciones.</p>
+      <div class="pyr" aria-label="Pirámide de riesgo del AI Act">
+        <div class="p1"><b>Prohibido</b><small>Manipular a personas, puntuación social, detectar emociones de empleados, deepfakes sexuales…</small></div>
+        <div class="p2"><b>Alto riesgo</b><small>IA que decide sobre personas: contratar, evaluar, despedir, asignar turnos, conceder crédito.</small></div>
+        <div class="p3"><b>Transparencia</b><small>Chatbots que hablan con personas, imágenes o vídeos generados: hay que avisar de que es IA.</small></div>
+        <div class="p4"><b>Riesgo mínimo</b> <span class="here">Brompton hoy</span><small>Redactar, traducir, resumir, analizar datos operativos sin identificar personas.</small></div>
+      </div>
+      <h3>¿Qué nos exige como empresa?</h3>
+      <p>Somos <strong>«responsables del despliegue»</strong>: es decir, <em>usamos</em> IA que han fabricado otros. Para nuestro tamaño y nuestros usos, las obligaciones reales son tres:</p>
+      <ol class="pillars">
+        <li><span class="pn">1</span><span class="pt">Formar al personal (art. 4)</span><span class="pd">Tomar medidas para que quien usa IA sepa cómo funciona, qué riesgos tiene y cuáles son sus límites. Esta guía forma parte de esa obligación.</span></li>
+        <li><span class="pn">2</span><span class="pt">No usar ninguna práctica prohibida (art. 5)</span><span class="pd">Ver el capítulo «Línea roja legal».</span></li>
+        <li><span class="pn">3</span><span class="pt">Avisar cuando algo lo ha hecho una IA y puede confundir (art. 50)</span><span class="pd">Por ejemplo: un chatbot que atiende a clientes, o una imagen realista generada para la web.</span></li>
+      </ol>
+      <h3>Calendario: qué ya está en vigor</h3>
+      <div class="timeline">
+        <div class="tl"><div class="when"><b>02/02/2025</b>En vigor</div><div><p>Prácticas prohibidas y obligación de formar al personal.</p></div></div>
+        <div class="tl"><div class="when"><b>27/07/2026</b>En vigor</div><div><p>Entra en vigor el <strong>«Ómnibus digital sobre IA»</strong> (Reglamento (UE) 2026/1744): simplifica la ley y retrasa las normas de alto riesgo. La formación sigue siendo obligatoria, pero ya no se exige un «nivel suficiente» concreto: la empresa debe <em>adoptar medidas</em> de formación.</p></div></div>
+        <div class="tl"><div class="when"><b>02/08/2026</b>En vigor</div><div><p>Aplicación general. Las autoridades (en España, la <strong>AESIA</strong>) ya pueden inspeccionar y sancionar.</p></div></div>
+        <div class="tl now"><div class="when"><b>02/12/2026</b>Dentro de 12 días</div><div><p>Nuevas prohibiciones: crear con IA imágenes íntimas o sexuales sin consentimiento y material de abuso infantil.</p></div></div>
+        <div class="tl"><div class="when"><b>02/12/2027</b>Futuro</div><div><p>Obligaciones de los sistemas de alto riesgo del anexo III (empleo, crédito, educación…).</p></div></div>
+        <div class="tl"><div class="when"><b>02/08/2028</b>Futuro</div><div><p>Alto riesgo en productos regulados (máquinas, vehículos…), anexo I.</p></div></div>
+      </div>
+      <div class="callout info"><b>Y la protección de datos, ¿dónde queda?</b>El AI Act <strong>no sustituye</strong> a la ley de protección de datos: se suman. En la práctica, <strong>el mayor riesgo diario para nosotros no es el AI Act, sino el RGPD</strong>: pegar datos personales en un chat. Por eso tiene su propio bloque en esta guía.</div>
+    </section>
+
+    <section class="doc" id="sistemas" data-area="ia" data-group="Lo esencial">
+      <header><span class="num">02</span><h2>Qué significa para Brompton House: nuestros sistemas</h2><span class="pill ia">IA</span></header>
+      <p class="lead">Lo que cuenta no es el nombre del programa ni dónde está instalado (nube o NAS), sino <strong>para qué se usa</strong>. Un mismo programa puede ser de riesgo mínimo o de alto riesgo según la tarea.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Sistema</th><th>¿Es IA?</th><th>Nivel hoy</th><th>Lo que tenemos que vigilar</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Microsoft 365 (Outlook, Excel, Teams…)</td><td>No, salvo Copilot u otras funciones de IA</td><td><span class="pill ok">Mínimo</span></td><td>Si se activa Copilot, aplican las mismas reglas de datos que para cualquier IA. Copilot puede leer correos y OneDrive: su activación la decide IT.</td></tr>
+          <tr><td class="k">SAP Business One (CRM/ERP) en NAS propio</td><td>No: es software tradicional</td><td><span class="pill ok">Fuera del AI Act</span></td><td>Sí entra de lleno en el <strong>RGPD</strong>: contiene clientes, proveedores, autónomos y contactos. Accesos por usuario, nada de exportaciones a IA externas.</td></tr>
+          <tr><td class="k">Power BI en NAS</td><td>No, salvo módulos predictivos o de lenguaje natural</td><td><span class="pill ok">Mínimo</span></td><td>Si se activan funciones de IA (previsiones, preguntas en lenguaje natural), registrarlo en el inventario. Las capturas de informes son información confidencial.</td></tr>
+          <tr><td class="k">Chatbot interno de Supply Chain (desplegado en Railway desde un repositorio privado de GitHub)</td><td>Se construyó con ayuda de IA, pero las cifras se calculan con programación y la IA no accede a los datos</td><td><span class="pill ok">Mínimo</span></td><td>Que se haya programado con IA no lo convierte en sistema de IA: cuenta lo que hace cuando funciona. Si un modelo de lenguaje solo interpreta la pregunta, es de riesgo mínimo; si no hay ningún modelo funcionando, queda fuera del AI Act. Lo que sí hay que vigilar es la <strong>protección de datos</strong>, porque está en la nube y no en el NAS: región de los servidores (preferiblemente UE), contrato de encargado del tratamiento con Railway y GitHub, repositorio privado, claves guardadas como secretos y acceso solo con usuario. Si un día atiende a clientes, debe avisar de que es una IA.</td></tr>
+          <tr><td class="k">ChatGPT, Claude, DeepSeek, Gemini… (cuentas individuales)</td><td>Sí</td><td><span class="pill amb">Mínimo, pero riesgo de datos</span></td><td>Permitidos para tareas sin datos personales ni confidenciales. Lo que escribes sale de la empresa y se guarda en servidores de terceros, a veces fuera de la UE.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout warn"><b>Cuándo cambiaría el nivel</b>Si mañana usáramos IA para <strong>filtrar currículums, evaluar el rendimiento de alguien, decidir turnos según su comportamiento o calcular el crédito de un cliente autónomo</strong>, pasaríamos a <strong>alto riesgo</strong>. Eso exige revisión jurídica previa y está prohibido hacerlo por iniciativa propia.</div>
+      <h3>Agentes de IA que leen facturas, albaranes o fichas técnicas: ¿es alto riesgo?</h3>
+      <p><strong>No.</strong> Leer, extraer o clasificar documentos comerciales <strong>no es alto riesgo</strong> en el AI Act, porque no decide sobre personas. Pero <strong>sí tiene dos riesgos reales</strong>, y hay que gestionarlos:</p>
+      <div class="cols">
+        <div class="box f"><h3>1. Riesgo de datos (RGPD)</h3><p>Una factura lleva el NIF de un autónomo; un albarán, el nombre, la firma o la matrícula del conductor. Al subirla, esos datos salen de la empresa.</p></div>
+        <div class="box a"><h3>2. Riesgo de que actúe mal</h3><p>Un agente puede leer mal un importe o un lote, o seguir instrucciones ocultas dentro de un PDF, y <strong>ejecutar</strong> la acción: grabar, enviar o pagar.</p></div>
+      </div>
+      <div class="tool">
+        <div class="tt">Cómo hacerlo sin riesgo · 6 condiciones</div>
+        <ol class="pillars">
+          <li><span class="pn">1</span><span class="pt">Herramienta aprobada y en cuenta de empresa</span><span class="pd">Con contrato de encargado del tratamiento, sin entrenamiento con nuestros datos y, si es posible, con los datos alojados en la UE. Nunca en una cuenta personal.</span></li>
+          <li><span class="pn">2</span><span class="pt">Mínimo dato</span><span class="pd">Si la tarea no necesita la firma, el teléfono o el nombre del conductor, se tapan antes de subir el documento.</span></li>
+          <li><span class="pn">3</span><span class="pt">Solo lectura</span><span class="pd">El agente propone; no escribe en SAP, no envía correos y no paga. Si tiene permisos de escritura, se limitan a borradores.</span></li>
+          <li><span class="pn">4</span><span class="pt">Revisión humana obligatoria</span><span class="pd">Una persona comprueba importes, lotes, caducidades y alérgenos contra el original antes de dar nada por bueno.</span></li>
+          <li><span class="pn">5</span><span class="pt">Documentos de origen conocido</span><span class="pd">Solo de proveedores y clientes reales. Un PDF de origen dudoso puede llevar instrucciones ocultas para el agente.</span></li>
+          <li><span class="pn">6</span><span class="pt">Registrado en el inventario</span><span class="pd">Qué agente, para qué tipo de documento, quién lo usa y dónde guarda los datos.</span></li>
+        </ol>
+      </div>
+      <div class="callout stop"><b>Esto sí sería alto riesgo</b>Usar un agente para valorar personas: puntuar a conductores por sus albaranes, evaluar a empleados por su productividad o decidir el crédito de un cliente autónomo a partir de sus facturas.</div>
+    </section>
+
+    <!-- ===================== PROTECCIÓN DE DATOS ===================== -->
+    <section class="doc" id="lopd" data-area="datos" data-group="Protección de datos (RGPD y LOPDGDD)">
+      <header><span class="num">03</span><h2>RGPD y LOPDGDD: la otra ley que debes conocer</h2><span class="pill datos">Datos</span></header>
+      <p class="lead">Muchos la siguen llamando «LOPD». Hoy son dos normas que van juntas: el <strong>RGPD</strong> (Reglamento (UE) 2016/679, europeo) y la <strong>LOPDGDD</strong> (Ley Orgánica 3/2018, española). Protegen cualquier información sobre <strong>personas físicas</strong>, la trate una IA o no.</p>
+      <div class="cols">
+        <div class="box r"><h3>AI Act</h3><p><strong>Protege de:</strong> los usos peligrosos de la IA.</p><p><strong>Pregunta clave:</strong> «¿Para qué uso esta IA?»</p><p><strong>Autoridad:</strong> AESIA.</p></div>
+        <div class="box f"><h3>RGPD + LOPDGDD</h3><p><strong>Protege:</strong> los datos de las personas.</p><p><strong>Pregunta clave:</strong> «¿Qué datos estoy compartiendo y con quién?»</p><p><strong>Autoridad:</strong> AEPD (Agencia Española de Protección de Datos).</p></div>
+      </div>
+      <h3>Las 5 ideas que tienes que llevarte</h3>
+      <ol class="pillars">
+        <li><span class="pn">1</span><span class="pt">Mínimo dato</span><span class="pd">Usa solo los datos imprescindibles para la tarea. Si la IA puede ayudarte sin el nombre, no pongas el nombre.</span></li>
+        <li><span class="pn">2</span><span class="pt">Misma finalidad</span><span class="pd">Los datos de un cliente se recogieron para servirle pedidos, no para «probar» una herramienta nueva.</span></li>
+        <li><span class="pn">3</span><span class="pt">Deber de confidencialidad (art. 5 LOPDGDD)</span><span class="pd">Todos los empleados estamos obligados a guardar secreto sobre los datos que conocemos por el trabajo. <strong>Y sigue vigente aunque dejes la empresa.</strong></span></li>
+        <li><span class="pn">4</span><span class="pt">Pegar datos en una IA externa es «comunicarlos a un tercero»</span><span class="pd">Si ese proveedor no tiene contrato con Brompton, no hay base legal para dárselos. Y si sus servidores están fuera de la UE, además es una transferencia internacional.</span></li>
+        <li><span class="pn">5</span><span class="pt">Ninguna decisión importante sobre una persona solo por máquina (art. 22 RGPD)</span><span class="pd">Las personas tienen derecho a que un humano revise las decisiones que les afectan.</span></li>
+      </ol>
+      <h3>Tus derechos digitales como trabajador (LOPDGDD, arts. 87 a 91)</h3>
+      <p>La ley también te protege a ti dentro de la empresa:</p>
+      <ul>
+        <li><strong>Dispositivos de la empresa:</strong> la empresa puede fijar normas de uso, pero debe informarte de ellas (esta guía lo hace para la IA).</li>
+        <li><strong>Videovigilancia y geolocalización</strong> (cámaras del almacén, GPS de vehículos): deben informarse previamente y no pueden usarse para fines distintos de los comunicados.</li>
+        <li><strong>Desconexión digital:</strong> derecho a no responder fuera de tu horario.</li>
+      </ul>
+      <div class="callout stop"><b>Sanciones RGPD</b>Hasta 20 millones de euros o el 4 % de la facturación mundial. Una fuga de datos por un mal uso de la IA es, legalmente, una <strong>brecha de seguridad</strong> que la empresa puede tener que comunicar a la AEPD en <strong>72 horas</strong>.</div>
+    </section>
+
+    <section class="doc" id="tipos-datos" data-area="datos" data-group="Protección de datos (RGPD y LOPDGDD)">
+      <header><span class="num">04</span><h2>¿Qué es un dato personal? Más de lo que parece</h2><span class="pill datos">Datos</span></header>
+      <p class="lead">Dato personal es <strong>cualquier información que permita identificar a una persona</strong>, directa o indirectamente. No solo el nombre y el DNI.</p>
+      <div class="cols">
+        <div class="box f"><h3>Datos personales «normales»</h3><ul>
+          <li>Nombre, teléfono, correo (también el de trabajo: <code>pedro@cliente.es</code>)</li>
+          <li>NIF de un <strong>autónomo</strong> (es su DNI)</li>
+          <li>Matrícula, ruta y horario de un conductor</li>
+          <li>Código de empleado, firma, foto</li>
+          <li>Nómina, IBAN, dirección</li>
+        </ul></div>
+        <div class="box r"><h3>Categorías especiales (máxima protección)</h3><ul>
+          <li><strong>Salud:</strong> bajas, informes médicos, alergias, embarazo</li>
+          <li><strong>Biométricos:</strong> huella, rostro, voz cuando se usan para identificar</li>
+          <li>Afiliación sindical, religión, ideología, origen étnico</li>
+          <li>Vida u orientación sexual, datos genéticos</li>
+        </ul><p>Regla de Brompton: <strong>nunca</strong> salen hacia una IA.</p></div>
+        <div class="box a"><h3>No son personales, pero son confidenciales</h3><ul>
+          <li>Tarifas negociadas, márgenes, escandallos</li>
+          <li>Contratos, condiciones con proveedores</li>
+          <li>Estrategia, previsiones, cifras de ventas</li>
+          <li>Contraseñas, claves API, accesos al NAS</li>
+        </ul><p>Los protege el <strong>secreto empresarial</strong> (Ley 1/2019).</p></div>
+      </div>
+      <div class="callout warn"><b>Quitar el nombre no siempre anonimiza</b>«El conductor de la ruta de Alcalá del martes a las 6:00» identifica a una persona sin decir su nombre. Lo mismo un número de pedido, un código de empleado o una combinación de fechas y lugares. <strong>Anonimizar es que nadie, ni siquiera nosotros, pueda volver a saber de quién se trata.</strong></div>
+      <div class="callout info"><b>Datos B2B: ojo con los autónomos</b>Los datos de una sociedad (S.L., S.A.) no son datos personales. Pero en nuestra cartera hay <strong>panaderías, cafeterías y obradores de autónomos</strong>: su NIF, dirección y facturación sí lo son. Y el nombre y el correo del comprador de una S.L. también.</div>
+    </section>
+
+    <section class="doc" id="semaforo" data-area="datos" data-group="Protección de datos (RGPD y LOPDGDD)">
+      <header><span class="num">05</span><h2>El semáforo: ¿puedo pegarlo en una IA?</h2><span class="pill datos">Datos</span></header>
+      <p class="lead">Antes de copiar algo en un chat de IA, clasifícalo con tres colores.</p>
+      <div class="cols">
+        <div class="box g"><h3><span class="pill ok">VERDE</span> Adelante</h3><p>Ideas generales, plantillas vacías, ejemplos inventados, información pública, datos agregados realmente anónimos.</p></div>
+        <div class="box a"><h3><span class="pill amb">ÁMBAR</span> Pide permiso</h3><p>Pedidos, stock, volúmenes logísticos, tendencias comerciales, procedimientos internos. Solo con autorización, el mínimo necesario y en una herramienta aprobada (preferentemente el chatbot interno).</p></div>
+        <div class="box r"><h3><span class="pill no">ROJO</span> Nunca en IA pública</h3><p>DNI/NIF, teléfonos, correos, nóminas, currículums, salud, datos bancarios, contraseñas, tarifas, márgenes, listados de clientes, contratos, exportaciones de SAP, capturas completas del ERP.</p></div>
+      </div>
+      <div class="tool" id="semTool">
+        <div class="tt">Ejercicio interactivo · Pulsa un caso real de Brompton</div>
+        <div class="chips" id="semChips"></div>
+        <div class="verdict" id="semOut" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ===================== NORMAS ===================== -->
+    <section class="doc" id="prohibido-ley" data-area="ia" data-group="Lo que no se puede hacer">
+      <header><span class="num">06</span><h2>Línea roja legal: prohibido por el AI Act</h2><span class="pill ia">IA</span></header>
+      <p class="lead">Estas prácticas están <strong>prohibidas por ley</strong> en toda la UE (art. 5). No hay excepción interna posible. Multa: hasta 35 millones de euros o el 7 % de la facturación.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Prohibido</th><th>Qué significa en Brompton</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Detectar emociones en el trabajo</td><td>Ninguna cámara del almacén, grabación de llamadas ni herramienta de videollamada puede analizar si un empleado está estresado, enfadado o motivado. (Solo se admite por razones médicas o de seguridad previstas en la ley.)</td></tr>
+          <tr><td class="k">Manipular o explotar vulnerabilidades</td><td>No usar IA para presionar a un cliente con técnicas engañosas, ni aprovechar su edad, discapacidad o situación económica para venderle más.</td></tr>
+          <tr><td class="k">Puntuación social</td><td>No crear un «ranking» de empleados, conductores o clientes según su comportamiento personal para tratarlos peor.</td></tr>
+          <tr><td class="k">Clasificación biométrica sensible</td><td>No usar fotos, voz o rasgos para deducir religión, orientación sexual, ideas políticas o afiliación sindical de nadie.</td></tr>
+          <tr><td class="k">Bases de datos de reconocimiento facial</td><td>No recopilar caras de internet o de cámaras para crear bases de datos de reconocimiento.</td></tr>
+          <tr><td class="k">Deepfakes sexuales y abuso infantil <span class="pill no">desde 02/12/2026</span></td><td>Prohibido generar con IA contenido íntimo o sexual de una persona real sin su consentimiento, o cualquier material de abuso sexual infantil. Además, es delito.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="doc" id="prohibido-interno" data-area="datos" data-group="Lo que no se puede hacer">
+      <header><span class="num">07</span><h2>Prohibiciones internas de Brompton House</h2><span class="pill datos">Datos</span></header>
+      <p class="lead">Estas normas son <strong>más estrictas que el AI Act</strong>. Existen para cumplir el RGPD y proteger el secreto comercial, la seguridad alimentaria y la ciberseguridad.</p>
+      <ol class="pillars">
+        <li><span class="pn">✖</span><span class="pt">Datos personales en chats externos</span><span class="pd">De empleados, clientes, proveedores, conductores, candidatos o familiares. Ni nombres, ni teléfonos, ni correos.</span></li>
+        <li><span class="pn">✖</span><span class="pt">Información de SAP, Power BI o del NAS</span><span class="pd">Ni exportaciones, ni capturas de pantalla, ni contratos, precios, márgenes o rutas, salvo autorización escrita.</span></li>
+        <li><span class="pn">✖</span><span class="pt">Contraseñas y accesos</span><span class="pd">Ni contraseñas, ni tokens, ni claves API, ni capturas donde se vea una sesión abierta.</span></li>
+        <li><span class="pn">✖</span><span class="pt">Instalar IA sin permiso de IT</span><span class="pd">Extensiones del navegador, «agentes», plugins o conectores que lean el correo, OneDrive, SharePoint o el NAS. Tampoco grabadoras de reuniones con IA.</span></li>
+        <li><span class="pn">✖</span><span class="pt">Dejar que una IA actúe sola</span><span class="pd">Ninguna IA confirma pedidos, modifica SAP, envía correos externos o paga facturas sin una persona que lo revise y lo apruebe.</span></li>
+        <li><span class="pn">✖</span><span class="pt">Decidir sobre personas con IA</span><span class="pd">No usar IA para seleccionar candidatos, puntuar, asignar trabajo, sancionar o despedir. Algunos de estos usos no están prohibidos por ley, pero son de alto riesgo y requieren revisión previa de Dirección.</span></li>
+        <li><span class="pn">✖</span><span class="pt">Dar por bueno lo que dice la IA</span><span class="pd">Cifras, normas, fechas, <strong>alérgenos, lotes, caducidades o requisitos de trazabilidad</strong> sugeridos por una IA nunca se presentan como verificados.</span></li>
+        <li><span class="pn">✖</span><span class="pt">Datos de trabajo en DeepSeek u otras IA sin garantías europeas</span><span class="pd">Según su propia política de privacidad, DeepSeek guarda los datos en China, y varias autoridades europeas han actuado contra ella. Úsala, si quieres, solo para cuestiones genéricas.</span></li>
+      </ol>
+    </section>
+
+    <section class="doc" id="departamentos" data-area="ia" data-group="Lo que no se puede hacer">
+      <header><span class="num">08</span><h2>Tu departamento: qué sí y qué no</h2><span class="pill ia">IA</span></header>
+      <p class="lead">Elige tu departamento para ver ejemplos de tu día a día.</p>
+      <div class="tool">
+        <div class="tabs" role="tablist" id="depTabs"></div>
+        <div id="depPanels"></div>
+      </div>
+    </section>
+
+    <!-- ===================== USO CORRECTO ===================== -->
+    <section class="doc" id="buen-uso" data-area="ia" data-group="Cómo usar bien la IA">
+      <header><span class="num">09</span><h2>Cómo usar la IA bien (y sacarle partido)</h2><span class="pill ia">IA</span></header>
+      <p class="lead">La IA es muy útil para redactar, resumir, traducir, ordenar ideas y explicar fórmulas. Estas reglas te permiten usarla sin exponer a la empresa.</p>
+      <h3>La técnica del «hueco»: pregunta sin datos, completa tú</h3>
+      <div class="ba">
+        <div class="bx bad"><span class="lbl">✖ Así no</span><q>Escribe un correo a Panadería López (Juan, 600 123 456) diciendo que su pedido 45872 de 120 cajas de croissant se retrasa porque nos ha fallado el camión del transportista.</q></div>
+        <div class="bx good"><span class="lbl">✔ Así sí</span><q>Escribe un correo cordial a un cliente avisando de que su pedido se retrasa un día por una incidencia de transporte. Deja huecos para [nombre], [pedido] y [nueva fecha].</q><br>Luego completas los datos reales en Outlook.</div>
+      </div>
+      <div class="ba">
+        <div class="bx bad"><span class="lbl">✖ Así no</span><q>Adjunto el Excel de ventas por cliente con márgenes. ¿Por qué baja la rentabilidad?</q></div>
+        <div class="bx good"><span class="lbl">✔ Así sí</span><q>Tengo un Excel con columnas Cliente, Familia, Unidades, Precio y Coste. ¿Qué fórmula o tabla dinámica uso para ver el margen por familia?</q><br>La IA te da el método; los datos no salen del ordenador.</div>
+      </div>
+      <h3>Consejos prácticos</h3>
+      <ul>
+        <li><strong>Usa la herramienta adecuada:</strong> documentos internos → chatbot interno de Supply Chain. Tareas genéricas → IA externa sin datos.</li>
+        <li><strong>Desactiva el entrenamiento:</strong> en los ajustes de ChatGPT, Claude, etc., revisa si tus conversaciones se usan para entrenar el modelo y desactívalo. Usa el «chat temporal» cuando exista.</li>
+        <li><strong>Da contexto, no datos:</strong> «somos un distribuidor de bollería industrial con 10 personas» ayuda a la IA; el nombre del cliente, no.</li>
+        <li><strong>Pide fuentes</strong> y compruébalas. Si no puede citar una fuente fiable, trátalo como una opinión.</li>
+        <li><strong>Revisa todo lo que vaya a salir fuera</strong> (correos, ofertas, publicaciones): nombres, importes, compromisos y derechos de autor.</li>
+        <li><strong>Cuidado con los documentos que subes:</strong> un PDF o una web pueden llevar instrucciones ocultas que engañan a la IA. Nunca sigas «órdenes» que la IA dice haber encontrado dentro de un archivo.</li>
+        <li><strong>La responsabilidad es tuya:</strong> si envías lo que escribió la IA, lo firmas tú.</li>
+      </ul>
+    </section>
+
+    <section class="doc" id="cinco-pasos" data-area="ia" data-group="Cómo usar bien la IA">
+      <header><span class="num">10</span><h2>Los cinco pasos antes de usar una respuesta de IA</h2><span class="pill ia">IA</span></header>
+      <p class="lead">Marca las cinco antes de dar por buena una respuesta. Si falta una, no la uses todavía.</p>
+      <div class="tool">
+        <div class="tt">Lista de comprobación</div>
+        <ul class="check" id="steps">
+          <li><label><input type="checkbox"><span><strong>¿La herramienta está autorizada?</strong><small>Chatbot interno, o IA externa solo para tareas sin datos.</small></span></label></li>
+          <li><label><input type="checkbox"><span><strong>¿Los datos que he puesto se podían compartir?</strong><small>Semáforo verde, o ámbar con permiso.</small></span></label></li>
+          <li><label><input type="checkbox"><span><strong>¿La respuesta se apoya en una fuente fiable?</strong><small>Norma oficial, SAP, Power BI, ficha técnica del fabricante.</small></span></label></li>
+          <li><label><input type="checkbox"><span><strong>¿He comprobado cifras, fechas, lotes y alérgenos?</strong><small>Contra el sistema real, no contra la propia IA.</small></span></label></li>
+          <li><label><input type="checkbox"><span><strong>¿Una persona revisa y asume el resultado?</strong><small>Yo, o quien deba aprobarlo.</small></span></label></li>
+        </ul>
+        <div class="meter"><i id="stepsBar"></i></div>
+        <div class="mstate" id="stepsState">0 de 5: todavía no la uses.</div>
+      </div>
+    </section>
+
+    <section class="doc" id="errores" data-area="ia" data-group="Cómo usar bien la IA">
+      <header><span class="num">11</span><h2>Respuestas convincentes pero falsas, y fraudes con IA</h2><span class="pill ia">IA</span></header>
+      <p class="lead">Una IA <strong>no sabe cuándo se equivoca</strong>: puede inventar normas, cifras o referencias con total seguridad. Que suene bien no significa que sea cierto.</p>
+      <div class="cols">
+        <div class="box r"><h3>Nunca te fíes solo de la IA en…</h3><ul>
+          <li>Alérgenos y etiquetado de productos</li>
+          <li>Lotes, caducidades, retiradas de producto</li>
+          <li>Stock y fechas: la fuente de verdad es SAP</li>
+          <li>Cálculos fiscales, nóminas, plazos legales</li>
+          <li>Códigos GS1-128 / SSCC: verificar con GS1 y el sistema real</li>
+        </ul></div>
+        <div class="box a"><h3>Fraudes con IA: cómo protegerte</h3><ul>
+          <li><strong>Voz o vídeo falsos</strong> de Dirección o de un proveedor pidiendo una transferencia urgente o un cambio de IBAN.</li>
+          <li><strong>Correos perfectos</strong> sin faltas que imitan a un cliente.</li>
+          <li><strong>Regla:</strong> todo cambio de cuenta bancaria o pago urgente se confirma <strong>por otro canal</strong> (llamando al número que ya tenemos, no al del correo).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ===================== PERSONAL ===================== -->
+    <section class="doc" id="vida-privada" data-area="personal" data-group="Tu protección personal">
+      <header><span class="num">12</span><h2>Fuera del trabajo: protege tu vida privada y la de tu familia</h2><span class="pill personal">Personal</span></header>
+      <p class="lead">En tu vida personal decides tú, pero conviene saber esto: <strong>lo que escribes en un chat de IA puede guardarse, revisarse por personas del proveedor o filtrarse</strong>. Y tus datos de salud o biométricos no se pueden «cambiar» como una contraseña.</p>
+      <div class="cols">
+        <div class="box m"><h3>Salud</h3><ul>
+          <li>No subas informes médicos, analíticas o recetas con tu nombre o el de un familiar.</li>
+          <li>Pregunta en general: «¿qué significa un valor alto de ferritina?», en vez de adjuntar el análisis completo.</li>
+          <li>La IA no sustituye a un médico.</li>
+        </ul></div>
+        <div class="box m"><h3>Cara, voz y huella</h3><ul>
+          <li>Evita subir fotos de tu cara o grabaciones de voz a apps desconocidas («hazte viejo», «convierte tu voz»…).</li>
+          <li>Con 30 segundos de voz se puede clonar a una persona. Pacta una <strong>palabra clave familiar</strong> para emergencias por teléfono.</li>
+        </ul></div>
+        <div class="box m"><h3>Menores y familia</h3><ul>
+          <li>No subas fotos de niños, ni su colegio, horarios o ubicación.</li>
+          <li>No compartas problemas de salud o íntimos de familiares sin su permiso.</li>
+          <li>Habla con tus hijos de las apps de IA que usan.</li>
+        </ul></div>
+        <div class="box m"><h3>Dinero y documentos</h3><ul>
+          <li>Nunca DNI, contraseñas, claves de banca o fotos de tarjetas.</li>
+          <li>Desconfía de chats que te piden descargar archivos, instalar programas o hacer transferencias.</li>
+        </ul></div>
+      </div>
+      <div class="callout info"><b>¿Ya te ha pasado algo?</b>Si alguien difunde una imagen tuya íntima o violenta: <a href="https://www.aepd.es/canalprioritario">Canal prioritario de la AEPD</a> (aepd.es/canalprioritario). Para dudas o incidentes de ciberseguridad: <strong>017</strong>, línea gratuita y confidencial de INCIBE.</div>
+    </section>
+
+    <!-- ===================== ACTUACIÓN ===================== -->
+    <section class="doc" id="incidente" data-area="datos" data-group="Si algo sale mal">
+      <header><span class="num">13</span><h2>Si te equivocas y compartes algo sensible</h2><span class="pill datos">Datos</span></header>
+      <p class="lead">Equivocarse puede pasar. <strong>Lo grave es ocultarlo</strong>: la empresa tiene solo <strong>72 horas</strong> para valorar y, si procede, comunicarlo a la AEPD.</p>
+      <div class="chain">
+        <div class="node"><b>1. Para</b><small>No sigas escribiendo ni subiendo nada.</small></div><span class="arr">→</span>
+        <div class="node"><b>2. No borres</b><small>Nada de borrar el chat para «ocultarlo»: hace falta como prueba.</small></div><span class="arr">→</span>
+        <div class="node"><b>3. Avisa ya</b><small>A la <a href="#gobernanza">persona responsable de IA</a>, el mismo día.</small></div><span class="arr">→</span>
+        <div class="node"><b>4. Informa</b><small>Herramienta, hora, qué datos y de quién.</small></div><span class="arr">→</span>
+        <div class="node"><b>5. La empresa decide</b><small>Medidas, borrado ante el proveedor, aviso a AEPD o afectados.</small></div>
+      </div>
+      <div class="callout okc"><b>Avisar a tiempo te protege</b>Comunicar un error rápido es lo que se espera de ti. Lo que puede causar problemas, a la empresa y a ti, es esconderlo.</div>
+    </section>
+
+    <section class="doc" id="gobernanza" data-area="ia" data-group="Gobernanza">
+      <header><span class="num">14</span><h2>Gobernanza: quién decide y a quién acudir</h2><span class="pill ia">IA</span></header>
+      <p class="lead">Una empresa de 10 personas no necesita un comité: necesita <strong>una persona de referencia</strong> y unas reglas claras sobre quién aprueba qué.</p>
+      <div class="box r">
+        <h3>Persona responsable de IA y protección de datos</h3>
+        <p><strong>Nombre:</strong> <span class="pill amb">[pendiente de designar por Dirección]</span></p>
+        <p><strong>Contacto:</strong> <span class="pill amb">[correo y extensión]</span> · <strong>Suplente:</strong> <span class="pill amb">[nombre]</span></p>
+        <p>Funciones: autoriza herramientas y usos nuevos, mantiene el inventario, recibe los incidentes, actualiza esta guía y es el enlace con la AEPD y la AESIA si hiciera falta.</p>
+      </div>
+      <h3>Quién aprueba qué</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Situación</th><th>Quién decide</th><th>Cómo</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Uso diario sin datos (semáforo verde)</td><td>Cada empleado</td><td>Sin trámites, siguiendo esta guía.</td></tr>
+          <tr><td class="k">Datos internos (semáforo ámbar)</td><td>Responsable del departamento</td><td>Permiso por correo, indicando herramienta y datos.</td></tr>
+          <tr><td class="k">Herramienta, extensión o agente nuevo</td><td>Responsable de IA + IT</td><td>Solicitud previa; se añade al inventario antes de usarla.</td></tr>
+          <tr><td class="k">Cualquier uso que afecte a personas (selección, evaluación, turnos, crédito)</td><td>Dirección</td><td>Revisión jurídica previa: puede ser de alto riesgo.</td></tr>
+          <tr><td class="k">Incidente o fuga de datos</td><td>Responsable de IA → Dirección</td><td>Aviso el mismo día; decisión sobre la notificación a la AEPD en 72 horas.</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Registros mínimos que debemos guardar</h3>
+      <ul>
+        <li><strong>Inventario de IA</strong>: herramienta, finalidad, usuarios, datos, proveedor y ubicación de los datos.</li>
+        <li><strong>Constancia de formación</strong>: quién ha recibido esta guía y cuándo.</li>
+        <li><strong>Registro de incidentes</strong>: aunque al final no haya que notificarlos.</li>
+      </ul>
+    </section>
+
+    <section class="doc" id="plan" data-area="ia" data-group="Gobernanza">
+      <header><span class="num">15</span><h2>Plan de implantación (para Dirección e IT)</h2><span class="pill ia">IA</span></header>
+      <p class="lead">Seis pasos sencillos para una empresa de 10 personas.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Paso</th><th>Qué hacer</th><th>Quién</th></tr></thead>
+        <tbody>
+          <tr><td class="n">1</td><td><strong>Nombrar una persona responsable de IA:</strong> autoriza herramientas y usos y recibe los incidentes.</td><td>Dirección</td></tr>
+          <tr><td class="n">2</td><td><strong>Inventario de IA:</strong> herramienta, para qué se usa, quién la usa, qué datos, proveedor, dónde guarda los datos.</td><td>IT &amp; Digitalización</td></tr>
+          <tr><td class="n">3</td><td><strong>Revisar el chatbot interno (Railway + GitHub):</strong> región de los servidores, contratos de encargado del tratamiento, repositorio privado, secretos, accesos por usuario y si hay un modelo de lenguaje funcionando.</td><td>IT &amp; Digitalización</td></tr>
+          <tr><td class="n">4</td><td><strong>Herramientas externas:</strong> valorar cuentas de empresa (Team/Business) con contrato de encargado del tratamiento y sin entrenamiento con nuestros datos.</td><td>Dirección + IT</td></tr>
+          <tr><td class="n">5</td><td><strong>Formación:</strong> sesión de 30 a 45 minutos con esta guía. Guardar la firma de recepción. No existe un certificado oficial obligatorio.</td><td>Dirección</td></tr>
+          <tr><td class="n">6</td><td><strong>Revisión:</strong> actualizar esta guía al incorporar una herramienta, un conector o un uso que afecte a personas.</td><td>Responsable de IA</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="doc" id="test" data-area="ia" data-group="Comprueba lo aprendido">
+      <header><span class="num">15</span><h2>Test rápido: ¿lo tienes claro?</h2><span class="pill ia">IA</span></header>
+      <p class="lead">Seis preguntas. Al pulsar una respuesta verás la explicación.</p>
+      <div class="tool"><div id="quiz"></div><p class="score" id="quizScore"></p></div>
+    </section>
+
+    <section class="doc" id="decalogo" data-area="ia" data-group="Comprueba lo aprendido">
+      <header><span class="num">16</span><h2>Decálogo del empleado</h2><span class="pill ia">IA</span></header>
+      <p class="lead">Mis diez compromisos. Márcalos a medida que los leas.</p>
+      <div class="tool">
+        <ul class="check" id="deca"></ul>
+        <div class="meter"><i id="decaBar"></i></div>
+        <div class="mstate" id="decaState"></div>
+        <div class="sign" id="signBox">
+          «He recibido y comprendido la Guía de IA y Protección de Datos de Brompton House y conozco el procedimiento para comunicar incidencias.»<br><br>
+          Nombre: ______________________ &nbsp; Departamento: ______________ &nbsp; Fecha: ________ &nbsp; Firma: ____________
+        </div>
+        <p><button class="btn sec" type="button" id="copySign">Copiar texto de constancia</button> <span id="copyMsg" class="mono"></span></p>
+      </div>
+    </section>
+
+    <!-- ===================== REFERENCIA ===================== -->
+    <section class="doc" id="glosario" data-area="ref" data-group="Referencia">
+      <header><span class="num">17</span><h2>Glosario en lenguaje llano</h2><span class="pill ref">Referencia</span></header>
+      <dl class="dict" id="dict"></dl>
+    </section>
+
+    <section class="doc" id="enlaces" data-area="ref" data-group="Referencia">
+      <header><span class="num">18</span><h2>Enlaces útiles y fuentes</h2><span class="pill ref">Referencia</span></header>
+      <div class="links">
+        <a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj?locale=es"><b>Reglamento de IA (AI Act)</b><small>Reglamento (UE) 2024/1689 · EUR-Lex</small></a>
+        <a href="https://eur-lex.europa.eu/eli/reg/2026/1744/oj?locale=es"><b>Ómnibus digital sobre IA</b><small>Reglamento (UE) 2026/1744 · modificación de 2026</small></a>
+        <a href="https://ai-act-service-desk.ec.europa.eu"><b>AI Act Service Desk</b><small>Comisión Europea · consultas y herramientas</small></a>
+        <a href="https://digital-strategy.ec.europa.eu/es/policies/ai-talent-skills-and-literacy"><b>Alfabetización en IA (art. 4)</b><small>Comisión Europea · preguntas frecuentes</small></a>
+        <a href="https://aesia.digital.gob.es/es"><b>AESIA</b><small>Agencia Española de Supervisión de la IA</small></a>
+        <a href="https://www.aepd.es"><b>AEPD</b><small>Agencia Española de Protección de Datos</small></a>
+        <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=es"><b>RGPD</b><small>Reglamento (UE) 2016/679 · EUR-Lex</small></a>
+        <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673"><b>LOPDGDD</b><small>Ley Orgánica 3/2018 · BOE</small></a>
+        <a href="https://www.aepd.es/canalprioritario"><b>Canal prioritario AEPD</b><small>Retirada urgente de contenidos sensibles</small></a>
+        <a href="https://www.incibe.es/linea-de-ayuda-en-ciberseguridad"><b>INCIBE · 017</b><small>Línea gratuita de ayuda en ciberseguridad</small></a>
+      </div>
+      <p class="foot">Base: Reglamento (UE) 2024/1689 (arts. 3, 4, 5, 6, 26, 50, 99 y anexo III), modificado por el Reglamento (UE) 2026/1744; Reglamento (UE) 2016/679; Ley Orgánica 3/2018; Ley 1/2019 de Secretos Empresariales.<br>Documento de sensibilización y política interna propuesta, no dictamen jurídico. Las prohibiciones internas requieren aprobación formal de Dirección. Brompton House S.L. · Coslada (Madrid) · Noviembre 2026.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const fold = s => (s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
+
+/* ---------- semáforo ---------- */
+const SEM = [
+  ["Plantilla de correo para pedir un camión a Coslada","verde","No hay datos de nadie: es una petición genérica.","Completa nombres, matrículas y horarios después, en Outlook."],
+  ["Ideas para un post de LinkedIn sobre bollería","verde","Información pública y creativa.","Revisa que no prometa nada que no podamos cumplir ni use marcas ajenas."],
+  ["Fórmula de Excel con datos inventados","verde","Los datos son ficticios.","Aplica luego la fórmula en tu Excel real, sin subirlo."],
+  ["Ficha técnica pública del fabricante","verde","Ya es pública.","Si la IA la resume, comprueba alérgenos y valores contra la ficha original."],
+  ["Procedimiento interno de expediciones","ambar","Es información interna de la empresa.","Úsalo en el chatbot interno de Supply Chain. En IA externa, solo con permiso."],
+  ["Ficha técnica de un proveedor para traducirla","ambar","Puede contener información confidencial del proveedor (fórmulas, especificaciones).","Si es pública, adelante. Si es confidencial, solo con una herramienta de empresa aprobada. Revisa siempre alérgenos e ingredientes."],
+  ["Excel de stock con lotes y caducidades","ambar","Información operativa confidencial y con trazabilidad.","Chatbot interno sí; IA externa no. SAP sigue siendo la fuente de verdad."],
+  ["Ventas del mes por familia, sin clientes","ambar","Dato comercial interno, aunque no sea personal.","Pide autorización y comparte solo los totales imprescindibles."],
+  ["Listado de clientes exportado de SAP","rojo","Contiene datos personales (autónomos, contactos) y secreto comercial.","Pregunta a la IA el método sin el listado, o usa una herramienta interna autorizada."],
+  ["Nómina o IRPF de un compañero","rojo","Datos personales y económicos de un empleado.","Nunca. Para dudas de cálculo, usa importes inventados."],
+  ["Currículum de un candidato","rojo","Dato personal, y filtrar candidatos con IA es alto riesgo.","La selección la hacen personas. La IA solo puede ayudar a redactar la oferta de empleo."],
+  ["Baja médica o informe de salud","rojo","Categoría especial de datos (salud): máxima protección.","Nunca, ni siquiera sin nombre."],
+  ["Tarifa negociada con un proveedor","rojo","Secreto comercial de Brompton.","Pide a la IA una plantilla de negociación sin cifras reales."],
+  ["Captura de un informe de Power BI","rojo","Suele mostrar clientes, márgenes o cifras confidenciales.","Describe la estructura del informe con palabras y pregunta cómo mejorarlo."],
+  ["Correo de queja de un cliente con su nombre y teléfono","rojo","Contiene datos personales.","Reescribe la queja sin datos («un cliente se queja de…») y pide un borrador de respuesta."],
+  ["Ruta y matrícula del camión con el nombre del conductor","rojo","Geolocalización y horarios de una persona identificable.","Usa «conductor A, ruta zona este» si necesitas ayuda para planificar."],
+  ["Foto del equipo o de un cliente para editarla con IA","rojo","La imagen de una persona es un dato personal (y puede ser biométrico).","Solo con consentimiento escrito y herramienta aprobada. Si la imagen se altera, indica que está generada con IA."],
+  ["Contrato con un cliente o proveedor","rojo","Datos personales y condiciones confidenciales.","Pregunta dudas jurídicas en general, sin pegar el contrato."],
+  ["Contraseña, clave API o acceso al NAS","rojo","Abre la puerta a todos nuestros sistemas.","Nunca, en ningún chat. Si se ha filtrado, avisa a IT para cambiarla."]
+];
+const SEMTXT = {verde:"VERDE · Adelante", ambar:"ÁMBAR · Pide permiso", rojo:"ROJO · Nunca en IA pública"};
+$("#semChips").innerHTML = SEM.map((s,i)=>`<button type="button" class="chip" data-i="${i}" aria-pressed="false">${esc(s[0])}</button>`).join("");
+$$("#semChips .chip").forEach(b => b.addEventListener("click", () => {
+  const s = SEM[+b.dataset.i];
+  $$("#semChips .chip").forEach(x => x.setAttribute("aria-pressed", x===b));
+  const o = $("#semOut");
+  o.className = "verdict show v-" + s[1];
+  o.innerHTML = `<div class="vh">${SEMTXT[s[1]]}</div><p><strong>Caso:</strong> ${esc(s[0])}</p><p><strong>Por qué:</strong> ${esc(s[2])}</p><p><strong>Qué hacer:</strong> ${esc(s[3])}</p>`;
+}));
+
+/* ---------- departamentos ---------- */
+const DEP = [
+  {n:"Dirección", si:["Preparar el guion de una reunión o una presentación genérica","Resumir normativa pública (AI Act, RGPD) y contrastarla","Redactar comunicaciones internas sin datos personales"],
+   no:["Usar IA para evaluar el rendimiento, puntuar o decidir despidos","Subir planes estratégicos, márgenes o previsiones a IA pública","Autorizar pagos pedidos por voz o vídeo sin confirmar por otro canal"],
+   ej:"Llega un audio de WhatsApp con la voz del administrador pidiendo una transferencia urgente a un proveedor nuevo. Podría ser una voz clonada: se confirma llamando al número habitual antes de mover un euro."},
+  {n:"Financiero", si:["Pedir fórmulas de Excel o explicaciones contables con datos inventados","Redactar un recordatorio de cobro genérico con huecos","Entender una norma fiscal y comprobarla después en la AEAT"],
+   no:["Subir nóminas, modelos 111/190, extractos bancarios o IBAN","Pegar facturas de clientes autónomos (su NIF es un dato personal)","Presentar un cálculo fiscal hecho por IA sin revisarlo"],
+   ej:"Quieres conciliar el banco más rápido: pide a la IA la fórmula BUSCARX con columnas de ejemplo, no el extracto real."},
+  {n:"Ventas", si:["Redactar ofertas y argumentarios de producto","Traducir una ficha comercial","Preparar preguntas para una visita a un cliente"],
+   no:["Exportar el CRM de SAP a un chat de IA","Pegar tarifas o condiciones negociadas","Usar IA para decidir el crédito o la solvencia de un cliente autónomo (alto riesgo)","Poner un chatbot a atender a clientes sin avisar de que es una IA"],
+   ej:"Para preparar la renovación anual de tarifas, pide a la IA una estructura de carta y un argumentario. Las cifras reales las pones tú."},
+  {n:"Operaciones", si:["Redactar procedimientos de carga, limpieza o recepción","Crear listas de comprobación de seguridad en el almacén","Explicar una norma de prevención y contrastarla"],
+   no:["Instalar cámaras o apps que analicen emociones o actitud del personal (prohibido)","Asignar turnos o tareas según el comportamiento de cada persona con IA","Analizar con IA el GPS de los conductores sin haberles informado"],
+   ej:"Una app promete «medir la productividad del almacén con cámaras inteligentes». Si detecta emociones, está prohibida; si puntúa a personas, es alto riesgo. No se instala sin aprobación de Dirección."},
+  {n:"Supply Chain", si:["Pedir un correo genérico para solicitar un camión","Consultar procedimientos internos en el chatbot interno","Preguntar cómo es la estructura de un código GS1-128 y verificarla con GS1"],
+   no:["Pegar en IA externa Excels con nombres, clientes, precios y lotes","Calcular stock o caducidades con IA en lugar de SAP/Power BI","Confiar en la IA para alérgenos, trazabilidad o retiradas de producto"],
+   ej:"Ante una posible retirada de un lote, el procedimiento oficial y SAP mandan. La IA, como mucho, ayuda a redactar el aviso, que revisa Calidad."},
+  {n:"Calidad", si:["Pedir una estructura o plantilla de ficha técnica","Traducir fichas técnicas propias o públicas y revisar después la traducción","Resumir normativa pública (etiquetado, materiales en contacto con alimentos) y contrastarla con la fuente oficial","Usar un agente de empresa aprobado para extraer datos de fichas, con revisión humana"],
+   no:["Subir a IA pública fichas técnicas o especificaciones confidenciales de proveedores","Dar por buena una traducción de alérgenos, ingredientes o advertencias sin revisarla","Copiar en una ficha valores nutricionales, componentes o materiales sugeridos por la IA sin la fuente","Pegar informes de auditoría, no conformidades o reclamaciones con nombres"],
+   ej:"Traduces al portugués la ficha de un croissant con IA. La lista de alérgenos se comprueba palabra por palabra contra el original, porque un error en un alérgeno es un riesgo para la salud y puede obligar a retirar el producto."},
+  {n:"Marketing y diseño", si:["Generar ideas, textos y bocetos para campañas","Crear imágenes de producto o de ambiente sin personas reales","Adaptar textos a redes sociales"],
+   no:["Subir fotos de empleados o clientes sin consentimiento","Publicar imágenes o vídeos realistas generados con IA sin indicarlo","Imitar logotipos, personajes o estilos protegidos de otras marcas","Publicar alegaciones nutricionales o de alérgenos sin verificar"],
+   ej:"Una imagen generada de «nuestra panadera sonriendo con croissants» parece real: se publica con la indicación «imagen generada con IA»."},
+  {n:"IT & Digitalización", si:["Mantener el inventario de herramientas de IA","Revisar el chatbot interno en Railway: región, contratos, secretos, accesos y repositorio privado","Usar IA para revisar código sin claves ni datos reales"],
+   no:["Pegar claves API, contraseñas o configuración del NAS","Activar conectores (Copilot, agentes) que lean correo u OneDrive sin aprobación","Dar a una IA permisos para escribir en SAP sin control humano"],
+   ej:"Si el chatbot interno se abre a clientes, pasa a tener obligación de transparencia: debe indicar claramente que es una IA."}
+];
+$("#depTabs").innerHTML = DEP.map((d,i)=>`<button type="button" role="tab" id="tab${i}" aria-controls="pan${i}" aria-selected="${i===0}" tabindex="${i===0?0:-1}">${esc(d.n)}</button>`).join("");
+$("#depPanels").innerHTML = DEP.map((d,i)=>`<div class="tabpanel" role="tabpanel" id="pan${i}" aria-labelledby="tab${i}" ${i===0?"":"hidden"}>
+  <div class="cols">
+    <div class="box g"><h3>Puedes</h3><ul class="yes">${d.si.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="box r"><h3>Nunca</h3><ul class="nope">${d.no.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  </div>
+  <div class="callout info"><b>Ejemplo en Brompton</b>${esc(d.ej)}</div></div>`).join("");
+function selTab(i){
+  $$("#depTabs [role=tab]").forEach((t,j)=>{ t.setAttribute("aria-selected", j===i); t.tabIndex = j===i?0:-1; });
+  $$("#depPanels .tabpanel").forEach((p,j)=> p.hidden = j!==i);
+  store.set("bh-dep", i);
+}
+$$("#depTabs [role=tab]").forEach((t,i)=>{
+  t.addEventListener("click",()=>selTab(i));
+  t.addEventListener("keydown",e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ const n=(i+(e.key==="ArrowRight"?1:-1)+DEP.length)%DEP.length; selTab(n); $("#tab"+n).focus(); } });
+});
+const sd = parseInt(store.get("bh-dep")); if(sd>=0 && sd<DEP.length) selTab(sd);
+
+/* ---------- 5 pasos ---------- */
+function upSteps(){
+  const n = $$("#steps input:checked").length;
+  $("#stepsBar").style.width = (n*20)+"%";
+  $("#stepsState").textContent = n===5 ? "5 de 5: puedes usar la respuesta." : `${n} de 5: todavía no la uses.`;
+  $("#stepsState").style.color = n===5 ? "var(--ok)" : "var(--gen)";
+}
+$$("#steps input").forEach(c=>c.addEventListener("change",upSteps)); upSteps();
+
+/* ---------- test ---------- */
+const QZ = [
+  ["¿Prohíbe el AI Act usar ChatGPT o Claude en el trabajo?",["Sí, desde 2026","No; regula los usos según su riesgo","Solo en empresas de más de 50 empleados"],1,"La ley no prohíbe herramientas, sino ciertos usos. Redactar o resumir sin datos sensibles es de riesgo mínimo."],
+  ["Un cliente autónomo te envía su factura. ¿Puedes pegarla en una IA pública para revisarla?",["Sí, es un dato de empresa","No: su NIF y su nombre son datos personales","Sí, si borro el importe"],1,"El NIF de un autónomo es su DNI. Los datos de autónomos y contactos son datos personales protegidos por el RGPD."],
+  ["Un proveedor ofrece cámaras que detectan si los mozos de almacén están estresados. ¿Qué hacemos?",["Lo probamos un mes","Nada: está prohibido por el AI Act","Lo instalamos si avisamos a los empleados"],1,"Reconocer emociones en el lugar de trabajo está prohibido (art. 5), salvo razones médicas o de seguridad."],
+  ["La IA te dice que un producto «no contiene frutos secos». ¿Qué haces?",["Lo pongo en la ficha","Lo compruebo en la ficha técnica oficial del fabricante","Le pregunto a otra IA"],1,"Alérgenos, lotes y caducidades se verifican siempre contra la fuente oficial. La IA puede inventar."],
+  ["Has pegado por error un listado de clientes en un chat externo. ¿Qué es lo correcto?",["Borrar el chat y no decir nada","Avisar ese mismo día a la persona responsable de IA","Esperar a ver si pasa algo"],1,"Es una posible brecha de datos: la empresa tiene 72 horas para valorarla. No se borra nada y se avisa enseguida."],
+  ["Marketing genera con IA una foto realista de «una cliente feliz» para la web. ¿Qué falta?",["Nada","Indicar que es una imagen generada con IA","Ponerle un nombre inventado"],1,"Si el contenido realista puede hacer creer que es real, hay que avisar de que es artificial (art. 50)."]
+];
+let qok = 0, qdone = 0;
+$("#quiz").innerHTML = QZ.map((q,i)=>`<div class="q" data-i="${i}"><div class="qt">${i+1}. ${esc(q[0])}</div><div class="opts">${q[1].map((o,j)=>`<button type="button" data-j="${j}">${esc(o)}</button>`).join("")}</div><div class="exp" hidden></div></div>`).join("");
+$$("#quiz .q").forEach(box=>{
+  const q = QZ[+box.dataset.i];
+  $$("button",box).forEach(b=>b.addEventListener("click",()=>{
+    const j = +b.dataset.j;
+    $$("button",box).forEach(x=>{ x.disabled = true; if(+x.dataset.j===q[2]) x.classList.add("right"); });
+    if(j!==q[2]) b.classList.add("wrong"); else qok++;
+    qdone++;
+    const e = $(".exp",box); e.hidden = false; e.innerHTML = (j===q[2]?"<strong>¡Correcto!</strong> ":"<strong>No exactamente.</strong> ")+esc(q[3]);
+    if(qdone===QZ.length) $("#quizScore").textContent = `Resultado: ${qok} de ${QZ.length}` + (qok===QZ.length ? " · ¡Perfecto!" : " · Repasa las explicaciones.");
+  }));
+});
+
+/* ---------- decálogo ---------- */
+const DECA = ["Uso solo herramientas aprobadas.","Comparto el mínimo dato posible.","No subo información personal ni confidencial a IA pública.","No comparto contraseñas ni claves.","Pido permiso si tengo dudas (semáforo ámbar).","Compruebo cifras, fuentes, lotes y alérgenos.","No uso IA para decidir sobre personas.","Aviso cuando un contenido generado con IA pueda confundir.","Comunico errores o fugas el mismo día.","Recuerdo que la responsabilidad final es siempre humana."];
+let decaSaved = []; try{ decaSaved = JSON.parse(store.get("bh-deca")||"[]"); }catch(e){}
+$("#deca").innerHTML = DECA.map((d,i)=>`<li><label><input type="checkbox" data-i="${i}" ${decaSaved.includes(i)?"checked":""}><span><strong>${i+1}.</strong> ${esc(d)}</span></label></li>`).join("");
+function upDeca(){
+  const on = $$("#deca input").filter(c=>c.checked).map(c=>+c.dataset.i);
+  store.set("bh-deca", JSON.stringify(on));
+  $("#decaBar").style.width = (on.length*10)+"%";
+  $("#decaState").textContent = on.length===10 ? "10 de 10 · Listo para firmar la constancia." : `${on.length} de 10 compromisos leídos.`;
+  $("#decaState").style.color = on.length===10 ? "var(--ok)" : "var(--muted)";
+}
+$$("#deca input").forEach(c=>c.addEventListener("change",upDeca)); upDeca();
+$("#copySign").addEventListener("click", async ()=>{
+  const t = "He recibido y comprendido la Guía de IA y Protección de Datos de Brompton House y conozco el procedimiento para comunicar incidencias.\nNombre: ____  Departamento: ____  Fecha: ____  Firma: ____";
+  try{ await navigator.clipboard.writeText(t); $("#copyMsg").textContent = "Copiado"; }
+  catch(e){ $("#copyMsg").textContent = "No se pudo copiar: selecciona el texto a mano."; }
+});
+
+/* ---------- glosario ---------- */
+const DICT = [
+  ["Sistema de IA","Programa que, a partir de datos, genera respuestas, predicciones, contenidos o decisiones con cierta autonomía. Excel con fórmulas no lo es; un chatbot sí."],
+  ["Responsable del despliegue","Quien usa un sistema de IA en su actividad profesional. Brompton House lo es."],
+  ["Proveedor","Quien desarrolla una IA o la pone en el mercado (OpenAI, Anthropic, Microsoft…)."],
+  ["Alfabetización en IA","Saber usar la IA con criterio: cómo funciona, qué riesgos tiene y cuáles son sus límites."],
+  ["Alto riesgo","IA usada en ámbitos sensibles, como empleo, crédito o educación. Tiene muchas obligaciones."],
+  ["Deepfake","Imagen, audio o vídeo generado o manipulado con IA que parece auténtico."],
+  ["Alucinación","Respuesta inventada por la IA que suena convincente pero es falsa."],
+  ["Dato personal","Cualquier información sobre una persona identificada o identificable."],
+  ["Categorías especiales","Salud, biometría, ideología, religión, afiliación sindical, vida sexual u origen étnico. Tienen protección reforzada."],
+  ["Anonimizar","Eliminar datos de forma que nadie pueda volver a identificar a la persona. Quitar el nombre no basta."],
+  ["Brecha de datos","Pérdida, fuga o acceso indebido a datos personales. Puede ser obligatorio comunicarla a la AEPD en 72 horas."],
+  ["Encargado del tratamiento","Proveedor que trata datos por cuenta de la empresa con un contrato que lo regula."],
+  ["Shadow AI","Uso de herramientas de IA sin conocimiento ni aprobación de la empresa."],
+  ["AESIA / AEPD","Autoridades españolas: AESIA supervisa la IA; AEPD, la protección de datos."]
+];
+$("#dict").innerHTML = DICT.map(([t,d])=>`<div><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("");
+
+/* ---------- numeración e índice ---------- */
+$$("section.doc .num").forEach((n,i)=>n.textContent=String(i+1).padStart(2,"0"));
+(function buildToc(){
+  const groups = {};
+  $$("section.doc").forEach(s => { (groups[s.dataset.group] ||= []).push(s); });
+  const html = Object.entries(groups).map(([g,list]) =>
+    `<h4>${esc(g)}</h4>` + list.map(s => `<a href="#${s.id}" data-for="${s.id}" data-area="${s.dataset.area}"><span class="dot"></span>${esc($("h2",s).textContent)}</a>`).join("")
+  ).join("");
+  $("#tocFull").innerHTML = html; $("#tocSmall").innerHTML = html;
+})();
+
+/* ---------- búsqueda y filtro ---------- */
+let seg = "todo";
+const sv = store.get("bh-seg"); if(["todo","ia","datos","personal"].includes(sv)) seg = sv;
+function clearMarks(root){ $$("mark.hl",root).forEach(m=>{ const p=m.parentNode; p.replaceChild(document.createTextNode(m.textContent),m); p.normalize(); }); }
+function markText(root,q){
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode:n => n.nodeValue.trim() && !n.parentElement.closest("script,style,mark,button") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT});
+  const nodes=[]; let n; while((n=w.nextNode())) nodes.push(n);
+  let hits=0;
+  nodes.forEach(node=>{
+    const s=node.nodeValue, f=fold(s);
+    if(f.length!==s.length || !f.includes(q)) return;
+    const frag=document.createDocumentFragment(); let i=0,j;
+    while((j=f.indexOf(q,i))!==-1){ if(j>i) frag.appendChild(document.createTextNode(s.slice(i,j))); const m=document.createElement("mark"); m.className="hl"; m.textContent=s.slice(j,j+q.length); frag.appendChild(m); hits++; i=j+q.length; }
+    if(i<s.length) frag.appendChild(document.createTextNode(s.slice(i)));
+    node.parentNode.replaceChild(frag,node);
+  });
+  return hits;
+}
+function apply(){
+  const raw = fold($("#q").value.trim()); const q = raw.length>=2 ? raw : "";
+  let shown=0, hits=0;
+  $$("section.doc").forEach(s=>{
+    const area = s.dataset.area;
+    let vis = area==="ref" || seg==="todo" || area===seg;
+    clearMarks(s);
+    if(vis && q){
+      if(s.id==="departamentos"){ $$("#depPanels .tabpanel").forEach(p=>{ if(fold(p.textContent).includes(q)) p.hidden=false; }); }
+      if(fold(s.textContent).includes(q)) hits += markText(s,q); else vis=false;
+    }
+    s.hidden = !vis; if(vis) shown++;
+    $$(`.toc a[data-for="${s.id}"]`).forEach(a=>a.hidden=!vis);
+  });
+  if(!q){ const cur = $$("#depTabs [role=tab]").findIndex(t=>t.getAttribute("aria-selected")==="true"); $$("#depPanels .tabpanel").forEach((p,j)=>p.hidden=j!==cur); }
+  $$(".toc h4").forEach(h=>{ let el=h.nextElementSibling, any=false; while(el && el.tagName==="A"){ if(!el.hidden) any=true; el=el.nextElementSibling; } h.hidden=!any; });
+  $("#count").textContent = q ? (hits ? `${hits} coincidencias` : "Sin resultados") : `${shown} capítulos`;
+}
+$$(".seg button").forEach(b=>{
+  b.setAttribute("aria-pressed", b.dataset.seg===seg);
+  b.addEventListener("click",()=>{ seg=b.dataset.seg; $$(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b)); store.set("bh-seg",seg); apply(); });
+});
+let tq; $("#q").addEventListener("input",()=>{ clearTimeout(tq); tq=setTimeout(apply,120); });
+document.addEventListener("keydown",e=>{ if(e.key==="/" && !["INPUT","TEXTAREA"].includes(document.activeElement.tagName)){ e.preventDefault(); $("#q").focus(); } });
+$$(".toc a").forEach(a=>a.addEventListener("click",()=>{ const d=a.closest("details"); if(d) d.open=false; }));
+apply();
+</script>
+</body>
+</html>
